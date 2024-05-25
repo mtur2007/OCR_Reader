@@ -1,0 +1,6 @@
+
+
+登録字数 : 93
+登録情報 : abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!$%&'()*+,-./:;<=>?@[\]^_`{|}~#
+検証を開始...
+
