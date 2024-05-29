@@ -25,6 +25,7 @@ if os.path.exists(imagenamefile) == True:
 
 #-----------------------------------------------------------------------------------------------------------
 
+
 def removal_background(color_image,RGB,kyoyou): #写真のNumPy配列を渡すと戻り値として背景を１とし、それ以外を0に置き換えた配列が戻ってくる。
     background_color = np.array(RGB)
 
@@ -42,14 +43,12 @@ def removal_background(color_image,RGB,kyoyou): #写真のNumPy配列を渡す�
 
 def image_removal_background(imagename,RGB,kyoyou):
     #image = Image.open(imagename)
-    image = cv2.imread(imagename)
+    image = cv2.cvtColor(cv2.imread(imagename),cv2.COLOR_BGR2RGB)
     color_image = np.array(image)
-    background_color = np.array(RGB)
-    print(background_color)
 
     dataslist = {}
     dataslist["image"] = image
-    dataslist["RGB"] = np.array(RGB)
+    dataslist["RGB"] = RGB
     dataslist["kyoyou"] = kyoyou
 
     code0list = removal_background(color_image,RGB,kyoyou)
@@ -61,8 +60,6 @@ def image_removal_background(imagename,RGB,kyoyou):
             for x in range(code0list.shape[1]):
                 txt = txt + str(code0list[y,x])
             f.write(txt + "\n")
-        else:
-            print(code0list.shape)
 
     dataslist["code0list"] = code0list
 
@@ -174,7 +171,7 @@ def readtxt_imshow(dataslist):
 def txtdatas_insert(dataslist):
     color_image = np.array(dataslist["image"])
     code0list = dataslist["code0list"]
-    
+
     #plt.imshow(color_image[:100,:100])
     linetxts_sfyx = dataslist["linetxts_sfyx"]
     Alltxtimages,txtimages = [],[]
@@ -198,7 +195,7 @@ def txtdatas_insert(dataslist):
                         txtimage = txtimage[top:,:]
                         txtdata = txtdata[top:,:]
                         break
-                
+
                 resizeleny = np.shape(txtdata)[0]
 
                 for lower in range(resizeleny):
@@ -206,14 +203,14 @@ def txtdatas_insert(dataslist):
                         txtimage = txtimage[:resizeleny-lower,:]
                         txtdata = txtdata[:resizeleny-lower,:]
                         break
-                
+
             else:
                 txtimage = ""
                 txtdata = ""
 
             txtimages.append(txtimage)
             txtdatas.append(txtdata)
-        
+
         Alltxtimages.append(txtimages)
         Alltxtdatas.append(txtdatas)
 
@@ -225,8 +222,6 @@ def txtdatas_insert(dataslist):
     return dataslist
 
 
-
-
 #-----------------------------------------------------------------------------------------------------------
 
 def print_textdatas(dataslist,writefilename):
@@ -234,7 +229,7 @@ def print_textdatas(dataslist,writefilename):
     lineMaxlenx,lineMaxleny = [],[]
 
 #    with open(writefilename,"w") as f:
-    
+
     Maxlenx = 0
     for line in range(len(txtdatas)):
         lineMaxleny.append(0)
@@ -245,8 +240,7 @@ def print_textdatas(dataslist,writefilename):
             if len(txtline[txt]) != 0:
                 if np.shape(txtline[txt])[0] > lineMaxleny[line]:
                     lineMaxleny[line] = np.shape(txtline[txt])[0]
-                
-                
+
 
     for nouse in range(Maxlenx):
         lineMaxlenx.append(0)
@@ -257,8 +251,8 @@ def print_textdatas(dataslist,writefilename):
             if len(txtline[txt]) != 0:
                 if np.shape(txtline[txt])[1] > lineMaxlenx[txt]:
                     lineMaxlenx[txt] = np.shape(txtline[txt])[1]
-                    
-    
+
+
     with open(writefilename,"w") as f:
         for line in range(len(txtdatas)):
             printlist = []
@@ -291,7 +285,7 @@ def print_textdatas(dataslist,writefilename):
                         printlist[y] = (f"{printlist[y]}{Textlen * ' '} | ")
                         y += 1
 
-                
+
                 else:
                     y = 0
                     for nouse in range(thislineMaxY):
@@ -311,32 +305,33 @@ def print_textdatas(dataslist,writefilename):
             else:
                 f.write(f"{printlen*'-'}\n\n")
                 a = printlen
-                        
+            
 
             for printline in printlist:
                 f.write("| "+printline[:894]+ "\n")
 
         f.write(f"\n{len(printline[:894])*'-'}")
 
-        
-        
 
 #-----------------------------------------------------------------------------------------------------------
 
 for imagename in imageslist:
 
-    dataslist = image_removal_background(imagename,[36,36,36],80)
-    dataslist = seach_txtposition(dataslist,"auto")
+    if imageslist[0] == "/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader_Mk-II/textdata.jpeg":
+        dataslist = image_removal_background(imagename,[36,36,36],180)
+    else:
+        dataslist = image_removal_background(imagename,[36,36,36],60)
+        
+    dataslist = seach_txtposition(dataslist,100)
     dataslist = txtdatas_insert(dataslist)
-    
-    """
+
+    print_textdatas(dataslist,"Alltextimages.text")
     txtimage = dataslist["Alltxtimages"]
-    txtidata = dataslist["Alltxtdatas"]
+    txtdata = dataslist["Alltxtdatas"]
     #plt.imshow(readtxt_imshow(dataslist))
-    plt.imshow(np.array(txtimage[0][0]))
-    print(txtidata[0][0])
+    #plt.imshow(cv2.resize(txtimage[0][0],dsize=(10,30)))
+    #print(txtdata[0][1])
     print_textdatas(dataslist,"textdataslist_printfile.txt")
-    """
 
 
 #===========================================================================================================
@@ -632,8 +627,6 @@ with open("testanser_printfile.txt", "w")as f:
 
             if txtnum == txt:
                 count = 1
-    print(retest[1])
-            
 
     count = 0
     txts = []
