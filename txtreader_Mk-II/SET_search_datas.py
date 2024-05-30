@@ -314,17 +314,6 @@ print_textdatas(dataslist,"textdataslist_printfile.txt")
 #===========================================================================================================
 
 
-import pickle
-
-"""
-### pickleで保存（書き出し）
-with open('data.pickle', mode='wb') as fo:
-  pickle.dump(txtimage, fo)
-"""
-
-#===========================================================================================================
-
-
 def Myint(num): #数値の int部分を確実に表示させる様にする自作関数
     for line in range(len(str(num))):
         if str(num)[line] == ".":
@@ -448,6 +437,14 @@ testdata        が 文字
 seach_textdatas が 文字コード
 '''
 
+#識字用のコード配列が合っているかの確認
+
+for i in range(len(seach_textdatas)):
+    if seach_textdatas[i][3] != textdata[i]:
+        print(i)
+
+
+
 #---------------------------------------------------------------------------------------------------------------
 
 #類似・重なる字の調査用プログラム
@@ -478,16 +475,12 @@ def test_seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
     return resembletxt
 
 
-#識字用のコード配列が合っているかの確認
+#===========================================================================================================
 
-for i in range(len(seach_textdatas)):
-    if seach_textdatas[i][3] != textdata[i]:
-        print(i)
+seach_txtimage = txtimage[0]
 
+#===========================================================================================================
 
-### pickleで保存したファイルを読み込み
-with open('data.pickle', mode='br') as fi:
-  seach_txtimage = pickle.load(fi)[0]
 
 txtimages = []
 line = 0
@@ -570,6 +563,16 @@ with open("testanser_printfile.txt", "w")as f:
 """
 
     #print(f"\n検証結果[合致数{Truecount}, 誤検知数{Falsecount}]\n")
+
+
+#===========================================================================================================
+
+
+import pickle
+
+### pickleで保存（書き出し）
+with open('Save_retest.pickle', mode='wb') as fo:
+  pickle.dump((seach_textdatas,retest[1]), fo)
 
 
 #===========================================================================================================
@@ -658,4 +661,5 @@ for line in Falselist:
     print(line)
 
 print()
-print(f"検証結果[合致数{true},誤検知{false}]")
+print(f"検証結果[合致数{true}, 誤検知{false}]\n")
+

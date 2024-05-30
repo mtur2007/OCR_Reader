@@ -336,348 +336,12 @@ for imagename in imageslist:
 
 #===========================================================================================================
 
-
 import pickle
 
-"""
-### pickleで保存（書き出し）
-with open('data.pickle', mode='wb') as fo:
-  pickle.dump(txtimage, fo)
-"""
 
-### pickleで保存したファイルを読み込み
-with open('/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader_Mk-II/data.pickle', mode='br') as fi:
-  txtimage = pickle.load(fi)
-
-
-#===========================================================================================================
-
-
-def Myint(num): #数値の int部分を確実に表示させる様にする自作関数
-    for line in range(len(str(num))):
-        if str(num)[line] == ".":
-            return int(str(num)[:line])
-    return num
-
-
-#数値の整列を行う関数
-
-def SET_numbertxt(numberslist,mode):
-    if mode == 0:
-        Max = 0
-        len_list = []
-
-        for line in numberslist:
-            len_list.append(len(line))
-            if len(line) > Max:
-                Max = len(line)
-        
-        New_list = []
-        Line_list = []
-        for nouse in range(Max):
-            New_list.append("")
-
-        for line in numberslist:
-            Set_list = copy.deepcopy(New_list)
-
-            for number in range(len(line)):
-                Set_list[number] = line[number]
-            
-            Line_list.append(Set_list)
-        
-        Line_list = np.array(Line_list)
-
-        search_list = []
-        for num in range(np.shape(Line_list)[1]):
-            search_list.append(Line_list[:,num])
-
-        search_list = np.array(SET_numbertxt(search_list,1))
-        Line_list = []
-
-        for num in range(np.shape(search_list)[1]):
-            Line_list.append(search_list[:,num])
-
-        returndata = []
-        for line in range (np.shape(Line_list)[0]):
-            cut = len_list[line]
-            returndata.append(Line_list[line][:cut])
-
-        return returndata
-
-    
-    elif mode == 1:
-
-        for line in range(len(numberslist)):
-            Maxintlen,Maxfloatlen = 0,0
-
-            for num in numberslist[line]:
-
-                if len(str(Myint(num))) > Maxintlen:
-                    Maxintlen = len(str(Myint(num)))
-
-                if len(str(num)) - len(str(Myint(num))) > Maxfloatlen:
-                    Maxfloatlen = len(str(num)) - len(str(Myint(num)))
-
-            Maxlen = Maxintlen + Maxfloatlen
-
-            for nowread in range(len(numberslist[line])):
-                num = numberslist[line][nowread]
-                Air0 = Maxintlen - len(str(Myint(num)))
-                Air1 = Maxlen - (Air0 + len(str(num)))
-
-                numberslist[line][nowread] = (Air0 * " ") + str(num) + (Air1 * " ")
-
-        return numberslist#[:-1]
-
-
-#===========================================================================================================
-
-
-def Myint(num): #数値の int部分を確実に表示させる様にする自作関数
-    for line in range(len(str(num))):
-        if str(num)[line] == ".":
-            return int(str(num)[:line])
-    return num
-
-
-#数値の整列を行う関数
-
-def SET_numbertxt(numberslist,mode):
-    if mode == 0:
-        Max = 0
-        len_list = []
-
-        for line in numberslist:
-            len_list.append(len(line))
-            if len(line) > Max:
-                Max = len(line)
-        
-        New_list = []
-        Line_list = []
-        for nouse in range(Max):
-            New_list.append("")
-
-        for line in numberslist:
-            Set_list = copy.deepcopy(New_list)
-
-            for number in range(len(line)):
-                Set_list[number] = line[number]
-            
-            Line_list.append(Set_list)
-        
-        Line_list = np.array(Line_list)
-
-        search_list = []
-        for num in range(np.shape(Line_list)[1]):
-            search_list.append(Line_list[:,num])
-
-        search_list = np.array(SET_numbertxt(search_list,1))
-        Line_list = []
-
-        for num in range(np.shape(search_list)[1]):
-            Line_list.append(search_list[:,num])
-
-        returndata = []
-        for line in range (np.shape(Line_list)[0]):
-            cut = len_list[line]
-            returndata.append(Line_list[line][:cut])
-
-        return returndata
-
-    
-    elif mode == 1:
-
-        for line in range(len(numberslist)):
-            Maxintlen,Maxfloatlen = 0,0
-
-            for num in numberslist[line]:
-
-                if len(str(Myint(num))) > Maxintlen:
-                    Maxintlen = len(str(Myint(num)))
-
-                if len(str(num)) - len(str(Myint(num))) > Maxfloatlen:
-                    Maxfloatlen = len(str(num)) - len(str(Myint(num)))
-
-            Maxlen = Maxintlen + Maxfloatlen
-
-            for nowread in range(len(numberslist[line])):
-                num = numberslist[line][nowread]
-                Air0 = Maxintlen - len(str(Myint(num)))
-                Air1 = Maxlen - (Air0 + len(str(num)))
-
-                numberslist[line][nowread] = (Air0 * " ") + str(num) + (Air1 * " ")
-
-        return numberslist#[:-1]
-
-
-#===========================================================================================================
-
-
-seach_textdatas = []
-set_txttype = ""
-set_wariai = ""
-seach_shape = [0,0]
-set_txtdata = []
-textdata = ""
-seach_num = 0
-
-with open("/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader_Mk-II/Seave_Txtdatas.txt","r") as f:
-    for line in f:
-        line = line.strip()
-        if len(line) == 5 and line[-2:] == " ]":
-            #print(line)
-            set_txtdata = np.array(set_txtdata).reshape(seach_shape)
-            seach_textdatas.append([set_wariai,seach_shape,np.where(set_txtdata==0),set_txttype])
-            textdata = textdata + set_txttype
-            set_txtdata = []
-            set_txttype = line[2]
-            seach_num = 1
-        elif seach_num == 1:
-            set_wariai = float(line)
-            seach_num = 2
-        elif seach_num == 2:
-            for txt in range(len(line)):
-                if line[txt] == ",":
-                    seach_shape = [int(line[1:txt]),int(line[txt+2:-1])]
-            seach_num = 3
-        elif seach_num == 3:
-            for txt in range(len(line)):
-                if line[txt] == "0" or line[txt] == "1":
-                    set_txtdata.append(int(line[txt]))
-
-    set_txtdata = np.array(set_txtdata).reshape(seach_shape)
-    seach_textdatas.append([set_wariai,np.shape(set_txtdata),np.where(set_txtdata==0),set_txttype])
-    textdata = textdata + set_txttype
-
-seach_textdatas = seach_textdatas[1:]
-
-'''
-testdata        が 文字
-seach_textdatas が 文字コード
-'''
-
-#---------------------------------------------------------------------------------------------------------------
-
-#類似・重なる字の調査用プログラム
-
-def test_seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
-    #for txt in seach_textdatas[3]:
-    resembletxt = []
-    rgb = dataslist["RGB"]
-    kyoyoucolor = dataslist["kyoyou"]
-    hiritu = np.shape(txtimage)[1]/np.shape(txtimage)[0]
-    for line in range(len(seach_textdatas)):
-
-        if abs(seach_textdatas[line][0] - hiritu) < kyoyou:
-            set_image = removal_background(cv2.resize(txtimage,dsize=(seach_textdatas[line][1][1],seach_textdatas[line][1][0])),rgb,kyoyoucolor)
-            #print(set_image)
-            syougouritu = np.count_nonzero(set_image[seach_textdatas[line][2]] == 0) / np.shape(seach_textdatas[line][2])[1]
-
-            if txt != "None" and seach_textdatas[line][3] == txt:
-                #print(set_image)
-
-                print(f"\n ▶️ {txt} :{str(syougouritu * 100)}%\n")
-
-            if syougouritu > 0.85:
-
-                resembletxt.append(line)
-                #resembletxt.append(seach_textdatas[line][3])
-                
-    return resembletxt
-
-
-#識字用のコード配列が合っているかの確認
-
-for i in range(len(seach_textdatas)):
-    if seach_textdatas[i][3] != textdata[i]:
-        print(i)
-
-
-### pickleで保存したファイルを読み込み
-with open('data.pickle', mode='br') as fi:
-  seach_txtimage = pickle.load(fi)[0]
-
-txtimages = []
-line = 0
-
-with open("testanser_printfile.txt", "w")as f:
-
-    
-    a = 0
-    Truecount = 0
-    Falsecount = 0
-
-    retest = [[[]],[]]
-    num = []
-    txtnum = []
-
-
-    for txt in range(len(seach_textdatas)):
-        num.append(txt)
-        txtnum.append([])
-    
-    retest[0][0] = num
-    retest[1] = txtnum
-
-    for txtnum in range(len(seach_txtimage)):
-        anser = test_seach_txt(seach_txtimage[txtnum],seach_textdatas,0.15,dataslist,"None")
-        
-        for txt in anser:
-            retest[1][txt].append(txtnum)
-
-            if txtnum == txt:
-                count = 1
-
-    count = 0
-    txts = []
-
-    for line in range(len(retest[1])):
-        txtlist = []
-        for txt in retest[1][line]:
-            txtlist.append(seach_textdatas[txt][3])
-            if line == txt:
-                count += 1
-        txts.append(txtlist)
-
-    Err = len(retest[1]) - count
-    if Err != 0:
-        print(f"正しく識字されていない文字があります。")
-        Err = len(retest[1]) - count
-
-    
-    retest[0] = SET_numbertxt(retest[0],1)
-    retest_copy = SET_numbertxt(retest[1],0)
-
-    numdata = ""
-    txtdata = ""
-
-    for num in range(len(retest[0][0])):
-        printlist = []
-        for txt in retest_copy[num]:
-            printlist.append(txt)
-            
-        if len(printlist) >= 2:
-            numdata = numdata + f"{retest[0][0][num]}: {printlist}\n"
-            txtdata = txtdata + f"{seach_textdatas[num][3]}: {txts[num]}\n"
-
-    f.write(f"\n\n登録字数 : {len(seach_textdatas)}\n登録情報 : {textdata}\n検証を開始...\n\nErr ({Err})\n\n")
-
-    f.write(txtdata)
-    f.write(f"\n\nNumber.Ver (機械用データ)\n\n{numdata}")
-
-
-"""
-            if len(anser) >= 2:
-                f.write(f"▶️{textdata[i]}:{anser}\n")
-
-            if textdata[i] != anser:
-                Falsecount += 1
-                print (f"▶️結果が違う {textdata[i]} → {anser}")
-            else:
-                Truecount += 1
-"""
-
-    #print(f"\n検証結果[合致数{Truecount}, 誤検知数{Falsecount}]\n")
+# seach_textdatas
+with open('/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader_Mk-II/Save_retest.pickle', mode='br') as fi:
+  seach_textdatas,retest = pickle.load(fi)
 
 
 #===========================================================================================================
@@ -707,7 +371,7 @@ def seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
     #print(f'▶️▶️ {anserline} :{str(Max * 100)}%')
     Min = 100
 
-    for line in retest[1][anserline]:
+    for line in retest[anserline]:
 
         set_image = removal_background(cv2.resize(txtimage,dsize=(seach_textdatas[line][1][1],seach_textdatas[line][1][0])),rgb,kyoyoucolor)
 
@@ -745,11 +409,11 @@ txt = ""
 true = 0
 false = 0
 
-for lennum in range(len(textdata)):
+for lennum in range(len(seach_textdatas)):
     if len(txtimage[line][lennum]) != 0:
         fainalanser = seach_txt(txtimage[line][lennum],seach_textdatas,0.15,dataslist,txt)
-        if fainalanser != textdata[lennum]:
-            Falselist.append(f"▶️結果が違う {textdata[lennum]} → {fainalanser}")
+        if fainalanser != seach_textdatas[lennum][3]:
+            Falselist.append(f"▶️結果が違う {seach_textdatas[lennum][3]} → {fainalanser}")
             false += 1
         else:
             true += 1
@@ -757,6 +421,10 @@ for lennum in range(len(textdata)):
         #print(f"文字は ' {seach_txt(txtimage[line][lennum],seach_textdatas,0.15,dataslist,txt)} ' ですか？")
         #print(textdata[num])
         #plt.imshow(txtimage[line][lennum])
+
+textdata = ""
+for line in seach_textdatas:
+    textdata = textdata + line[3]
 
 print(f"\n登録字数 : {len(seach_textdatas)}\n登録情報 : {textdata}\n検証を開始...\n\nErr ({len(Falselist)})\n")
 
