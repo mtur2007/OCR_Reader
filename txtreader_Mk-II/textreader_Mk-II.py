@@ -399,18 +399,13 @@ for imagename in imageslist:
 
 #-----------------------------------------------------------------------------------------------------------
 
-line,lennum = 0,92
+line,lennum = 0,4
 #txt = textdata[lennum]
 
-seach = "#"
 txt = ""
 
-for num in range(len(seach_textdatas)):
-    if seach_textdatas[num][3] == seach:
-        lennum = num
-        break
+print(len(txtimage[line][lennum]))
 
-txtimage[line][lennum]
 if len(txtimage[line][lennum]) != 0:
     print(f"文字は ' {seach_txt(txtimage[line][lennum],seach_textdatas,0.15,dataslist,txt)} ' ですか？")
     #print(textdata[num])

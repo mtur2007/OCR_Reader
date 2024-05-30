@@ -2,7 +2,6 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
-
 #-----------------------------------------------------------------------------------------------------------
 
 def removal_background(color_image,RGB,kyoyou): #写真のNumPy配列を渡すと戻り値として背景を１とし、それ以外を0に置き換えた配列が戻ってくる。
@@ -601,6 +600,7 @@ def seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
 
 
 #===========================================================================================================
+
 
 dataimage = "/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader_Mk-II/textdata.jpeg"
 
