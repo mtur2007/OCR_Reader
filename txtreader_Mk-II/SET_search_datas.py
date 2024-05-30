@@ -292,25 +292,6 @@ def print_textdatas(dataslist,writefilename):
         f.write(f"\n{len(printline[:894])*'-'}")
 
 
-#-----------------------------------------------------------------------------------------------------------
-
-
-dataimage = "/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader_Mk-II/textdata.jpeg"
-
-dataslist = image_removal_background(dataimage,[36,36,36],180)
-    
-dataslist = seach_txtposition(dataslist,100)
-dataslist = txtdatas_insert(dataslist)
-
-print_textdatas(dataslist,"Alltextimages.text")
-txtimage = dataslist["Alltxtimages"]
-txtdata = dataslist["Alltxtdatas"]
-#plt.imshow(readtxt_imshow(dataslist))
-#plt.imshow(cv2.resize(txtimage[0][0],dsize=(10,30)))
-#print(txtdata[0][1])
-print_textdatas(dataslist,"textdataslist_printfile.txt")
-
-
 #===========================================================================================================
 
 
@@ -477,78 +458,78 @@ def test_seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
 
 #===========================================================================================================
 
-seach_txtimage = txtimage[0]
+def Saerch_retest():
+    seach_txtimage = txtimage[0]
 
-#===========================================================================================================
+    txtimages = []
+    line = 0
 
+    with open("testanser_printfile.txt", "w")as f:
 
-txtimages = []
-line = 0
-
-with open("testanser_printfile.txt", "w")as f:
-
-    
-    a = 0
-    Truecount = 0
-    Falsecount = 0
-
-    retest = [[[]],[]]
-    num = []
-    txtnum = []
-
-
-    for txt in range(len(seach_textdatas)):
-        num.append(txt)
-        txtnum.append([])
-    
-    retest[0][0] = num
-    retest[1] = txtnum
-
-    for txtnum in range(len(seach_txtimage)):
-        anser = test_seach_txt(seach_txtimage[txtnum],seach_textdatas,0.15,dataslist,"None")
         
-        for txt in anser:
-            retest[1][txt].append(txtnum)
+        a = 0
+        Truecount = 0
+        Falsecount = 0
 
-            if txtnum == txt:
-                count = 1
+        retest = [[[]],[]]
+        num = []
+        txtnum = []
 
-    count = 0
-    txts = []
 
-    for line in range(len(retest[1])):
-        txtlist = []
-        for txt in retest[1][line]:
-            txtlist.append(seach_textdatas[txt][3])
-            if line == txt:
-                count += 1
-        txts.append(txtlist)
+        for txt in range(len(seach_textdatas)):
+            num.append(txt)
+            txtnum.append([])
+        
+        retest[0][0] = num
+        retest[1] = txtnum
 
-    Err = len(retest[1]) - count
-    if Err != 0:
-        print(f"正しく識字されていない文字があります。")
-        Err = len(retest[1]) - count
-
-    
-    retest[0] = SET_numbertxt(retest[0],1)
-    retest_copy = SET_numbertxt(retest[1],0)
-
-    numdata = ""
-    txtdata = ""
-
-    for num in range(len(retest[0][0])):
-        printlist = []
-        for txt in retest_copy[num]:
-            printlist.append(txt)
+        for txtnum in range(len(seach_txtimage)):
+            anser = test_seach_txt(seach_txtimage[txtnum],seach_textdatas,0.15,dataslist,"None")
             
-        if len(printlist) >= 2:
-            numdata = numdata + f"{retest[0][0][num]}: {printlist}\n"
-            txtdata = txtdata + f"{seach_textdatas[num][3]}: {txts[num]}\n"
+            for txt in anser:
+                retest[1][txt].append(txtnum)
 
-    f.write(f"\n\n登録字数 : {len(seach_textdatas)}\n登録情報 : {textdata}\n検証を開始...\n\nErr ({Err})\n\n")
+                if txtnum == txt:
+                    count = 1
 
-    f.write(txtdata)
-    f.write(f"\n\nNumber.Ver (機械用データ)\n\n{numdata}")
+        count = 0
+        txts = []
+
+        for line in range(len(retest[1])):
+            txtlist = []
+            for txt in retest[1][line]:
+                txtlist.append(seach_textdatas[txt][3])
+                if line == txt:
+                    count += 1
+            txts.append(txtlist)
+
+        Err = len(retest[1]) - count
+        if Err != 0:
+            print(f"正しく識字されていない文字があります。")
+            Err = len(retest[1]) - count
+
+        
+        retest[0] = SET_numbertxt(retest[0],1)
+        retest_copy = SET_numbertxt(retest[1],0)
+
+        numdata = ""
+        txtdata = ""
+
+        for num in range(len(retest[0][0])):
+            printlist = []
+            for txt in retest_copy[num]:
+                printlist.append(txt)
+                
+            if len(printlist) >= 2:
+                numdata = numdata + f"{retest[0][0][num]}: {printlist}\n"
+                txtdata = txtdata + f"{seach_textdatas[num][3]}: {txts[num]}\n"
+
+        f.write(f"\n\n登録字数 : {len(seach_textdatas)}\n登録情報 : {textdata}\n検証を開始...\n\nErr ({Err})\n\n")
+
+        f.write(txtdata)
+        f.write(f"\n\nNumber.Ver (機械用データ)\n\n{numdata}")
+
+    return retest
 
 
 """
@@ -563,16 +544,6 @@ with open("testanser_printfile.txt", "w")as f:
 """
 
     #print(f"\n検証結果[合致数{Truecount}, 誤検知数{Falsecount}]\n")
-
-
-#===========================================================================================================
-
-
-import pickle
-
-### pickleで保存（書き出し）
-with open('Save_retest.pickle', mode='wb') as fo:
-  pickle.dump((seach_textdatas,retest[1]), fo)
 
 
 #===========================================================================================================
@@ -630,6 +601,33 @@ def seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
 
 
 #===========================================================================================================
+
+dataimage = "/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader_Mk-II/textdata.jpeg"
+
+dataslist = image_removal_background(dataimage,[36,36,36],180)
+    
+dataslist = seach_txtposition(dataslist,100)
+dataslist = txtdatas_insert(dataslist)
+
+print_textdatas(dataslist,"Alltextimages.text")
+txtimage = dataslist["Alltxtimages"]
+txtdata = dataslist["Alltxtdatas"]
+#plt.imshow(readtxt_imshow(dataslist))
+#plt.imshow(cv2.resize(txtimage[0][0],dsize=(10,30)))
+#print(txtdata[0][1])
+print_textdatas(dataslist,"textdataslist_printfile.txt")
+
+#-----------------------------------------------------------------------------------------------------------
+
+
+retest = Saerch_retest()
+
+import pickle
+
+### pickleで保存（書き出し）
+with open('Save_retest.pickle', mode='wb') as fo:
+  pickle.dump((seach_textdatas,retest[1]), fo)
+
 
 
 line,lennum = 0,92

@@ -313,27 +313,6 @@ def print_textdatas(dataslist,writefilename):
         f.write(f"\n{len(printline[:894])*'-'}")
 
 
-#-----------------------------------------------------------------------------------------------------------
-
-for imagename in imageslist:
-
-    if imageslist[0] == "/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader_Mk-II/textdata.jpeg":
-        dataslist = image_removal_background(imagename,[36,36,36],180)
-    else:
-        dataslist = image_removal_background(imagename,[36,36,36],60)
-        
-    dataslist = seach_txtposition(dataslist,100)
-    dataslist = txtdatas_insert(dataslist)
-
-    print_textdatas(dataslist,"Alltextimages.text")
-    txtimage = dataslist["Alltxtimages"]
-    txtdata = dataslist["Alltxtdatas"]
-    #plt.imshow(readtxt_imshow(dataslist))
-    #plt.imshow(cv2.resize(txtimage[0][0],dsize=(10,30)))
-    #print(txtdata[0][1])
-    print_textdatas(dataslist,"textdataslist_printfile.txt")
-
-
 #===========================================================================================================
 
 import pickle
@@ -400,38 +379,42 @@ def seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
 
 #===========================================================================================================
 
+for imagename in imageslist:
+
+    if imageslist[0] == "/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader_Mk-II/textdata.jpeg":
+        dataslist = image_removal_background(imagename,[36,36,36],180)
+    else:
+        dataslist = image_removal_background(imagename,[36,36,36],60)
+        
+    dataslist = seach_txtposition(dataslist,100)
+    dataslist = txtdatas_insert(dataslist)
+
+    print_textdatas(dataslist,"Alltextimages.text")
+    txtimage = dataslist["Alltxtimages"]
+    txtdata = dataslist["Alltxtdatas"]
+    #plt.imshow(readtxt_imshow(dataslist))
+    #plt.imshow(cv2.resize(txtimage[0][0],dsize=(10,30)))
+    #print(txtdata[0][1])
+    print_textdatas(dataslist,"textdataslist_printfile.txt")
+
+#-----------------------------------------------------------------------------------------------------------
 
 line,lennum = 0,92
-Falselist = []
 #txt = textdata[lennum]
+
+seach = "#"
 txt = ""
 
-true = 0
-false = 0
+for num in range(len(seach_textdatas)):
+    if seach_textdatas[num][3] == seach:
+        lennum = num
+        break
 
-for lennum in range(len(seach_textdatas)):
-    if len(txtimage[line][lennum]) != 0:
-        fainalanser = seach_txt(txtimage[line][lennum],seach_textdatas,0.15,dataslist,txt)
-        if fainalanser != seach_textdatas[lennum][3]:
-            Falselist.append(f"▶️結果が違う {seach_textdatas[lennum][3]} → {fainalanser}")
-            false += 1
-        else:
-            true += 1
+txtimage[line][lennum]
+if len(txtimage[line][lennum]) != 0:
+    print(f"文字は ' {seach_txt(txtimage[line][lennum],seach_textdatas,0.15,dataslist,txt)} ' ですか？")
+    #print(textdata[num])
+    plt.imshow(txtimage[line][lennum])
 
-        #print(f"文字は ' {seach_txt(txtimage[line][lennum],seach_textdatas,0.15,dataslist,txt)} ' ですか？")
-        #print(textdata[num])
-        #plt.imshow(txtimage[line][lennum])
-
-textdata = ""
-for line in seach_textdatas:
-    textdata = textdata + line[3]
-
-print(f"\n登録字数 : {len(seach_textdatas)}\n登録情報 : {textdata}\n検証を開始...\n\nErr ({len(Falselist)})\n")
-
-if false == 0:
-    print("--------")
-for line in Falselist:
-    print(line)
-
-print()
-print(f"検証結果[合致数{true},誤検知{false}]")
+else:
+    print(f"文字は Air判定 です。")
