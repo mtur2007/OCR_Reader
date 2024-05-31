@@ -291,7 +291,7 @@ def print_textdatas(dataslist,writefilename):
                     for nouse in range(thislineMaxY):
                         printlist[y] = (f"{printlist[y]}{Textlen * ' '} | ")
                         y += 1
-
+            
             printlen = len(printlist[0][:894])
 
             if line != 0:
@@ -348,7 +348,10 @@ def seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
 
 
     #print(f'▶️▶️ {anserline} :{str(Max * 100)}%')
-    Min = 100
+    Max = 0
+
+    if anserline == "":
+        return "</?/>"
 
     for line in retest[anserline]:
 
@@ -360,19 +363,22 @@ def seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
         Sa0 = np.shape(seach_textdatas[line][2])[1]
         Tr = np.count_nonzero(set_image[seach_textdatas[line][2]] == 0)
 
-        False0num = Pi0 - Tr + Sa0 - Tr
+        #False0num = Pi0 - Tr + Sa0 - Tr
+        Tr_xy = Tr / (seach_textdatas[line][1][1] * seach_textdatas[line][1][0])
+        Sa_xy = Sa0 / (seach_textdatas[line][1][1] * seach_textdatas[line][1][0])
+
+        sougouritu = Tr_xy + (Tr_xy - Sa_xy)
+
 
         if txt != "":
             print(f"{seach_textdatas[line][3]}: Pi0 {Pi0}, Sa0 {Sa0} , Tr {Tr}")
         
         if txt != "None" and seach_textdatas[line][3] == txt:
-            print(f"\n ▶️ {txt} :{syougouritu * 100}%\n ▶️ 不合致数 :{False0num}")
+            print(f"\n ▶️ {txt} :{syougouritu * 100}%\n ▶️ 全体合致率 :{sougouritu}")
 
-        if False0num < Min:
-            Min = False0num
+        if sougouritu < Max:
+            Max = sougouritu
             anserline = line
-
-
 
     return seach_textdatas[anserline][3]
 
@@ -389,13 +395,13 @@ for imagename in imageslist:
     dataslist = seach_txtposition(dataslist,100)
     dataslist = txtdatas_insert(dataslist)
 
-    print_textdatas(dataslist,"Alltextimages.text")
+    #print_textdatas(dataslist,"Alltextimages.text")
     txtimage = dataslist["Alltxtimages"]
     txtdata = dataslist["Alltxtdatas"]
     #plt.imshow(readtxt_imshow(dataslist))
     #plt.imshow(cv2.resize(txtimage[0][0],dsize=(10,30)))
     #print(txtdata[0][1])
-    print_textdatas(dataslist,"textdataslist_printfile.txt")
+    #print_textdatas(dataslist,"textdataslist_printfile.txt")
 
 #-----------------------------------------------------------------------------------------------------------
 
