@@ -491,22 +491,27 @@ def Saerch_retest():
                 if txtnum == txt:
                     count = 1
 
-        count = 0
+
         txts = []
+        count = 0
 
         for line in range(len(retest[1])):
             txtlist = []
+            Err = 1
             for txt in retest[1][line]:
                 txtlist.append(seach_textdatas[txt][3])
                 if line == txt:
-                    count += 1
+                    Err = 0
+            
+            if Err == 1:
+                print(f"\n無: {seach_textdatas[line][3]}\ntxtnum: {line}\n")
+                count += 1
+
             txts.append(txtlist)
 
-        Err = len(retest[1]) - count
         if Err != 0:
             print(f"正しく識字されていない文字があります。")
-            Err = len(retest[1]) - count
-
+            
         
         retest[0] = SET_numbertxt(retest[0],1)
         retest_copy = SET_numbertxt(retest[1],0)
@@ -523,7 +528,7 @@ def Saerch_retest():
                 numdata = numdata + f"{retest[0][0][num]}: {printlist}\n"
                 txtdata = txtdata + f"{seach_textdatas[num][3]}: {txts[num]}\n"
 
-        f.write(f"\n\n登録字数 : {len(seach_textdatas)}\n登録情報 : {textdata}\n検証を開始...\n\nErr ({Err})\n\n")
+        f.write(f"\n\n登録字数 : {len(seach_textdatas)}\n登録情報 : {textdata}\n検証を開始...\n\nErr ({count})\n\n")
 
         f.write(txtdata)
         f.write(f"\n\nNumber.Ver (機械用データ)\n\n{numdata}")
@@ -570,7 +575,10 @@ def seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
 
 
     #print(f'▶️▶️ {anserline} :{str(Max * 100)}%')
-    Min = 100
+    Max = 0
+
+    if anserline == "":
+        return "</?/>"
 
     for line in retest[1][anserline]:
 
@@ -582,16 +590,21 @@ def seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
         Sa0 = np.shape(seach_textdatas[line][2])[1]
         Tr = np.count_nonzero(set_image[seach_textdatas[line][2]] == 0)
 
-        False0num = Pi0 - Tr + Sa0 - Tr
+        #False0num = Pi0 - Tr + Sa0 - Tr
+        False0num = Tr / (seach_textdatas[line][1][1] * seach_textdatas[line][1][0])
+        #a = Sa0 / (seach_textdatas[line][1][1] * seach_textdatas[line][1][0])
 
-        if txt != "":
-            print(f"{seach_textdatas[line][3]}: Pi0 {Pi0}, Sa0 {Sa0} , Tr {Tr}")
-        
+        #sougouritu = False0num / a
+
         if txt != "None" and seach_textdatas[line][3] == txt:
-            print(f"\n ▶️ {txt} :{syougouritu * 100}%\n ▶️ 不合致数 :{False0num}")
+            #print(f"{seach_textdatas[line][3]}: Sa0/ (PX*Y) {a*100}%")
+            print()
+            print(False0num * 100)
+            print()
+            #print(f"\n ▶️ {txt} :{syougouritu * 100}%\n ▶️
 
-        if False0num < Min:
-            Min = False0num
+        if False0num > Max:
+            Max = False0num
             anserline = line
 
 
@@ -604,7 +617,36 @@ def seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
 
 dataimage = "/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader_Mk-II/textdata.jpeg"
 
-dataslist = image_removal_background(dataimage,[36,36,36],180)
+dataslist = image_removal_background(dataimage,[31,31,31],180)
+
+image = dataslist['image']
+imageshape = np.shape(image)
+a = image.reshape(imageshape[0] * imageshape[1],3)
+
+#-----------------------------------------------------------------------------------------------------------
+
+#print(a)
+
+u, indices, inverse, counts = np.unique(a, axis=0, return_index=True, return_inverse=True, return_counts=True)
+#print(u)
+# [[ 0  0 10 30]
+#  [20 20 10 10]]
+
+print()
+
+#print(indices)
+# [1 0]
+
+#print(a[indices])
+# [[ 0  0 10 30]
+#  [20 20 10 10]]
+
+Max = np.amax(counts)
+print(Max)
+posishon = np.where(counts == Max)[0]
+print(u[posishon])
+
+#-----------------------------------------------------------------------------------------------------------
     
 dataslist = seach_txtposition(dataslist,100)
 dataslist = txtdatas_insert(dataslist)
@@ -614,8 +656,8 @@ txtimage = dataslist["Alltxtimages"]
 txtdata = dataslist["Alltxtdatas"]
 #plt.imshow(readtxt_imshow(dataslist))
 #plt.imshow(cv2.resize(txtimage[0][0],dsize=(10,30)))
-#print(txtdata[0][1])
-print_textdatas(dataslist,"textdataslist_printfile.txt")
+print(len(txtdata[0][72][0]))
+print_textdatas(dataslist,"Serach_textdataslist_printfile.txt")
 
 #-----------------------------------------------------------------------------------------------------------
 
@@ -661,3 +703,76 @@ for line in Falselist:
 print()
 print(f"検証結果[合致数{true}, 誤検知{false}]\n")
 
+
+
+def get_anser(anser):
+    anserreturn = anser
+
+    for a in range(len(anser)):
+        if anser[a] == "=":
+            start = a+1
+            for b in range(len[anser]- (start+1)):
+                if anser[b] != " ":
+                    start = b+1
+                    for c in range(len[anser]- (start+1)):
+                        if anser[c] != " ":
+                            anserreturn = anserreturn + anser[c]                                
+            else:
+                return anserreturn
+    else:
+        return anserreturn
+
+
+if01 = 0
+while if01 == 0:
+
+    search = input(f"\n{'='*50}\n\n ➡️ 調べたい文字を入力\n ➡️ 行数を指定する場合は(lennum = 行数)\n ▶️ 調査終了(END)\n回答: ")
+    if search == "END":
+        break
+    print(f"\n{'-'*50}")
+    search2 = input(f"\n ➡️ 比較したい文字を入力、なければ''と入力\n回答: ")
+    print(f"\n{'='*50}\n")
+
+    search = get_anser(search)
+
+    if search != "None":
+
+        if search[:7] == "lennum":
+            lennum = search
+
+        line = 0
+
+        if search2 != "":
+            for searchline in range(len(seach_textdatas)):
+                if seach_textdatas[searchline][3] == search:
+                    txt = seach_textdatas[searchline][3]
+                    break
+            else:
+                print("比較対象が登録されていない為、比較をOFFにします。")
+                search2 = ""
+
+        
+        if search != "":
+            for searchline in range(len(seach_textdatas)):
+                if seach_textdatas[searchline][3] == search:
+                    lennum = searchline
+                    print(txtdata[line][lennum])
+
+                    if len(txtimage[line][lennum]) != 0:
+                        print(f"文字は ' {seach_txt(txtimage[line][lennum],seach_textdatas,0.15,dataslist,txt)} ' ですか？")
+                        #print(textdata[num])
+                        #plt.imshow(txtimage[line][lennum])
+
+                    else:
+                        print(f"文字は Air判定 です。")
+                    
+                    break
+
+            else:
+                print("調査対象が登録されていない為、調査をパスします。")
+                search2 = ""
+
+    else:
+        print("\n無効な回答です💢❗️\n")
+
+print(f"\n終了します。\n\n{'='*50}\n")
