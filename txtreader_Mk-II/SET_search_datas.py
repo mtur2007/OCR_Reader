@@ -511,7 +511,7 @@ def Saerch_retest():
 
         if Err != 0:
             print(f"正しく識字されていない文字があります。")
-            
+    
         
         retest[0] = SET_numbertxt(retest[0],1)
         retest_copy = SET_numbertxt(retest[1],0)
@@ -576,6 +576,7 @@ def seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
 
     #print(f'▶️▶️ {anserline} :{str(Max * 100)}%')
     Max = 0
+    Min = 1
 
     if anserline == "":
         return "</?/>"
@@ -594,7 +595,11 @@ def seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
         Tr_xy = Tr / (seach_textdatas[line][1][1] * seach_textdatas[line][1][0])
         Sa_xy = Sa0 / (seach_textdatas[line][1][1] * seach_textdatas[line][1][0])
 
-        sougouritu = Tr_xy + (Tr_xy - Sa_xy)
+        #sougouritu = Tr_xy + (Tr_xy - Sa_xy)
+        #sougouritu = Tr_xy / Sa_xy
+        sougouritu = Tr / Sa0
+        #a = (Sa_xy + Tr_xy) / 2
+        #sougouritu = Tr_xy / Sa_xy # 合致割合にすると全体割合が無視されてしまう為全体の割合で計算する。
 
         #sougouritu = False0num / a
 
@@ -602,11 +607,15 @@ def seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
 
             #サンプル
             #print(f" ▶️ 称号割合 :{a * 100}%")
-            
-            print(f"{seach_textdatas[line][3]}: {syougouritu}%")
-            print(f" ▶️ 写真割合 :{Sa_xy * 100}%")
-            print(f" ▶️ 称号割合 :{Tr_xy * 100}%")
-            print(f" ▶️ 総合割合 :{(sougouritu) * 100}%")
+            if txt == "'":
+                print(f' ▶️ ["{seach_textdatas[line][3]}"] 重複率: {syougouritu}%')
+            else:
+                print(f" ▶️ ['{seach_textdatas[line][3]}'] 重複率: {syougouritu}%")
+
+            print(f" > 比較要素数 :{Sa0}")
+            print(f" > 合致数     :{Tr}")
+            print(f" >> 合致率  :{(sougouritu) * 100}%")
+            #print(f" ▶️ 不合致割合 :{a * 100}%")
 
             seach_data = np.ones(np.shape(set_image),dtype='i1')
             seach_data[seach_textdatas[line][2]] = np.array(0)
@@ -620,10 +629,16 @@ def seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
                     print(f'{set_image[i]}     {seach_data[i]}')
 
             print()
-
+        
         if sougouritu > Max:
             Max = sougouritu
             anserline = line
+        """
+        if sougouritu < Min:
+            Min = sougouritu
+            anserline = line
+        """
+
 
 
 
@@ -748,11 +763,11 @@ if01 = 0
 while if01 == 0:
 
     search = input(f"\n{'='*linelen}⬇️\n\n ➡️ 調べたい文字を入力\n ➡️ 行数を指定する場合は(lennum = 行数)\n ▶️ 調査終了(END)\n回答: ")
-    if (search[0] == "E" or search[0] == "e") and (search[1] == "N" or search[1] == "n") and (search[2] == "D" or search[2] == "d"): #片方は自分のタイプミスに対応する為のものです。笑
+    if (search[0] == "E" or search[0] == "e") and (search[1] == "N" or search[1] == "n") and (search[2] == "D" or search[2] == "d" ): #片方は自分のタイプミスに対応する為のものです。笑
         break
     print(f"\n{'-'*linelen}")
     search2 = input(f"\n ➡️ 比較したい文字を入力、なければ''と入力\n ▶️ 調査終了(END)\n回答: ")
-    if (search[0] == "E" or search[0] == "e") and (search[1] == "N" or search[1] == "n") and (search[2] == "D" or search[2] == "d"):
+    if (search2[0] == "E" or search2[0] == "e") and (search2[1] == "N" or search2[1] == "n") and (search2[2] == "D" or search2[2] == "d" ):
         break
     print(f"\n{'='*linelen}⬆️\n")
 
