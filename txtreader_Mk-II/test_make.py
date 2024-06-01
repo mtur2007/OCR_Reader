@@ -1,63 +1,3 @@
-import cv2
-import matplotlib.pyplot as plt
-import numpy as np
-
-import pickle
-
-# seach_textdatas
-with open('/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader_Mk-II/Save_retest.pickle', mode='br') as fi:
-    seach_textdatas,retest = pickle.load(fi)
-
-search_line = []
-
-for linenum in range(len(seach_textdatas)):
-
-    line = seach_textdatas[linenum]
-
-    Sa_xy = line[1][0] * line[1][1]
-
-    wariai = (len(line[2][0]) / Sa_xy) * 100
-
-    if wariai > 90:
-        
-        search_line.append(linenum)
-        print(f"\n対象: {line[3]}\nデータ比率: {(len(line[2][0]) / Sa_xy) * 100}%\n")
-    #print(np.shape(line[2]))
-
-printtxt = ""
-count = 0
-for line in search_line:
-    printtxt = printtxt + f"{count}: {linenum} / {seach_textdatas[line][3]}\n"
-    count += 1
-
-
-NEW_retest = []
-
-for line in range(len(retest)):
-    insertlist = []
-    for num in range(len(retest[line])):
-        for search in search_line:
-            if retest[line][num] == search:
-                break
-        else:
-            insertlist.append(retest[line][num])
-    NEW_retest.append(insertlist)
-                
-retest = NEW_retest
-
-print("元々のリスト")
-print(retest)
-print()
-
-"""
-for line in retest:
-    print(line)
-"""
-
-
-
-
-
 import copy
 
 def Myint(num): #数値の int部分を確実に表示させる様にする自作関数
@@ -138,36 +78,24 @@ def SET_numbertxt(numberslist,mode):
 
 #-----------------------------------------------------------------------------------------------------------
 
-print(retest)
-
-retest_copy = copy.deepcopy(retest)
-retest_copy = SET_numbertxt(retest_copy,0)
-
-print(retest)
-
-txtsample = ""
-for i in range(len(retest)):
-    txtsample = txtsample + seach_textdatas[i][3]
+retest[0] = SET_numbertxt(retest[0],1)
+retest_copy = SET_numbertxt(retest)
 
 numdata = ""
 txtdata = ""
 
 for num in range(len(retest)):
-    printlist_num = []
-    printlist_txt = []
-
+    printlist = []
     for txt in retest_copy[num]:
-        printlist_num.append(txt)
-    
-    for txt in retest[num]:
-        printlist_txt.append(seach_textdatas[txt][3])
+        printlist.append(txt)
+        
+    if len(printlist) >= 2:
+        numdata = numdata + f"{retest[0][0][num]}: {printlist}\n"
+        txtdata = txtdata + f"{seach_textdatas[num][3]}: {txts[num]}\n"
 
-    if len(retest[num]) >= 2:
-        numdata = numdata + f"{num}: {printlist_num}\n"
-        txtdata = txtdata + f"{seach_textdatas[num][3]}: {printlist_txt}\n"
+f.write(f"\n\n登録字数 : {len(seach_textdatas)}\n登録情報 : {textdata}\n検証を開始...\n\nErr ({count})\n\n")
 
-with open ("remake_retest.txt", "w") as f:
-    f.write(f"\n\n登録字数 : {len(seach_textdatas)}\n登録情報 : {txtsample}\n検証を開始...\n\nErr ({count})\n\n")
+f.write(txtdata)
+f.write(f"\n\nNumber.Ver (機械用データ)\n\n{numdata}")
 
-    f.write(txtdata)
-    f.write(f"\n\nNumber.Ver (機械用データ)\n\n{numdata}")
+return retest
