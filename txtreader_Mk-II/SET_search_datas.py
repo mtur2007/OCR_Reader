@@ -587,6 +587,7 @@ def seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
         Pi0 = np.count_nonzero(set_image == 0)
         Sa0 = np.shape(seach_textdatas[line][2])[1]
         Tr = np.count_nonzero(set_image[seach_textdatas[line][2]] == 0)
+        pi_xy = seach_textdatas[line][1][1] * seach_textdatas[line][1][0]
 
         #False0num = Pi0 - Tr + Sa0 - Tr
         Tr_xy = Tr / (seach_textdatas[line][1][1] * seach_textdatas[line][1][0])
@@ -611,6 +612,9 @@ def seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
 
             print(f" > 比較要素数 :{Sa0}")
             print(f" > 合致数     :{Tr}")
+            print(f" ** [面積率] pi:{Tr/pi_xy*100}%; sa:{Sa0/pi_xy*100}%")
+            print(f" << 試作 >>     :{(((Tr/pi_xy) / (Sa0/pi_xy))*syougouritu)*100}%")
+            
             print(f" >> 合致率  :{(sougouritu) * 100}%")
             #print(f" ▶️ 不合致割合 :{a * 100}%")
 
