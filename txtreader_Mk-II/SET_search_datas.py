@@ -576,7 +576,7 @@ def seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
     Min = 1
 
     if anserline == "":
-        return "</?/>"
+        return "</huh?/>"
 
     for line in retest[1][anserline]:
 
@@ -595,7 +595,7 @@ def seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
 
         #sougouritu = Tr_xy + (Tr_xy - Sa_xy)
         #sougouritu = Tr_xy / Sa_xy
-        sougouritu = Tr / Sa0
+        sougouritu = (((syougouritu*3)+(Sa0/pi_xy))/4)
         #a = (Sa_xy + Tr_xy) / 2
         #sougouritu = Tr_xy / Sa_xy # 合致割合にすると全体割合が無視されてしまう為全体の割合で計算する。
 
@@ -610,12 +610,21 @@ def seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
             else:
                 print(f" ▶️ ['{seach_textdatas[line][3]}'] 重複率: {syougouritu}%")
 
-            print(f" > 比較要素数 :{Sa0}")
-            print(f" > 合致数     :{Tr}")
-            print(f" ** [面積率] pi:{Tr/pi_xy*100}%; sa:{Sa0/pi_xy*100}%")
-            print(f" << 試作 >>     :{(((Tr/pi_xy) / (Sa0/pi_xy))*syougouritu)*100}%")
+            printdata = []
+            printdata.append([Sa0,Tr])
+            printdata.append([(Tr/Sa0)*100])
+            printdata.append([Tr/pi_xy*100, Sa0/pi_xy*100])
+            #printdata.append([sougouritu * 100])
+            num = 2
+            printdata.append([((syougouritu*num + (syougouritu*(Sa0/pi_xy)))/(num+1))*100])
+
+            printdata = SET_numbertxt(printdata,0)
+
+            print(f" > 比較要素数  : {printdata[0][0]}   ; 合致数: {printdata[0][1]}\n")
+            print(f" >> 合致率     : {printdata[1][0]} % ;")
+            print(f" ** [面積率] pi: {printdata[2][0]} % ; sa: {printdata[2][1]} %")
+            print(f" << 試作 >>    : {printdata[3][0]} % ;")
             
-            print(f" >> 合致率  :{(sougouritu) * 100}%")
             #print(f" ▶️ 不合致割合 :{a * 100}%")
 
             seach_data = np.ones(np.shape(set_image),dtype='i1')
@@ -705,108 +714,111 @@ with open('Save_retest.pickle', mode='wb') as fo:
   pickle.dump((seach_textdatas,retest[1]), fo)
 
 
+def test(linelen):
 
-line,lennum = 0,92
-Falselist = []
-#txt = textdata[lennum]
-txt = ""
+    print()
+    print(f'>> test >> {"~" * (linelen - len('>> test >> '))}')
 
-true = 0
-false = 0
+    line,lennum = 0,92
+    Falselist = []
+    #txt = textdata[lennum]
+    txt = ""
 
-for lennum in range(len(textdata)):
-    if len(txtimage[line][lennum]) != 0:
-        fainalanser = seach_txt(txtimage[line][lennum],seach_textdatas,0.15,dataslist,txt)
-        if fainalanser != textdata[lennum]:
-            Falselist.append(f"▶️結果が違う {textdata[lennum]} → {fainalanser}")
-            false += 1
-        else:
-            true += 1
+    true = 0
+    false = 0
 
-        #print(f"文字は ' {seach_txt(txtimage[line][lennum],seach_textdatas,0.15,dataslist,txt)} ' ですか？")
-        #print(textdata[num])
-        #plt.imshow(txtimage[line][lennum])
+    for lennum in range(len(textdata)):
+        if len(txtimage[line][lennum]) != 0:
+            fainalanser = seach_txt(txtimage[line][lennum],seach_textdatas,0.15,dataslist,txt)
+            if fainalanser != textdata[lennum]:
+                Falselist.append(f"▶️結果が違う {textdata[lennum]} → {fainalanser}")
+                false += 1
+            else:
+                true += 1
 
-print(f"\n登録字数 : {len(seach_textdatas)}\n登録情報 : {textdata}\n検証を開始...\n\nErr ({len(Falselist)})\n")
+            #print(f"文字は ' {seach_txt(txtimage[line][lennum],seach_textdatas,0.15,dataslist,txt)} ' ですか？")
+            #print(textdata[num])
+            #plt.imshow(txtimage[line][lennum])
 
-if false == 0:
-    print("--------")
-for line in Falselist:
-    print(line)
+    print(f"\n登録字数 : {len(seach_textdatas)}\n登録情報 : {textdata}\n検証を開始...\n\nErr ({len(Falselist)})\n")
 
-print()
-print(f"検証結果[合致数{true}, 誤検知{false}]\n")
+    if false == 0:
+        print("--------")
+    for line in Falselist:
+        print(line)
+
+    print(f"検証結果[合致数{true}, 誤検知{false}]\n")
+
+    print(f'{"~" * (linelen - len(' << test <<'))} << test <<')
+    print()
 
 
 #===========================================================================================================
 
 
-def get_anser(anser):
-    anserreturn = anser
+linelen = 110
 
-    for a in range(len(anser)):
-        if anser[a] == "=":
-            start = a+1
-            for b in range(len[anser]- (start+1)):
-                if anser[b] != " ":
-                    start = b+1
-                    for c in range(len[anser]- (start+1)):
-                        if anser[c] != " ":
-                            anserreturn = anserreturn + anser[c]                                
-            else:
-                return anserreturn
-    else:
-        return anserreturn
-
-linelen = 100
+test(linelen)
 
 if01 = 0
 while if01 == 0:
 
-    search = input(f"\n{'='*linelen}⬇️\n\n ➡️ 調べたい文字を入力\n ➡️ 行数を指定する場合は(lennum = 行数)\n ▶️ 調査終了(END)\n回答: ")
-    if (search[0] == "E" or search[0] == "e") and (search[1] == "N" or search[1] == "n") and (search[2] == "D" or search[2] == "d" ): #片方は自分のタイプミスに対応する為のものです。笑
+    search = input(f"\n⬇ {'='*(linelen-2)}\n\n ➡️ 調べたい文字を入力\n ▶️ 調査終了(END)\n回答: ")
+    if len(search) >= 3 and ((search[0] == "E" or search[0] == "e") and (search[1] == "N" or search[1] == "n") and (search[2] == "D" or search[2] == "d" )): #片方は自分のタイプミスに対応する為のものです。笑
         break
-    print(f"\n{'-'*linelen}")
-    search2 = input(f"\n ➡️ 比較したい文字を入力、なければ''と入力\n ▶️ 調査終了(END)\n回答: ")
-    if (search2[0] == "E" or search2[0] == "e") and (search2[1] == "N" or search2[1] == "n") and (search2[2] == "D" or search2[2] == "d" ):
-        break
-    print(f"\n{'='*linelen}⬆️\n")
+    if search == "test()":
+        print(f"\n⬆ {'='*(linelen-2)}\n")
+        test(linelen)
 
-    search = get_anser(search)
+    else:
+        print(f"\n{'-'*linelen}")
+        search2 = input(f"\n ➡️ 比較したい文字を入力、なければ''と入力\n ▶️ 調査終了(END)\n回答: ")
+        if len(search2) >= 3 and ((search2[0] == "E" or search2[0] == "e") and (search2[1] == "N" or search2[1] == "n") and (search2[2] == "D" or search2[2] == "d" )):
+            break
 
 
-    if search[:7] == "lennum":
-        lennum = search
+        if search2 == "test()":
+            print(f"\n⬆ {'='*(linelen-2)}\n")
+            test(linelen)
 
-    line = 0
-
-    if search2 != "":
-        for searchline in range(len(seach_textdatas)):
-            if seach_textdatas[searchline][3] == search2:
-                txt = seach_textdatas[searchline][3]
-                break
         else:
-            print("比較対象が登録されていない為、比較をOFFにします。")
-            search2 = ""
+            print(f"\n⬆ {'='*(linelen-2)}\n")
 
-    
-    if search != "":
-        for searchline in range(len(seach_textdatas)):
-            if seach_textdatas[searchline][3] == search:
-                lennum = searchline
+            if search[:7] == "lennum":
+                lennum = search
 
-                if len(txtimage[line][lennum]) != 0:
-                    print(f"文字は ' {seach_txt(txtimage[line][lennum],seach_textdatas,0.15,dataslist,txt)} ' ですか？")
-                    #print(textdata[num])
-                    #plt.imshow(txtimage[line][lennum])
+            line = 0
+
+            if search2 != "":
+                for searchline in range(len(seach_textdatas)):
+                    if seach_textdatas[searchline][3] == search2:
+                        txt = seach_textdatas[searchline][3]
+                        break
+                else:
+                    print("比較対象が登録されていない為、比較をOFFにします。")
+                    search2 = ""
+            else:
+                txt = search
+
+            
+            if search != "":
+                for searchline in range(len(seach_textdatas)):
+                    if seach_textdatas[searchline][3] == search:
+                        lennum = searchline
+
+                        if len(txtimage[line][lennum]) != 0:
+                            print(f"文字は ' {seach_txt(txtimage[line][lennum],seach_textdatas,0.15,dataslist,txt)} ' ですか？")
+                            #print(textdata[num])
+                            #plt.imshow(txtimage[line][lennum])
+
+                        else:
+                            print(f"文字は Air判定 です。")
+                        
+                        break
 
                 else:
-                    print(f"文字は Air判定 です。")
-                
-                break
-
-        else:
-            print("調査対象が登録されていない為、調査をパスします。")
-            search2 = ""
-
-print(f"\n終了します。\n\n{'='*linelen}⬆️\n")
+                    print("調査対象が登録されていない為、調査をパスします。")
+                    search2 = ""
+    
+            
+print(f"\n終了します。\n\n⬆ {'='*(linelen-2)}\n")
