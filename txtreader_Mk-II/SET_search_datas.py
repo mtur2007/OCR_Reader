@@ -293,56 +293,6 @@ def print_textdatas(dataslist,writefilename):
 #===========================================================================================================
 
 
-seach_textdatas = []
-set_txttype = ""
-set_wariai = ""
-seach_shape = [0,0]
-set_txtdata = []
-textdata = ""
-seach_num = 0
-
-with open("/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader_Mk-II/Seave_Txtdatas.txt","r") as f:
-    for line in f:
-        line = line.strip()
-        if len(line) == 5 and line[-2:] == " ]":
-            #print(line)
-            set_txtdata = np.array(set_txtdata).reshape(seach_shape)
-            seach_textdatas.append([set_wariai,seach_shape,np.where(set_txtdata==0),set_txttype])
-            textdata = textdata + set_txttype
-            set_txtdata = []
-            set_txttype = line[2]
-            seach_num = 1
-        elif seach_num == 1:
-            set_wariai = float(line)
-            seach_num = 2
-        elif seach_num == 2:
-            for txt in range(len(line)):
-                if line[txt] == ",":
-                    seach_shape = [int(line[1:txt]),int(line[txt+2:-1])]
-            seach_num = 3
-        elif seach_num == 3:
-            for txt in range(len(line)):
-                if line[txt] == "0" or line[txt] == "1":
-                    set_txtdata.append(int(line[txt]))
-
-    set_txtdata = np.array(set_txtdata).reshape(seach_shape)
-    seach_textdatas.append([set_wariai,np.shape(set_txtdata),np.where(set_txtdata==0),set_txttype])
-    textdata = textdata + set_txttype
-
-seach_textdatas = seach_textdatas[1:]
-
-'''
-testdata        が 文字
-seach_textdatas が 文字コード
-'''
-
-#識字用のコード配列が合っているかの確認
-
-for i in range(len(seach_textdatas)):
-    if seach_textdatas[i][3] != textdata[i]:
-        print(i)
-
-
 
 #---------------------------------------------------------------------------------------------------------------
 
@@ -525,7 +475,7 @@ def Saerch_retest():
                 numdata = numdata + f"{retest[0][0][num]}: {printlist}\n"
                 txtdata = txtdata + f"{seach_textdatas[num][3]}: {txts[num]}\n"
 
-        f.write(f"\n\n登録字数 : {len(seach_textdatas)}\n登録情報 : {textdata}\n検証を開始...\n\nErr ({count})\n\n")
+        f.write(f"\n\n登録字数 : {len(seach_textdatas)}\n登録情報 : {insert_txtdatas}\n検証を開始...\n\nErr ({count})\n\n")
 
         f.write(txtdata)
         f.write(f"\n\nNumber.Ver (機械用データ)\n\n{numdata}")
@@ -616,7 +566,7 @@ def seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
             printdata.append([Tr/pi_xy*100, Sa0/pi_xy*100])
             #printdata.append([sougouritu * 100])
             num = 2
-            printdata.append([((syougouritu*num + (syougouritu*(Sa0/pi_xy)))/(num+1))*100])
+            printdata.append([((syougouritu*num + (syougouritu*(Sa0/pi_xy)))/(num))*100])
 
             printdata = SET_numbertxt(printdata,0)
 
@@ -704,14 +654,30 @@ print_textdatas(dataslist,"Serach_textdataslist_printfile.txt")
 
 #-----------------------------------------------------------------------------------------------------------
 
+Alltxtdatas = dataslist["Alltxtdatas"][0]
+
+insert_txtdatas = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!$%&'()*+,-./:;<=>?@[\]^_`{|}~#"
+
+
+seach_textdatas = []
+set_txttype = ""
+set_wariai = ""
+set_shape = [0,0]
+set_txtdata = []
+
+
+for dataline in range(len(Alltxtdatas)):
+    set_txtdata = Alltxtdatas[dataline]
+    set_txttype = insert_txtdatas[dataline]
+    set_shape = np.shape(set_txtdata)
+    set_wariai = set_shape[1] / set_shape[0]
+    set_where0 = np.where(set_txtdata == 0)
+
+    seach_textdatas.append([set_wariai, set_shape, set_where0, set_txttype])
+
 
 retest = Saerch_retest()
 
-import pickle
-
-### pickleで保存（書き出し）
-with open('Save_retest.pickle', mode='wb') as fo:
-  pickle.dump((seach_textdatas,retest[1]), fo)
 
 
 def test(linelen):
@@ -726,12 +692,12 @@ def test(linelen):
 
     true = 0
     false = 0
-
-    for lennum in range(len(textdata)):
+    
+    for lennum in range(len(insert_txtdatas)):
         if len(txtimage[line][lennum]) != 0:
             fainalanser = seach_txt(txtimage[line][lennum],seach_textdatas,0.15,dataslist,txt)
-            if fainalanser != textdata[lennum]:
-                Falselist.append(f"▶️結果が違う {textdata[lennum]} → {fainalanser}")
+            if fainalanser != insert_txtdatas[lennum]:
+                Falselist.append(f"▶️結果が違う {insert_txtdatas[lennum]} → {fainalanser}")
                 false += 1
             else:
                 true += 1
@@ -740,7 +706,7 @@ def test(linelen):
             #print(textdata[num])
             #plt.imshow(txtimage[line][lennum])
 
-    print(f"\n登録字数 : {len(seach_textdatas)}\n登録情報 : {textdata}\n検証を開始...\n\nErr ({len(Falselist)})\n")
+    print(f"\n登録字数 : {len(seach_textdatas)}\n登録情報 : {insert_txtdatas}\n検証を開始...\n\nErr ({len(Falselist)})\n")
 
     if false == 0:
         print("--------")
@@ -822,3 +788,25 @@ while if01 == 0:
     
             
 print(f"\n終了します。\n\n⬆ {'='*(linelen-2)}\n")
+
+
+
+
+'''
+testdata        が 文字
+seach_textdatas が 文字コード
+'''
+
+#識字用のコード配列が合っているかの確認
+"""
+for i in range(len(seach_textdatas)):
+    if seach_textdatas[i][3] != textdata[i]:
+        print(i)
+
+
+import pickle
+
+### pickleで保存（書き出し）
+with open('Save_retest.pickle', mode='wb') as fo:
+  pickle.dump((seach_textdatas,retest[1]), fo)
+"""
