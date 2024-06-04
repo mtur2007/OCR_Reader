@@ -25,10 +25,10 @@ print(seach_data)
 
 test_txtdata = seach_data.copy()
 
-set_x = 10
-set_y = 10
+set_x = 0
+set_y = 17
 
-search_area_XY = 3
+search_area_XY = 5
 
 radius = search_area_XY // 2
 
@@ -79,17 +79,13 @@ def data_print(data):
         for txt in line:
             printtxt = printtxt + txt + " "
         
-        printtxt[-2] = "]"
-        del printtxt[-1]
-        
-        printtxt = printtxt + ' ]'
+        printtxt = printtxt[:-1] + "]"
     
         printlist.append(printtxt)
 
-    """
-    printlist[0][0] = "["
+    printlist[0] = "[" + printlist[0][1:]
     printlist[-1] = printlist[-1] + "]"
-    """
+
 
     for line in printlist:
         print(line)
@@ -97,8 +93,18 @@ def data_print(data):
 print()
 
 data_copy = np.array(seach_data.copy(),dtype=str)
-data_copy[set_x,set_y] = " "
-search = data_copy[start_y:finish_y, start_x:finish_x]
+data_copy[set_y,set_x] = "+"
+
+search = np.array(data_copy[start_y:finish_y, start_x:finish_x],dtype=str)
+
+search[np.where(search == "0")] = "･"
+search[np.where(search == "1")] = " "
+
+data_copy[start_y:finish_y, start_x:finish_x] = search
+
+print(f"center / X: {set_x}, Y: {set_y}")
+print(f"start  / X:{start_x}, Y{start_y}")
+print(f"finish / X:{finish_x}, Y{finish_y}\n")
 
 data_print(data_copy)
 
