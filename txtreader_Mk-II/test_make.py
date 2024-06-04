@@ -1,101 +1,110 @@
-import copy
+import cv2
+import matplotlib.pyplot as plt
+import numpy as np
 
-def Myint(num): #数値の int部分を確実に表示させる様にする自作関数
-    for line in range(len(str(num))):
-        if str(num)[line] == ".":
-            return int(str(num)[:line])
-    return num
+import pickle
+
+# seach_textdatas
+with open('/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader_Mk-II/Save_retest.pickle', mode='br') as fi:
+    seach_textdatas,retest = pickle.load(fi)
+
+seach_textdatas
+
+#------------------------------------------------------------------------------------------------------------------------
+
+line = 0
+
+sample_txtdata = seach_textdatas[line][2]
+
+shape = seach_textdatas[line][1]
+
+seach_data = np.ones(shape,dtype='i1')
+seach_data[seach_textdatas[line][2]] = np.array(0)
+
+print(seach_data)
+
+test_txtdata = seach_data.copy()
+
+set_x = 10
+set_y = 10
+
+search_area_XY = 3
+
+radius = search_area_XY // 2
+
+'''
+
+<seach_area_XY>
+
+seach_area_XY = 3  |  search_area_XY = 5  |
+                   |    *  *  *  *  *     |
+     *  *  *       |    *  *  *  *  *     |
+     *  *  *       |    *  *  *  *  *     |   ・・・
+     *  *  *       |    *  *  *  *  *     |
+                   |    *  *  *  *  *     |
+radius == 1        |  radius == 2         |
 
 
-#数値の整列を行う関数
+<radius>
 
-def SET_numbertxt(numberslist,mode):
-    if mode == 0:
-        Max = 0
-        len_list = []
+       . <   +
+       . < radius
+ .  .  *  .  .
+ ^  ^  .
+radius .
 
-        for line in numberslist:
-            len_list.append(len(line))
-            if len(line) > Max:
-                Max = len(line)
-        
-        New_list = []
-        Line_list = []
-        for nouse in range(Max):
-            New_list.append("")
+'''
 
-        for line in numberslist:
-            Set_list = copy.deepcopy(New_list)
+start_x = set_x - radius
+start_y = set_y - radius
 
-            for number in range(len(line)):
-                Set_list[number] = line[number]
-            
-            Line_list.append(Set_list)
-        
-        Line_list = np.array(Line_list)
+finish_x = set_x + radius + 1
+finish_y = set_y + radius + 1
 
-        search_list = []
-        for num in range(np.shape(Line_list)[1]):
-            search_list.append(Line_list[:,num])
+if start_x < 0:
+    start_x = 0
+if start_y < 0:
+    start_y = 0
 
-        search_list = np.array(SET_numbertxt(search_list,1))
-        Line_list = []
+if finish_x > (shape[1]):
+    finish_x = shape[1]
+if finish_y > (shape[0]):
+    finish_y = shape[0]
 
-        for num in range(np.shape(search_list)[1]):
-            Line_list.append(search_list[:,num])
 
-        returndata = []
-        for line in range (np.shape(Line_list)[0]):
-            cut = len_list[line]
-            returndata.append(Line_list[line][:cut])
-
-        return returndata
-
-    
-    elif mode == 1:
-
-        for line in range(len(numberslist)):
-            Maxintlen,Maxfloatlen = 0,0
-
-            for num in numberslist[line]:
-
-                if len(str(Myint(num))) > Maxintlen:
-                    Maxintlen = len(str(Myint(num)))
-
-                if len(str(num)) - len(str(Myint(num))) > Maxfloatlen:
-                    Maxfloatlen = len(str(num)) - len(str(Myint(num)))
-
-            Maxlen = Maxintlen + Maxfloatlen
-
-            for nowread in range(len(numberslist[line])):
-                num = numberslist[line][nowread]
-                Air0 = Maxintlen - len(str(Myint(num)))
-                Air1 = Maxlen - (Air0 + len(str(num)))
-
-                numberslist[line][nowread] = (Air0 * " ") + str(num) + (Air1 * " ")
-
-        return numberslist#[:-1]
-
-#-----------------------------------------------------------------------------------------------------------
-
-retest[0] = SET_numbertxt(retest[0],1)
-retest_copy = SET_numbertxt(retest)
-
-numdata = ""
-txtdata = ""
-
-for num in range(len(retest)):
+def data_print(data):
     printlist = []
-    for txt in retest_copy[num]:
-        printlist.append(txt)
+    for line in data:
+        printtxt = " ["
+        for txt in line:
+            printtxt = printtxt + txt + " "
         
-    if len(printlist) >= 2:
-        numdata = numdata + f"{retest[0][0][num]}: {printlist}\n"
-        txtdata = txtdata + f"{seach_textdatas[num][3]}: {txts[num]}\n"
+        printtxt[-2] = "]"
+        del printtxt[-1]
+        
+        printtxt = printtxt + ' ]'
+    
+        printlist.append(printtxt)
 
-f.write(f"\n\n登録字数 : {len(seach_textdatas)}\n登録情報 : {textdata}\n検証を開始...\n\nErr ({count})\n\n")
+    """
+    printlist[0][0] = "["
+    printlist[-1] = printlist[-1] + "]"
+    """
 
-f.write(txtdata)
-f.write(f"\n\nNumber.Ver (機械用データ)\n\n{numdata}")
+    for line in printlist:
+        print(line)
 
-return retest
+print()
+
+data_copy = np.array(seach_data.copy(),dtype=str)
+data_copy[set_x,set_y] = " "
+search = data_copy[start_y:finish_y, start_x:finish_x]
+
+data_print(data_copy)
+
+print()
+
+data_print(search)
+
+print()
+
