@@ -58,7 +58,7 @@ def image_removal_background(imagename,RGB,kyoyou):
 
     dataslist = {}
     dataslist["image"] = image
-    dataslist["RGB"] = RGB
+    dataslist["background_color"] = RGB
     dataslist["kyoyou"] = kyoyou
 
     code0list = removal_background(color_image,RGB,kyoyou)
@@ -332,7 +332,7 @@ def print_textdatas(dataslist,writefilename):
 def test_seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
     #for txt in seach_textdatas[3]:
     resembletxt = []
-    rgb = dataslist["RGB"]
+    rgb = dataslist["background_color"]
     kyoyoucolor = dataslist["kyoyou"]
     hiritu = np.shape(txtimage)[1]/np.shape(txtimage)[0]
     for line in range(len(seach_textdatas)):
@@ -532,7 +532,7 @@ def Saerch_retest():
 
 
 def seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
-    rgb = dataslist["RGB"]
+    rgb = dataslist["background_color"]
     kyoyoucolor = dataslist["kyoyou"]
     hiritu = np.shape(txtimage)[1]/np.shape(txtimage)[0]        
     Max = 0
@@ -799,11 +799,9 @@ print(f"\n終了します。\n\n⬆ {'='*(linelen-2)}\n")
 
 import pickle
 
-### pickleで保存（書き出し）
-Alltxtimages = txtimage
-Alltxtdatas = txtdata
+### pickleで保存（書き出し
 with open('sample_txtdata.pickle', mode='wb') as fo:
-  pickle.dump((Alltxtimages,Alltxtdatas,insert_txtdatas,seach_textdatas), fo)
+    pickle.dump((dataslist,insert_txtdatas,seach_textdatas), fo)
 
 
 '''
