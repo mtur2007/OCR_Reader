@@ -8,7 +8,7 @@ import pickle
 
 ### pickleで保存したファイルを読み込み
 with open('/Users/matsuurakenshin/WorkSpace/development/sample_txtdata.pickle', mode='br') as fi:
-  Alltxtimages,Alltxtdatas,insert_txtdatas,seach_textdatas = pickle.load(fi)
+    Alltxtimages,Alltxtdatas,insert_txtdatas,seach_textdatas = pickle.load(fi)
 
 
 def removal_background(color_image,RGB,kyoyou): #写真のNumPy配列を渡すと戻り値として背景を１とし、それ以外を0に置き換えた配列が戻ってくる。
@@ -25,3 +25,4 @@ def removal_background(color_image,RGB,kyoyou): #写真のNumPy配列を渡す�
 
     return code0list
 
+removal_background(color_image,RGB,kyoyou)

@@ -24,13 +24,44 @@ def image_removal_background(imagename,RGB,kyoyou):
     image = cv2.cvtColor(cv2.imread(imagename),cv2.COLOR_BGR2RGB)
     color_image = np.array(image)
 
+    if RGB == "auto":
+
+        #自動背景検出機能
+
+        shape = np.shape(image)
+        a = image.reshape(shape[0] * shape[1],3)
+        u, indices, inverse, counts = np.unique(a, axis=0, return_index=True, return_inverse=True, return_counts=True)
+        #print(u)
+        # [[ 0  0 10 30]
+        #  [20 20 10 10]]
+
+        print()
+
+        #print(indices)
+        # [1 0]
+
+        #print(a[indices])
+        # [[ 0  0 10 30]
+        #  [20 20 10 10]]
+
+        Max = np.amax(counts)
+        print(Max)
+        posishon = np.where(counts == Max)[0]
+        
+        RGB = u[posishon][0].tolist()
+
+        #RGB = [31,31,31]
+
+        print(f"背景色自動検出: {RGB}")
+    else:
+        print(f"背景色指定: {RGB}")
+
     dataslist = {}
     dataslist["image"] = image
     dataslist["RGB"] = RGB
     dataslist["kyoyou"] = kyoyou
 
     code0list = removal_background(color_image,RGB,kyoyou)
-
 
     with open("coode0list_printfile.txt","w") as f:
         for y in range(code0list.shape[0]):
@@ -607,37 +638,13 @@ def seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
 
 #===========================================================================================================
 
-
 dataimage = "/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader_Mk-II/textdata.jpeg"
 
-dataslist = image_removal_background(dataimage,[31,31,31],180)
+#dataslist = image_removal_background(dataimage,[31,31,31],180)
+dataslist = image_removal_background(dataimage,"auto",180)
 
 image = dataslist['image']
 imageshape = np.shape(image)
-a = image.reshape(imageshape[0] * imageshape[1],3)
-
-#-----------------------------------------------------------------------------------------------------------
-
-#print(a)
-
-u, indices, inverse, counts = np.unique(a, axis=0, return_index=True, return_inverse=True, return_counts=True)
-#print(u)
-# [[ 0  0 10 30]
-#  [20 20 10 10]]
-
-print()
-
-#print(indices)
-# [1 0]
-
-#print(a[indices])
-# [[ 0  0 10 30]
-#  [20 20 10 10]]
-
-Max = np.amax(counts)
-print(Max)
-posishon = np.where(counts == Max)[0]
-print(u[posishon])
 
 #-----------------------------------------------------------------------------------------------------------
     
