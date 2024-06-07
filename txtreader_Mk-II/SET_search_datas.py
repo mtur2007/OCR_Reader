@@ -790,6 +790,13 @@ while if01 == 0:
 print(f"\n終了します。\n\n⬆ {'='*(linelen-2)}\n")
 
 
+import pickle
+
+### pickleで保存（書き出し）
+Alltxtimages = txtimage
+Alltxtdatas = txtdata
+with open('sample_txtdata.pickle', mode='wb') as fo:
+  pickle.dump((Alltxtimages,Alltxtdatas,insert_txtdatas,seach_textdatas), fo)
 
 
 '''

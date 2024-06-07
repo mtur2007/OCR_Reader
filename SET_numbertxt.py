@@ -239,13 +239,13 @@ def list_random_del(datalist):
 
 numberslist = []
 
-for i in range(100):
-    numberslist.append(Myrandom(8, 0,90, 0))
+for i in range(50):
+    numberslist.append(Myrandom(8, -2000,2000, 2))
 
 numberslist = list_random_del(numberslist)
 
-#numberslist = np.array(numberslist)
-print(f"\nそのまま\n")
+
+print(f"\n\nnormal_print\n")
 
 for line in numberslist:
     print(line)
@@ -257,7 +257,18 @@ set_numbers = 1
 print()
 
 if set_txts == 1:
-    print(f"\nSET_txts()\n")
+    print(f"\nSET_txts()_print\n>> position[left--]\n")
+
+    txtslist = SET_txts(numberslist,0,0)
+    #txtslist = []
+
+    for line in txtslist:
+        print(line)
+    print()
+
+
+if set_txts == 1:
+    print(f"\nSET_txts()_print\n>> position[-center-]\n")
 
     txtslist = SET_txts(numberslist,0,1)
     #txtslist = []
@@ -267,8 +278,18 @@ if set_txts == 1:
     print()
 
 
+if set_txts == 1:
+    print(f"\nSET_txts()_print\n>> position[--right]\n")
+
+    txtslist = SET_txts(numberslist,0,2 )
+    #txtslist = []
+
+    for line in txtslist:
+        print(line)
+    print()
+
 if set_numbers == 1:
-    print(f"\nSET_numbers()\n")
+    print(f"\nSET_numbers()_print\n")
 
     set_number = SET_numbers(numberslist,0)
 
