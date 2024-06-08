@@ -68,7 +68,7 @@ def NEW_removal_background(color_image,RGB,kyoyou): #写真のNumPy配列を渡�
     for line in text_colors:
         print(line / np.max(line))
 
-    heritu = np.max(text_colors,axis=1)
+    heritu = np.sum(text_colors,axis=1)
     print(heritu.shape[0])
     heritu = heritu.reshape(heritu.shape[0],1)
 
