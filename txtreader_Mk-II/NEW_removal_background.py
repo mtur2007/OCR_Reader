@@ -51,8 +51,7 @@ def NEW_removal_background(color_image,RGB,kyoyou): #写真のNumPy配列を渡�
 
     test_sa = test_sa.reshape(color_image.shape[0],color_image.shape[1])
 
-    print(test_sa)
-    print(np.max(test_sa))
+    print(f"全体:\n{test_sa}\n最大差: {np.max(test_sa)}\n")
 
 
     code0list = np.ones((color_image.shape[0]*color_image.shape[1],1), dtype='i1') #一旦0で埋める
@@ -64,6 +63,23 @@ def NEW_removal_background(color_image,RGB,kyoyou): #写真のNumPy配列を渡�
     text_where = np.array(np.where((np.sum(sa,axis=1)) > kyoyou)[0]) #背景色判定の許容値を超えた場合文字判定。
     reshape_image = color_image.reshape(color_image.shape[0]*color_image.shape[1],3)
 
+    text_colors = reshape_image[text_where]
+
+    for line in text_colors:
+        print(line / np.max(line))
+
+    heritu = np.max(text_colors,axis=1)
+    print(heritu.shape[0])
+    heritu = heritu.reshape(heritu.shape[0],1)
+
+    print(heritu)
+
+    print(text_colors / heritu)
+    
+    np.abs(background_color - color_image)
+
+    #print(text_colors)
+
 
     code0list[text_where, 0] = np.array(0) #code0listに文字判定の場所を再代入。
     code0list = code0list.reshape(color_image.shape[0],color_image.shape[1]) #写真の比率にリサイズ。
@@ -71,4 +87,4 @@ def NEW_removal_background(color_image,RGB,kyoyou): #写真のNumPy配列を渡�
     return code0list
 
 
-print(NEW_removal_background(txtimage,back_color,kyoyou))
+NEW_removal_background(txtimage,back_color,kyoyou)
