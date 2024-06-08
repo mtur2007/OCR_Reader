@@ -37,7 +37,7 @@ Alltxtimages = dataslist["Alltxtimages"]
 back_color = dataslist["background_color"]
 kyoyou = dataslist["kyoyou"]
 
-txtimage = Alltxtimages[0][1]
+txtimage = Alltxtimages[0][0]
 
 #print(removal_background(txtimage,back_color,kyoyou))
 
@@ -65,15 +65,7 @@ def NEW_removal_background(color_image,RGB,kyoyou): #写真のNumPy配列を渡�
 
     text_colors = reshape_image[text_where]
 
-    for line in text_colors:
-        print(line / np.max(line))
-
-    heritu = np.sum(text_colors,axis=1)
-    print(heritu.shape[0])
-    heritu = heritu.reshape(heritu.shape[0],1)
-
-    print(heritu)
-
+    heritu = np.array(255)
     print(text_colors / heritu)
     
     np.abs(background_color - color_image)
