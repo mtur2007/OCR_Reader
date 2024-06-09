@@ -169,12 +169,57 @@ def removal_background(color_image,RGB,kyoyou): #写真のNumPy配列を渡す�
 def NEW_search(txtimage,search_txtdata,dataslist):
     rgb = dataslist["background_color"]
     kyoyoucolor = dataslist["kyoyou"]
-    shape = np.shape(sample_txtdata)
+    print(search_txtdata[2])
+    shape = np.array(search_txtdata[1])
 
     set_image = removal_background(cv2.resize(txtimage,dsize=(shape[1],shape[0])),rgb,kyoyoucolor)
 
+    anser_data = np.array(set_image,dtype=str)
+    where_false0 = np.where(anser_data[search_txtdata[2]] == "1")
+    false0 = [[search_txtdata[2][0][where_false0],search_txtdata[2][1][where_false0]]]
+    print(false0)
+    #anser_data[false0] = "*"
+    print()
+
+
+    seach_data = np.ones(shape,dtype='i1')
+    seach_data[search_txtdata[2]] = np.array(0)
+
+    print(f"\n<picture>{((np.shape(set_image)[1])*2 + 1 - 9 + 5)*' '}<search>{((np.shape(set_image)[1])*2 + 1 - 9 + 5)*' '}<anser>")
+
+    for i in range(np.shape(set_image)[0]):
+        if i+1 == np.shape(set_image)[0] // 2:
+            print(f'{set_image[i]} =?= {seach_data[i]}     ')
+        else:
+            print(f'{set_image[i]}     {seach_data[i]}     ')
+
+    print()
+
+    return set_image
+
+
 
 keys_print()
+Alltxtimages = dataslist["Alltxtimages"][0]
 
-Alltxtdatas = dataslist["Alltxtdatas"]
-#NEW_search()
+
+txtimage = "a"
+search_txtdata = "b"
+
+print(f"{txtimage} > 比率調整 > {search_txtdata}")
+
+for line in range (len(Alltxtimages)):
+    txt = seach_textdatas[line][3]
+
+    if txt == txtimage:
+        txtimage = Alltxtimages[line]
+        break
+
+for line in range (len(seach_textdatas)):
+    txt = seach_textdatas[line][3]
+
+    if txt == search_txtdata:
+        search_txtdata = seach_textdatas[line]
+        break
+
+NEW_search(txtimage,search_txtdata,dataslist)
