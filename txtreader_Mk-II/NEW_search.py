@@ -189,20 +189,20 @@ def NEW_search(txtimage,search_txtdata,dataslist):
     #print(f"\nfalse0:\n{where_false0}\n")
 
     anser_data[where_true0] = "･"
-    anser_data[where_false0] = "!"
+    anser_data[where_false0] = "\\"
     anser_data[anser_data == "1"] = " "
-    anser_data[anser_data == "0"] = "#"
+    anser_data[anser_data == "0"] = '+'
     anser_data = data_print(anser_data,0)
 
 
     seach_data = np.ones(shape,dtype='i1')
     seach_data[search_txtdata[2]] = np.array(0)
 
-    print(f"\n<picture>{((np.shape(set_image)[1])*2 + 1 - 9 + 5)*' '}<search>{((np.shape(set_image)[1])*2 + 1 - 9 + 5)*' '}<anser>")
+    print(f"\n<picture>{((np.shape(set_image)[1])*2 + 1 - 9 + 5)*' '}<search>{((np.shape(set_image)[1])*2 + 1 - 8 + 5)*' '}<anser>")
 
     for i in range(np.shape(set_image)[0]):
         if i+1 == np.shape(set_image)[0] // 2:
-            print(f'{set_image[i]} =?= {seach_data[i]}  =  {anser_data[i]}')
+            print(f'{set_image[i]} =?= {seach_data[i]} === {anser_data[i]}')
         else:
             print(f'{set_image[i]}     {seach_data[i]}     {anser_data[i]}')
 
@@ -211,13 +211,12 @@ def NEW_search(txtimage,search_txtdata,dataslist):
     return set_image
 
 
-
 keys_print()
 Alltxtimages = dataslist["Alltxtimages"][0]
 
 
 txtimage = "h"
-search_txtdata = "b"
+search_txtdata = "B"
 
 print(f"{txtimage} > 比率調整 > {search_txtdata}")
 
