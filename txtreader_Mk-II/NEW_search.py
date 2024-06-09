@@ -105,6 +105,8 @@ def data_print(data):
 
     for line in printlist:
         print(line)
+    
+    return printlist
 
 print()
 
@@ -175,11 +177,23 @@ def NEW_search(txtimage,search_txtdata,dataslist):
     set_image = removal_background(cv2.resize(txtimage,dsize=(shape[1],shape[0])),rgb,kyoyoucolor)
 
     anser_data = np.array(set_image,dtype=str)
+
+    where_true0 = np.where(anser_data[search_txtdata[2]] == "0")
     where_false0 = np.where(anser_data[search_txtdata[2]] == "1")
-    false0 = [[search_txtdata[2][0][where_false0],search_txtdata[2][1][where_false0]]]
-    print(false0)
-    #anser_data[false0] = "*"
-    print()
+
+    #print(f"\nwhere_false0:\n{where_false0}\n")
+
+
+    where_true0 = (search_txtdata[2][0][where_true0],search_txtdata[2][1][where_true0])
+    where_false0 = (search_txtdata[2][0][where_false0],search_txtdata[2][1][where_false0])
+        
+    print(f"\nfalse0:\n{where_false0}\n")
+
+    anser_data[where_true0] = "･"
+    anser_data[where_false0] = "!"
+    anser_data[anser_data == "1"] = " "
+    anser_data[anser_data == "0"] = "#"
+    data_print(anser_data)
 
 
     seach_data = np.ones(shape,dtype='i1')
