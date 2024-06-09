@@ -102,7 +102,7 @@ def data_print(data,print_on_off):
     printlist[0] = "[" + printlist[0][1:]
     printlist[-1] = printlist[-1] + "]"
 
-    if print_on_off == "1":
+    if print_on_off == 1:
         for line in printlist:
             print(line)
         
@@ -139,9 +139,6 @@ data_print(search_copy,1)
 
 print()
 
-print(center)
-
-print()
 where = np.where(search == "･")
 print(where)
 
@@ -198,13 +195,18 @@ def NEW_search(txtimage,search_txtdata,dataslist):
     seach_data = np.ones(shape,dtype='i1')
     seach_data[search_txtdata[2]] = np.array(0)
 
-    print(f"\n<picture>{((np.shape(set_image)[1])*2 + 1 - 9 + 5)*' '}<search>{((np.shape(set_image)[1])*2 + 1 - 8 + 5)*' '}<anser>")
+    print(f"\n\n<picture>{((np.shape(set_image)[1])*2 + 1 - 9 + 5)*' '}<search>{((np.shape(set_image)[1])*2 + 1 - 8 + 5)*' '}<anser>")
 
     for i in range(np.shape(set_image)[0]):
         if i+1 == np.shape(set_image)[0] // 2:
-            print(f'{set_image[i]} =?= {seach_data[i]} === {anser_data[i]}')
+            print(f'{set_image[i]} --- {seach_data[i]} === {anser_data[i]}')
         else:
             print(f'{set_image[i]}     {seach_data[i]}     {anser_data[i]}')
+
+
+    print(f"\n{(((np.shape(set_image)[1])*2 + 1 + 5)*' ')*2} ▶ [  \\ :無し ][  + :多い ]\n")
+    print(f"{(((np.shape(set_image)[1])*2 + 1 + 5)*' ')*2} > [  . : 文字判定一致 ]")
+    print(f"{(((np.shape(set_image)[1])*2 + 1 + 5)*' ')*2} > [ ' ': 背景判定一致 ]")
 
     print()
 
@@ -215,8 +217,8 @@ keys_print()
 Alltxtimages = dataslist["Alltxtimages"][0]
 
 
-txtimage = "h"
-search_txtdata = "B"
+txtimage = "a"
+search_txtdata = "."
 
 print(f"{txtimage} > 比率調整 > {search_txtdata}")
 
