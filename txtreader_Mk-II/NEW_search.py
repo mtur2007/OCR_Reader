@@ -88,7 +88,7 @@ Fsax = finish_x - Fsax
 Fsay = finish_y - Fsay
 
 
-def data_print(data):
+def data_print(data,print_on_off):
     printlist = []
     for line in data:
         printtxt = " ["
@@ -102,10 +102,10 @@ def data_print(data):
     printlist[0] = "[" + printlist[0][1:]
     printlist[-1] = printlist[-1] + "]"
 
-
-    for line in printlist:
-        print(line)
-    
+    if print_on_off == "1":
+        for line in printlist:
+            print(line)
+        
     return printlist
 
 print()
@@ -130,12 +130,12 @@ center = np.array([radius + (Ssay), radius + (Ssax)])
 print(f"center / X:{center[1]}, Y:{center[0]}\n")
 
 data_copy[set_y,set_x] = "+"
-data_print(data_copy)
+data_print(data_copy,1)
 
 print()
 search_copy = search.copy()
 search_copy[center[1],center[0]] = "+"
-data_print(search_copy)
+data_print(search_copy,1)
 
 print()
 
@@ -171,7 +171,6 @@ def removal_background(color_image,RGB,kyoyou): #写真のNumPy配列を渡す�
 def NEW_search(txtimage,search_txtdata,dataslist):
     rgb = dataslist["background_color"]
     kyoyoucolor = dataslist["kyoyou"]
-    print(search_txtdata[2])
     shape = np.array(search_txtdata[1])
 
     set_image = removal_background(cv2.resize(txtimage,dsize=(shape[1],shape[0])),rgb,kyoyoucolor)
@@ -187,13 +186,13 @@ def NEW_search(txtimage,search_txtdata,dataslist):
     where_true0 = (search_txtdata[2][0][where_true0],search_txtdata[2][1][where_true0])
     where_false0 = (search_txtdata[2][0][where_false0],search_txtdata[2][1][where_false0])
         
-    print(f"\nfalse0:\n{where_false0}\n")
+    #print(f"\nfalse0:\n{where_false0}\n")
 
     anser_data[where_true0] = "･"
     anser_data[where_false0] = "!"
     anser_data[anser_data == "1"] = " "
     anser_data[anser_data == "0"] = "#"
-    data_print(anser_data)
+    anser_data = data_print(anser_data,0)
 
 
     seach_data = np.ones(shape,dtype='i1')
@@ -203,9 +202,9 @@ def NEW_search(txtimage,search_txtdata,dataslist):
 
     for i in range(np.shape(set_image)[0]):
         if i+1 == np.shape(set_image)[0] // 2:
-            print(f'{set_image[i]} =?= {seach_data[i]}     ')
+            print(f'{set_image[i]} =?= {seach_data[i]}  =  {anser_data[i]}')
         else:
-            print(f'{set_image[i]}     {seach_data[i]}     ')
+            print(f'{set_image[i]}     {seach_data[i]}     {anser_data[i]}')
 
     print()
 
@@ -217,7 +216,7 @@ keys_print()
 Alltxtimages = dataslist["Alltxtimages"][0]
 
 
-txtimage = "a"
+txtimage = "h"
 search_txtdata = "b"
 
 print(f"{txtimage} > 比率調整 > {search_txtdata}")
