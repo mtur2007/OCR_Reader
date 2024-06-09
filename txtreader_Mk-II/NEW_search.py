@@ -105,7 +105,7 @@ def data_print(data):
 print()
 
 data_copy = np.array(seach_data.copy(),dtype=str)
-data_copy[set_y,set_x] = "+"
+#data_copy[set_y,set_x] = "+"
 
 search = np.array(data_copy[start_y:finish_y, start_x:finish_x],dtype=str)
 
@@ -123,12 +123,13 @@ print(f"radius / {radius}")
 center = np.array([radius + (Ssay), radius + (Ssax)])
 print(f"center / X:{center[1]}, Y:{center[0]}\n")
 
-
+data_copy[set_y,set_x] = "+"
 data_print(data_copy)
 
 print()
-
-data_print(search)
+search_copy = search.copy()
+search_copy[center[1],center[0]] = "+"
+data_print(search_copy)
 
 print()
 
