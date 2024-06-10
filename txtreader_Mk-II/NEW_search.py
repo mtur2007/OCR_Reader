@@ -161,7 +161,7 @@ def NEW_search(txtimage,search_txtdata,dataslist):
     anser_data[false0_position] = "\\"
     anser_data[anser_data == "1"] = " "
 
-    rest0_position = np.where(anser_data == 0)
+    rest0_position = np.where(anser_data == "0")
     anser_data[rest0_position] = '+'
 
     anser_data = data_print(anser_data,0)
@@ -206,8 +206,8 @@ area_search(sample_txtdata,[[1,0],[7,0]],5)
 #------------------------------------------------------------------------------------------------------------------------
 
 
-txtimage = "a"
-search_txtdata = "a"
+txtimage = "B"
+search_txtdata = "3"
 
 print(f"\nß{txtimage} > 比率調整 > {search_txtdata}")
 
@@ -229,4 +229,4 @@ for line in range (len(seach_textdatas)):
 
 anser1,anser2 = NEW_search(txtimage,search_txtdata,dataslist)
 
-print(anser2[0])
+print(anser2[1])
