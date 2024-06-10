@@ -88,8 +88,6 @@ def area_search(sample_txtdata,centerYX,search_area_XY):
 
         where = np.where(search == "･")
 
-        print()
-
         sa = np.abs(np.where(search == "･") - center.reshape(2, 1))
         sa = sa[0] ** 2 + sa[1] ** 2
         sa = np.sqrt(sa)
@@ -97,7 +95,6 @@ def area_search(sample_txtdata,centerYX,search_area_XY):
             print(f"MIN: 範囲越え")
         else:
             print(f"MIN: {np.min(sa)}")
-        print()
 
 
 '''
@@ -229,4 +226,6 @@ for line in range (len(seach_textdatas)):
 
 anser1,anser2 = NEW_search(txtimage,search_txtdata,dataslist)
 
-print(anser2[1])
+area_search(anser1[0],anser1[1],5)
+area_search(anser2[0],anser2[1],5)
+print()
