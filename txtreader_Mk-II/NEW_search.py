@@ -16,25 +16,111 @@ def keys_print():
 
 #------------------------------------------------------------------------------------------------------------------------
 
-line = 0
+def data_print(data,print_on_off):
+    printlist = []
+    for line in data:
+        printtxt = " ["
+        for txt in line:
+            printtxt = printtxt + txt + " "
+        
+        printtxt = printtxt[:-1] + "]"
+    
+        printlist.append(printtxt)
 
-sample_txtdata = seach_textdatas[line][2]
+    printlist[0] = "[" + printlist[0][1:]
+    printlist[-1] = printlist[-1] + "]"
 
-shape = seach_textdatas[line][1]
+    if print_on_off == 1:
+        for line in printlist:
+            print(line)
+        
+    return printlist
 
-seach_data = np.ones(shape,dtype='i1')
-seach_data[seach_textdatas[line][2]] = np.array(0)
+#------------------------------------------------------------------------------------------------------------------------
 
-print(seach_data)
+def area_search(sample_txtdata,centerXY,search_area_XY):
+    shape = np.shape(sample_txtdata)
 
-test_txtdata = seach_data.copy()
+    set_y = centerXY[1]
+    set_x = centerXY[0]
 
-set_x = 12
-set_y = 10
+    radius = search_area_XY // 2
 
-search_area_XY = 5
 
-radius = search_area_XY // 2
+    start_x = set_x - radius
+    start_y = set_y - radius
+
+    Ssax = 0
+    Ssay = 0
+
+    finish_x = set_x + radius + 1
+    finish_y = set_y + radius + 1
+
+    Fsax = finish_x
+    Fsay = finish_y
+
+    if start_x < 0:
+        Ssax = start_x
+        start_x = 0
+
+    if start_y < 0:
+        Ssay = start_y
+        start_y = 0
+
+    if finish_x > (shape[1]):
+        finish_x = shape[1]
+    if finish_y > (shape[0]):
+        finish_y = shape[0]
+
+    Fsax = finish_x - Fsax
+    Fsay = finish_y - Fsay
+
+
+    print()
+
+    data_copy = np.array(sample_txtdata.copy(),dtype=str)
+    #data_copy[set_y,set_x] = "+"
+
+    search = np.array(data_copy[start_y:finish_y, start_x:finish_x],dtype=str)
+
+    search[np.where(search == "0")] = "･"
+    search[np.where(search == "1")] = " "
+
+    data_copy[start_y:finish_y, start_x:finish_x] = search
+
+    print(f"center / X: {set_x}, Y: {set_y}")
+    print(f"start  / X:{start_x}, Y{start_y}")
+    print(f"finish / X:{finish_x}, Y{finish_y}\n")
+    print(f"Ssa    / X:{Ssax}, Y{Ssay}")
+
+    print(f"radius / {radius}")
+    center = np.array([radius + (Ssay), radius + (Ssax)])
+    print(f"center / X:{center[1]}, Y:{center[0]}\n")
+
+    data_copy[set_y,set_x] = "+"
+    data_print(data_copy,1)
+
+    print()
+    search_copy = search.copy()
+    search_copy[center[0],center[1]] = "+"
+    data_print(search_copy,1)
+
+    print()
+
+    where = np.where(search == "･")
+    print(where)
+
+    print()
+
+    sa = np.abs(np.where(search == "･") - center.reshape(2, 1))
+    sa = sa[0] ** 2 + sa[1] ** 2
+    sa = np.sqrt(sa)
+    if np.shape(sa)[0] == 0:
+        print(f"MIN: 離れ過ぎ")
+    else:
+        print(f"MIN: {np.min(sa)}")
+    print()
+
 
 '''
 
@@ -58,98 +144,6 @@ radius == 1        |  radius == 2         |
 radius .
 
 '''
-
-start_x = set_x - radius
-start_y = set_y - radius
-
-Ssax = 0
-Ssay = 0
-
-finish_x = set_x + radius + 1
-finish_y = set_y + radius + 1
-
-Fsax = finish_x
-Fsay = finish_y
-
-if start_x < 0:
-    Ssax = start_x
-    start_x = 0
-
-if start_y < 0:
-    Ssay = start_y
-    start_y = 0
-
-if finish_x > (shape[1]):
-    finish_x = shape[1]
-if finish_y > (shape[0]):
-    finish_y = shape[0]
-
-Fsax = finish_x - Fsax
-Fsay = finish_y - Fsay
-
-
-def data_print(data,print_on_off):
-    printlist = []
-    for line in data:
-        printtxt = " ["
-        for txt in line:
-            printtxt = printtxt + txt + " "
-        
-        printtxt = printtxt[:-1] + "]"
-    
-        printlist.append(printtxt)
-
-    printlist[0] = "[" + printlist[0][1:]
-    printlist[-1] = printlist[-1] + "]"
-
-    if print_on_off == 1:
-        for line in printlist:
-            print(line)
-        
-    return printlist
-
-print()
-
-data_copy = np.array(seach_data.copy(),dtype=str)
-#data_copy[set_y,set_x] = "+"
-
-search = np.array(data_copy[start_y:finish_y, start_x:finish_x],dtype=str)
-
-search[np.where(search == "0")] = "･"
-search[np.where(search == "1")] = " "
-
-data_copy[start_y:finish_y, start_x:finish_x] = search
-
-print(f"center / X: {set_x}, Y: {set_y}")
-print(f"start  / X:{start_x}, Y{start_y}")
-print(f"finish / X:{finish_x}, Y{finish_y}\n")
-print(f"Ssa    / X:{Ssax}, Y{Ssay}")
-
-print(f"radius / {radius}")
-center = np.array([radius + (Ssay), radius + (Ssax)])
-print(f"center / X:{center[1]}, Y:{center[0]}\n")
-
-data_copy[set_y,set_x] = "+"
-data_print(data_copy,1)
-
-print()
-search_copy = search.copy()
-search_copy[center[1],center[0]] = "+"
-data_print(search_copy,1)
-
-print()
-
-where = np.where(search == "･")
-print(where)
-
-print()
-
-sa = np.abs(np.where(search == "･") - center.reshape(2, 1))
-sa = sa[0] ** 2 + sa[1] ** 2
-sa = np.sqrt(sa)
-print(f"MIN: {np.min(sa)}")
-
-print()
 
 def removal_background(color_image,RGB,kyoyou): #写真のNumPy配列を渡すと戻り値として背景を１とし、それ以外を0に置き換えた配列が戻ってくる。
     background_color = np.array(RGB)
@@ -235,5 +229,19 @@ for line in range (len(seach_textdatas)):
     if txt == search_txtdata:
         search_txtdata = seach_textdatas[line]
         break
+
+
+#------------------------------------------------------------------------------------------------------------------------
+
+line = 0
+
+shape = seach_textdatas[line][1]
+
+sample_txtdata = np.ones(shape,dtype='i1')
+sample_txtdata[seach_textdatas[line][2]] = np.array(0)
+
+area_search(sample_txtdata,[1,6],3)
+
+#------------------------------------------------------------------------------------------------------------------------
 
 NEW_search(txtimage,search_txtdata,dataslist)
