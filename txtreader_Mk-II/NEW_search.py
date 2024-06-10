@@ -38,88 +38,66 @@ def data_print(data,print_on_off):
 
 #------------------------------------------------------------------------------------------------------------------------
 
-def area_search(sample_txtdata,centerXY,search_area_XY):
+def area_search(sample_txtdata,centerYX,search_area_XY):
     shape = np.shape(sample_txtdata)
-
-    set_y = centerXY[1]
-    set_x = centerXY[0]
-
     radius = search_area_XY // 2
 
+    for line in range(np.shape(centerYX)[1]):
+        set_y,set_x = centerYX[0][line],centerYX[1][line]
 
-    start_x = set_x - radius
-    start_y = set_y - radius
+        start_x = set_x - radius
+        start_y = set_y - radius
 
-    Ssax = 0
-    Ssay = 0
+        Ssax = 0
+        Ssay = 0
 
-    finish_x = set_x + radius + 1
-    finish_y = set_y + radius + 1
+        finish_x = set_x + radius + 1
+        finish_y = set_y + radius + 1
 
-    Fsax = finish_x
-    Fsay = finish_y
+        Fsax = finish_x
+        Fsay = finish_y
 
-    if start_x < 0:
-        Ssax = start_x
-        start_x = 0
+        if start_x < 0:
+            Ssax = start_x
+            start_x = 0
 
-    if start_y < 0:
-        Ssay = start_y
-        start_y = 0
+        if start_y < 0:
+            Ssay = start_y
+            start_y = 0
 
-    if finish_x > (shape[1]):
-        finish_x = shape[1]
-    if finish_y > (shape[0]):
-        finish_y = shape[0]
+        if finish_x > (shape[1]):
+            finish_x = shape[1]
+        if finish_y > (shape[0]):
+            finish_y = shape[0]
 
-    Fsax = finish_x - Fsax
-    Fsay = finish_y - Fsay
+        Fsax = finish_x - Fsax
+        Fsay = finish_y - Fsay
 
+        data_copy = np.array(sample_txtdata.copy(),dtype=str)
+        #data_copy[set_y,set_x] = "+"
 
-    print()
+        search = np.array(data_copy[start_y:finish_y, start_x:finish_x],dtype=str)
 
-    data_copy = np.array(sample_txtdata.copy(),dtype=str)
-    #data_copy[set_y,set_x] = "+"
+        search[np.where(search == "0")] = "･"
+        search[np.where(search == "1")] = " "
 
-    search = np.array(data_copy[start_y:finish_y, start_x:finish_x],dtype=str)
+        #data_copy[start_y:finish_y, start_x:finish_x] = search
 
-    search[np.where(search == "0")] = "･"
-    search[np.where(search == "1")] = " "
+        center = np.array([radius + (Ssay), radius + (Ssax)])
+        #data_copy[set_y,set_x] = "+"
 
-    data_copy[start_y:finish_y, start_x:finish_x] = search
+        where = np.where(search == "･")
 
-    print(f"center / X: {set_x}, Y: {set_y}")
-    print(f"start  / X:{start_x}, Y{start_y}")
-    print(f"finish / X:{finish_x}, Y{finish_y}\n")
-    print(f"Ssa    / X:{Ssax}, Y{Ssay}")
+        print()
 
-    print(f"radius / {radius}")
-    center = np.array([radius + (Ssay), radius + (Ssax)])
-    print(f"center / X:{center[1]}, Y:{center[0]}\n")
-
-    data_copy[set_y,set_x] = "+"
-    data_print(data_copy,1)
-
-    print()
-    search_copy = search.copy()
-    search_copy[center[0],center[1]] = "+"
-    data_print(search_copy,1)
-
-    print()
-
-    where = np.where(search == "･")
-    print(where)
-
-    print()
-
-    sa = np.abs(np.where(search == "･") - center.reshape(2, 1))
-    sa = sa[0] ** 2 + sa[1] ** 2
-    sa = np.sqrt(sa)
-    if np.shape(sa)[0] == 0:
-        print(f"MIN: 離れ過ぎ")
-    else:
-        print(f"MIN: {np.min(sa)}")
-    print()
+        sa = np.abs(np.where(search == "･") - center.reshape(2, 1))
+        sa = sa[0] ** 2 + sa[1] ** 2
+        sa = np.sqrt(sa)
+        if np.shape(sa)[0] == 0:
+            print(f"MIN: 範囲越え")
+        else:
+            print(f"MIN: {np.min(sa)}")
+        print()
 
 
 '''
@@ -189,7 +167,7 @@ def NEW_search(txtimage,search_txtdata,dataslist):
     seach_data = np.ones(shape,dtype='i1')
     seach_data[search_txtdata[2]] = np.array(0)
 
-    print(f"\n\n<picture>{((np.shape(set_image)[1])*2 + 1 - 9 + 5)*' '}<search>{((np.shape(set_image)[1])*2 + 1 - 8 + 5)*' '}<anser>")
+    print(f"\n<picture>{((np.shape(set_image)[1])*2 + 1 - 9 + 5)*' '}<search>{((np.shape(set_image)[1])*2 + 1 - 8 + 5)*' '}<anser>")
 
     for i in range(np.shape(set_image)[0]):
         if i+1 == np.shape(set_image)[0] // 2:
@@ -207,14 +185,28 @@ def NEW_search(txtimage,search_txtdata,dataslist):
     return set_image
 
 
-keys_print()
+#keys_print()
 Alltxtimages = dataslist["Alltxtimages"][0]
 
 
-txtimage = "a"
-search_txtdata = "."
+#------------------------------------------------------------------------------------------------------------------------
 
-print(f"{txtimage} > 比率調整 > {search_txtdata}")
+line = 0
+
+shape = seach_textdatas[line][1]
+
+sample_txtdata = np.ones(shape,dtype='i1')
+sample_txtdata[seach_textdatas[line][2]] = np.array(0)
+
+area_search(sample_txtdata,[[1,0],[7,0]],5)
+
+#------------------------------------------------------------------------------------------------------------------------
+
+
+txtimage = "a"
+search_txtdata = "a"
+
+print(f"\nß{txtimage} > 比率調整 > {search_txtdata}")
 
 for line in range (len(Alltxtimages)):
     txt = seach_textdatas[line][3]
@@ -229,18 +221,6 @@ for line in range (len(seach_textdatas)):
     if txt == search_txtdata:
         search_txtdata = seach_textdatas[line]
         break
-
-
-#------------------------------------------------------------------------------------------------------------------------
-
-line = 0
-
-shape = seach_textdatas[line][1]
-
-sample_txtdata = np.ones(shape,dtype='i1')
-sample_txtdata[seach_textdatas[line][2]] = np.array(0)
-
-area_search(sample_txtdata,[1,6],3)
 
 #------------------------------------------------------------------------------------------------------------------------
 
