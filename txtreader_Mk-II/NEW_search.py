@@ -42,6 +42,8 @@ def area_search(sample_txtdata,centerYX,search_area_XY):
     shape = np.shape(sample_txtdata)
     radius = search_area_XY // 2
 
+    count = 0
+
     for line in range(np.shape(centerYX)[1]):
         set_y,set_x = centerYX[0][line],centerYX[1][line]
 
@@ -73,29 +75,35 @@ def area_search(sample_txtdata,centerYX,search_area_XY):
         Fsax = finish_x - Fsax
         Fsay = finish_y - Fsay
 
-        data_copy = np.array(sample_txtdata.copy(),dtype=str)
-        #data_copy[set_y,set_x] = "+"
 
-        search = np.array(data_copy[start_y:finish_y, start_x:finish_x],dtype=str)
-
-        search[np.where(search == "0")] = "･"
-        search[np.where(search == "1")] = " "
+        data_copy = np.array(sample_txtdata.copy())
+        search = np.array(data_copy[start_y:finish_y, start_x:finish_x])
 
         #data_copy[start_y:finish_y, start_x:finish_x] = search
 
         center = np.array([radius + (Ssay), radius + (Ssax)])
         #data_copy[set_y,set_x] = "+"
 
-        where = np.where(search == "･")
-
-        sa = np.abs(np.where(search == "･") - center.reshape(2, 1))
+        sa = np.abs(np.where(search == 0) - center.reshape(2, 1))
         sa = sa[0] ** 2 + sa[1] ** 2
         sa = np.sqrt(sa)
-        if np.shape(sa)[0] == 0:
-            print(f"MIN: 範囲越え")
+        if np.shape(sa)[0] != 0:
+            min = np.min(sa)
+            #print(f"MIN: {min}")
+            count += min
         else:
-            print(f"MIN: {np.min(sa)}")
+            sa = np.abs(np.where(sample_txtdata == 0) - center.reshape(2, 1))
+            sa = sa[0] ** 2 + sa[1] ** 2
+            sa = np.sqrt(sa)
 
+            if np.shape(sa)[0] != 0:
+                min = np.min(sa)
+                #print(f"MIN: {min}")
+                count += min
+            else:
+                print("は？")
+
+    print(count)
 
 '''
 
@@ -191,20 +199,9 @@ Alltxtimages = dataslist["Alltxtimages"][0]
 
 #------------------------------------------------------------------------------------------------------------------------
 
-line = 0
 
-shape = seach_textdatas[line][1]
-
-sample_txtdata = np.ones(shape,dtype='i1')
-sample_txtdata[seach_textdatas[line][2]] = np.array(0)
-
-area_search(sample_txtdata,[[1,0],[7,0]],5)
-
-#------------------------------------------------------------------------------------------------------------------------
-
-
-txtimage = "B"
-search_txtdata = "3"
+txtimage = "a"
+search_txtdata = "a"
 
 print(f"\nß{txtimage} > 比率調整 > {search_txtdata}")
 
@@ -226,6 +223,16 @@ for line in range (len(seach_textdatas)):
 
 anser1,anser2 = NEW_search(txtimage,search_txtdata,dataslist)
 
-area_search(anser1[0],anser1[1],5)
-area_search(anser2[0],anser2[1],5)
+print("( \\ : - )")
+if np.shape(anser1[1])[1] != 0:
+    area_search(anser1[0],anser1[1],5)
+else:
+    print(0)
+print()
+
+print("( + )")
+if np.shape(anser2[1])[1] != 0:
+    area_search(anser2[0],anser2[1],5)
+else:
+    print(0)
 print()
