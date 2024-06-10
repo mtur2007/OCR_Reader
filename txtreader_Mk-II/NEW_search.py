@@ -146,21 +146,24 @@ def NEW_search(txtimage,search_txtdata,dataslist):
 
     anser_data = np.array(set_image,dtype=str)
 
-    where_true0 = np.where(anser_data[search_txtdata[2]] == "0")
-    where_false0 = np.where(anser_data[search_txtdata[2]] == "1")
+    true0_position = np.where(anser_data[search_txtdata[2]] == "0")
+    false0_position = np.where(anser_data[search_txtdata[2]] == "1")
 
     #print(f"\nwhere_false0:\n{where_false0}\n")
 
 
-    where_true0 = (search_txtdata[2][0][where_true0],search_txtdata[2][1][where_true0])
-    where_false0 = (search_txtdata[2][0][where_false0],search_txtdata[2][1][where_false0])
+    true0_position = (search_txtdata[2][0][true0_position],search_txtdata[2][1][true0_position])
+    false0_position = (search_txtdata[2][0][false0_position],search_txtdata[2][1][false0_position])
         
     #print(f"\nfalse0:\n{where_false0}\n")
 
-    anser_data[where_true0] = "･"
-    anser_data[where_false0] = "\\"
+    anser_data[true0_position] = "･"
+    anser_data[false0_position] = "\\"
     anser_data[anser_data == "1"] = " "
-    anser_data[anser_data == "0"] = '+'
+
+    rest0_position = np.where(anser_data == 0)
+    anser_data[rest0_position] = '+'
+
     anser_data = data_print(anser_data,0)
 
 
@@ -182,7 +185,7 @@ def NEW_search(txtimage,search_txtdata,dataslist):
 
     print()
 
-    return set_image
+    return [set_image,false0_position],[seach_data,rest0_position]
 
 
 #keys_print()
@@ -224,4 +227,6 @@ for line in range (len(seach_textdatas)):
 
 #------------------------------------------------------------------------------------------------------------------------
 
-NEW_search(txtimage,search_txtdata,dataslist)
+anser1,anser2 = NEW_search(txtimage,search_txtdata,dataslist)
+
+print(anser2[0])
