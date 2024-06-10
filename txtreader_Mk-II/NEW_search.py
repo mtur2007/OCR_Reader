@@ -92,13 +92,14 @@ def area_search(sample_txtdata,centerYX,search_area_XY):
             print(f"MIN: {min}")
             count += min
         else:
-            sa = np.abs(np.where(sample_txtdata == 0) - np.array(set_y,set_x))
+            center = np.array((set_y,set_x)).reshape(2, 1)
+            sa = np.abs(np.where(sample_txtdata == 0) - center)
             sa = sa[0] ** 2 + sa[1] ** 2
             sa = np.sqrt(sa)
 
             if np.shape(sa)[0] != 0:
                 min = np.min(sa)
-                print(f"MIN: {min}")
+                print(f"MIN: ？{min}")
                 count += min
             else:
                 print("は？")
