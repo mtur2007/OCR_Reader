@@ -180,8 +180,11 @@ def print_area_search(sample_txtdata,centerYX,search_area_XY):
             data_print(search_copy,1)
 
         else:
+
+            where_sample0 = np.where(sample_txtdata == 0)
+
             center = np.array((set_y,set_x)).reshape(2, 1)
-            sa = np.abs(np.where(sample_txtdata == 0) - center)
+            sa = np.abs(where_sample0 - center)
             sa = sa[0] ** 2 + sa[1] ** 2
             #sa = np.sqrt(sa)
 
@@ -189,6 +192,16 @@ def print_area_search(sample_txtdata,centerYX,search_area_XY):
                 min = np.min(sa)
                 #print(f"MIN: ？{min}")
                 count += min
+
+                where_min = np.where(sa == min)
+                where_min = np.array((where_sample0[0][where_min],where_sample0[1][where_min]))
+
+                data_copy[data_copy == "0"] = "･"
+                data_copy[data_copy == "1"] = " "
+                data_copy[where_min[0],where_min[1]] = "#"
+
+                data_print(data_copy,1)
+
             else:
                 print("は？")
 
@@ -290,8 +303,8 @@ Alltxtimages = dataslist["Alltxtimages"][0]
 #------------------------------------------------------------------------------------------------------------------------
 
 
-txtimage = "a"
-search_txtdata = "0"
+txtimage = "G"
+search_txtdata = "C"
 
 print(f"\n{txtimage} > 比率調整 ▶ {search_txtdata}")
 
