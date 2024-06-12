@@ -22,7 +22,7 @@ def SET_txt(txtslist,mode,position):
             len_list.append(len(line))
             if len(line) > Max:
                 Max = len(line)
-        
+
         New_list = []
         Line_list = []
         for nouse in range(Max):
@@ -191,13 +191,33 @@ def SET_numbers(numberslist,mode):
 
 
 def SET_data(datas):
+
     Allprint_txt = []
     for line in datas:
+        max= 0
+        for dataline in line:
+            for data in dataline:
+                if len(data) > max:
+                    max = len(data)
+
         printline = []
-        for dataline in range(len(line)):
-            printline[dataline].append(line[dataline])
+        for nouse in range(max):
+            printline.append([])
+        for dataline in line:
+            for data in dataline:
+                for linenum in range(len(data)):
+                    printline[linenum].append(data[linenum].tolist())
+
+                for num in range((max-1 - linenum)):
+                    printline[linenum + num+1].append('')
+
         Allprint_txt.append(printline)
-            
+    
+    print(len(Allprint_txt))
+
+    #return Allprint_txt
+    return SET_txts(Allprint_txt,0,1)
+
 
 
 import random
@@ -246,6 +266,27 @@ def list_random_del(datalist):
         print(f"\n\nここだーーーーーーーー !!!! \n\n")
 
     return datalist
+
+
+import pickle
+
+### pickleで保存したファイルを読み込み
+with open('/Users/matsuurakenshin/WorkSpace/development/sample_txtdata.pickle', mode='br') as fi:
+    dataslist,insert_txtdatas,seach_textdatas = pickle.load(fi)
+
+def keys_print():
+    print(f"\ndataslist_keys:")
+    for info_key in dataslist:
+        print(f">> {info_key}")
+    print()
+
+keys_print()
+
+
+Alltxtdatas = dataslist["Alltxtdatas"]
+Alltxtdatas = SET_data([Alltxtdatas,Alltxtdatas])
+#print(Alltxtdatas[0][0])
+
 """
 numberslist = []
 
