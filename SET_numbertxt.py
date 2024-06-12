@@ -301,7 +301,7 @@ import pickle
 
 ### pickleで保存したファイルを読み込み
 with open('/Users/matsuurakenshin/WorkSpace/development/txtreader/search_area_anser.pickle', mode='br') as fi:
-    M_printlist,P_printlist = pickle.load(fi)
+    M_printlist,P_printlist,printlist = pickle.load(fi)
 
 M_printlist = [M_printlist]
 M_printlist = SET_data(M_printlist)
@@ -310,13 +310,16 @@ P_printlist = [P_printlist]
 P_printlist = SET_data(P_printlist)
 
 with open("area_search_printfilea.txt","w")as f:
+    for line in printlist:
+        f.write(line)
+
     for line in M_printlist:
         f.write(f"{line}\n")
         #print(line[:4])
 
     for line in P_printlist:
         f.write(F"\n{line}")
-        
+
 
 
 """

@@ -221,7 +221,7 @@ def print_area_search(sample_txtdata,centerYX,search_area_XY):
 
         
         printline.append("")
-        printline.append(f" > MIN: {min}")
+        printline.append(f" > MIN: {np.sqrt(min)}")
 
         printlist.append(printline)
 
@@ -287,7 +287,7 @@ def NEW_search(txtimage,search_txtdata,dataslist):
         
     #print(f"\nfalse0:\n{where_false0}\n")
 
-    anser_data[true0_position] = "･"
+    anser_data[true0_position] = "."
     anser_data[false0_position] = "\\"
     anser_data[anser_data == "1"] = " "
 
@@ -300,22 +300,29 @@ def NEW_search(txtimage,search_txtdata,dataslist):
     seach_data = np.ones(shape,dtype='i1')
     seach_data[search_txtdata[2]] = np.array(0)
 
-    print(f"\n<picture>{((np.shape(set_image)[1])*2 + 1 - 9 + 5)*' '}<search>{((np.shape(set_image)[1])*2 + 1 - 8 + 5)*' '}<anser>")
+    printlist = []
+
+    printlist.append(f"\n<picture>{((np.shape(set_image)[1])*2 + 1 - 9 + 5)*' '}<search>{((np.shape(set_image)[1])*2 + 1 - 8 + 5)*' '}<anser>\n")
+    #print(f"\n<picture>{((np.shape(set_image)[1])*2 + 1 - 9 + 5)*' '}<search>{((np.shape(set_image)[1])*2 + 1 - 8 + 5)*' '}<anser>")
 
     for i in range(np.shape(set_image)[0]):
         if i+1 == np.shape(set_image)[0] // 2:
-            print(f'{set_image[i]} --- {seach_data[i]} === {anser_data[i]}')
+            printlist.append(f'{set_image[i]} --- {seach_data[i]} === {anser_data[i]}\n')
+            #print(f'{set_image[i]} --- {seach_data[i]} === {anser_data[i]}')
         else:
-            print(f'{set_image[i]}     {seach_data[i]}     {anser_data[i]}')
+            printlist.append(f'{set_image[i]}     {seach_data[i]}     {anser_data[i]}\n')
+            #print(f'{set_image[i]}     {seach_data[i]}     {anser_data[i]}')
 
-
-    print(f"\n{(((np.shape(set_image)[1])*2 + 1 + 5)*' ')*2} ▶ [  \\ :無し ][  + :多い ]\n")
-    print(f"{(((np.shape(set_image)[1])*2 + 1 + 5)*' ')*2} > [  . : 文字判定一致 ]")
-    print(f"{(((np.shape(set_image)[1])*2 + 1 + 5)*' ')*2} > [ ' ': 背景判定一致 ]")
+    printlist.append(f"\n{(((np.shape(set_image)[1])*2 + 1 + 5)*' ')*2} ▶ [  \\ :無し ][  + :多い ]\n\n")
+    printlist.append(f"{(((np.shape(set_image)[1])*2 + 1 + 5)*' ')*2} > [  . : 文字判定一致 ]\n")
+    printlist.append(f"{(((np.shape(set_image)[1])*2 + 1 + 5)*' ')*2} > [ ' ': 背景判定一致 ]\n\n\n")
+    #print(f"\n{(((np.shape(set_image)[1])*2 + 1 + 5)*' ')*2} ▶ [  \\ :無し ][  + :多い ]\n")
+    #print(f"{(((np.shape(set_image)[1])*2 + 1 + 5)*' ')*2} > [  . : 文字判定一致 ]")
+    #print(f"{(((np.shape(set_image)[1])*2 + 1 + 5)*' ')*2} > [ ' ': 背景判定一致 ]")
 
     print()
 
-    return [set_image,false0_position],[seach_data,rest0_position]
+    return [set_image,false0_position],[seach_data,rest0_position],printlist
 
 
 #keys_print()
@@ -324,11 +331,13 @@ Alltxtimages = dataslist["Alltxtimages"][0]
 
 #------------------------------------------------------------------------------------------------------------------------
 
+txtimage = "P"
+search_txtdata = "R"
 
-txtimage = "G"
-search_txtdata = "C"
+import copy
 
-print(f"\n{txtimage} > 比率調整 ▶ {search_txtdata}")
+txtimage_copy = copy.copy(txtimage)
+search_txtdata_copy = copy.copy(search_txtdata)
 
 for line in range (len(Alltxtimages)):
     txt = seach_textdatas[line][3]
@@ -346,7 +355,10 @@ for line in range (len(seach_textdatas)):
 
 #------------------------------------------------------------------------------------------------------------------------
 
-anser1,anser2 = NEW_search(txtimage,search_txtdata,dataslist)
+anser1,anser2,printlist = NEW_search(txtimage,search_txtdata,dataslist)
+
+
+printlist.insert(0,f"\n{txtimage_copy} > 比率調整 ▶ {search_txtdata_copy}\n")
 
 print("( \\ : - )")
 if np.shape(anser1[1])[1] != 0:
@@ -371,4 +383,4 @@ import pickle
 
 ### pickleで保存（書き出し
 with open('search_area_anser.pickle', mode='wb') as fo:
-    pickle.dump((M_printlist,P_printlist), fo)
+    pickle.dump((M_printlist,P_printlist,printlist), fo)
