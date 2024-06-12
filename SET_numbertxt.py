@@ -190,6 +190,16 @@ def SET_numbers(numberslist,mode):
     return numberslist
 
 
+def SET_data(datas):
+    Allprint_txt = []
+    for line in datas:
+        printline = []
+        for dataline in range(len(line)):
+            printline[dataline].append(line[dataline])
+        Allprint_txt.append(printline)
+            
+
+
 import random
 
 def Myrandom(lennum, a,b, numtype):
@@ -236,7 +246,7 @@ def list_random_del(datalist):
         print(f"\n\nここだーーーーーーーー !!!! \n\n")
 
     return datalist
-
+"""
 numberslist = []
 
 for i in range(50):
@@ -296,7 +306,7 @@ if set_numbers == 1:
     for line in set_number:
         print(line)
     print()
-
+"""
 
 """
 for line in numberslist:
