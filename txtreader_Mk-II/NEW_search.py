@@ -156,7 +156,7 @@ def print_area_search(sample_txtdata,centerYX,search_area_XY):
         printline = []
 
         search_copy = np.array(search,dtype=str)
-        search_copy[search == 0] = "･"
+        search_copy[search == 0] = "."
         search_copy[search == 1] = " "
         search_copy[center[0],center[1]] = "+"
 
@@ -209,7 +209,7 @@ def print_area_search(sample_txtdata,centerYX,search_area_XY):
                 where_min = np.where(sa == min)
                 where_min = np.array((where_sample0[0][where_min],where_sample0[1][where_min]))
 
-                data_copy[data_copy == "0"] = "･"
+                data_copy[data_copy == "0"] = "."
                 data_copy[data_copy == "1"] = " "
                 data_copy[where_min[0],where_min[1]] = "#"
 
@@ -362,6 +362,13 @@ else:
     print(0)
 print()
 
+#anser_area_search = [M_printlist,P_printlist]
 
-for line in M_printlist[4]:
+for line in M_printlist[0][:-3]:
     print(line)
+
+import pickle
+
+### pickleで保存（書き出し
+with open('search_area_anser.pickle', mode='wb') as fo:
+    pickle.dump((M_printlist,P_printlist), fo)

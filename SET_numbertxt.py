@@ -215,29 +215,37 @@ def SET_data(datas):
 
     Allprint_txt = []
     for line in datas:
+        # [[],[],[]]
+        #  ^  ^  ^
         max= 0
-        for dataline in line:
-            for data in dataline:
-                if len(data) > max:
-                    max = len(data)
+        for data in line:
+            # [ [ [],[] ], [ [],[] ] ,[ [],[] ] ]
+            #      ^  ^       ^  ^       ^  ^
+
+            print(len(data))
+            if len(data) > max:
+                max = len(data)
+
+        print(f"MAX: {max}")
 
         printline = []
         for nouse in range(max):
             printline.append([])
-        for dataline in line:
-            for data in dataline:
-                data = data_print(data,0)
-                for linenum in range(len(data)):
-                    printline[linenum].append(data[linenum])
+        for data in line:
+            print(f"配列数: {len(data)}")
+            for dataline in range(len(data)):
+                printline[dataline].append(data[dataline])
 
-                for num in range((max-1 - linenum)):
-                    printline[linenum + num+1].append('')
+            for num in range((max-1 - dataline)):
+                printline[dataline + num+1].append('')
 
         for line in printline:
             Allprint_txt.append(line)
+        
+        print(Allprint_txt[1][3])
 
     #return Allprint_txt
-    return SET_txts(Allprint_txt,0,1)
+    return SET_txts(Allprint_txt,0,0)
 
 
 
@@ -292,23 +300,24 @@ def list_random_del(datalist):
 import pickle
 
 ### pickleで保存したファイルを読み込み
-with open('/Users/matsuurakenshin/WorkSpace/development/sample_txtdata.pickle', mode='br') as fi:
-    dataslist,insert_txtdatas,seach_textdatas = pickle.load(fi)
+with open('/Users/matsuurakenshin/WorkSpace/development/txtreader/search_area_anser.pickle', mode='br') as fi:
+    M_printlist,P_printlist = pickle.load(fi)
 
-def keys_print():
-    print(f"\ndataslist_keys:")
-    for info_key in dataslist:
-        print(f">> {info_key}")
-    print()
+M_printlist = [M_printlist]
+M_printlist = SET_data(M_printlist)
 
-keys_print()
+P_printlist = [P_printlist]
+P_printlist = SET_data(P_printlist)
 
+with open("area_search_printfilea.txt","w")as f:
+    for line in M_printlist:
+        f.write(f"{line}\n")
+        #print(line[:4])
 
-Alltxtdatas = dataslist["Alltxtdatas"]
-Alltxtdatas = SET_data([Alltxtdatas,Alltxtdatas])
-for line in Alltxtdatas:
-    print(line[90:])
-print(Alltxtdatas[0][0])
+    for line in P_printlist:
+        f.write(F"\n{line}")
+        
+
 
 """
 numberslist = []
