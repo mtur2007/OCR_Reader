@@ -108,6 +108,9 @@ def area_search(sample_txtdata,centerYX,search_area_XY):
 
 
 def print_area_search(sample_txtdata,centerYX,search_area_XY):
+
+    printlist = []
+
     shape = np.shape(sample_txtdata)
     radius = search_area_XY // 2
 
@@ -149,14 +152,22 @@ def print_area_search(sample_txtdata,centerYX,search_area_XY):
         center = np.array([radius + (Ssay), radius + (Ssax)])
 
         #-----------------------------------------------------------------------
+
+        printline = []
+
         search_copy = np.array(search,dtype=str)
         search_copy[search == 0] = "･"
         search_copy[search == 1] = " "
-        
         search_copy[center[0],center[1]] = "+"
 
         data_copy = np.array(sample_txtdata,dtype=str)
         data_copy[start_y:finish_y, start_x:finish_x] = search_copy
+
+        for line in data_print(data_copy,0):
+            printline.append(line)
+
+        
+        printline.append("")
 
         #-----------------------------------------------------------------------
 
@@ -177,7 +188,9 @@ def print_area_search(sample_txtdata,centerYX,search_area_XY):
 
             search_copy[where_min[0],where_min[1]] = "#"
 
-            data_print(search_copy,1)
+            for line in data_print(search_copy,0):
+                printline.append(line)
+            
 
         else:
 
@@ -200,12 +213,21 @@ def print_area_search(sample_txtdata,centerYX,search_area_XY):
                 data_copy[data_copy == "1"] = " "
                 data_copy[where_min[0],where_min[1]] = "#"
 
-                data_print(data_copy,1)
+                for line in data_print(data_copy,0):
+                    printline.append(line)
 
             else:
                 print("は？")
 
+        
+        printline.append("")
+        printline.append(f" > MIN: {min}")
+
+        printlist.append(printline)
+
     print(count)
+
+    return printlist
 
 
 '''
@@ -328,14 +350,18 @@ anser1,anser2 = NEW_search(txtimage,search_txtdata,dataslist)
 
 print("( \\ : - )")
 if np.shape(anser1[1])[1] != 0:
-    print_area_search(anser1[0],anser1[1],5)
+    M_printlist = print_area_search(anser1[0],anser1[1],5)
 else:
     print(0)
 print()
 
 print("( + )")
 if np.shape(anser2[1])[1] != 0:
-    print_area_search(anser2[0],anser2[1],5)
+    P_printlist = print_area_search(anser2[0],anser2[1],5)
 else:
     print(0)
 print()
+
+
+for line in M_printlist[4]:
+    print(line)
