@@ -190,6 +190,27 @@ def SET_numbers(numberslist,mode):
     return numberslist
 
 
+def data_print(data,print_on_off):
+    printlist = []
+    for line in data:
+        printtxt = " ["
+        for txt in line:
+            printtxt = printtxt + str(txt) + " "
+        
+        printtxt = printtxt[:-1] + "]"
+    
+        printlist.append(printtxt)
+
+    printlist[0] = "[" + printlist[0][1:]
+    printlist[-1] = printlist[-1] + "]"
+
+    if print_on_off == 1:
+        for line in printlist:
+            print(line)
+        
+    return printlist
+
+
 def SET_data(datas):
 
     Allprint_txt = []
@@ -205,15 +226,15 @@ def SET_data(datas):
             printline.append([])
         for dataline in line:
             for data in dataline:
+                data = data_print(data,0)
                 for linenum in range(len(data)):
-                    printline[linenum].append(data[linenum].tolist())
+                    printline[linenum].append(data[linenum])
 
                 for num in range((max-1 - linenum)):
                     printline[linenum + num+1].append('')
 
-        Allprint_txt.append(printline)
-    
-    print(len(Allprint_txt))
+        for line in printline:
+            Allprint_txt.append(line)
 
     #return Allprint_txt
     return SET_txts(Allprint_txt,0,1)
@@ -285,7 +306,9 @@ keys_print()
 
 Alltxtdatas = dataslist["Alltxtdatas"]
 Alltxtdatas = SET_data([Alltxtdatas,Alltxtdatas])
-#print(Alltxtdatas[0][0])
+for line in Alltxtdatas:
+    print(line[90:])
+print(Alltxtdatas[0][0])
 
 """
 numberslist = []
