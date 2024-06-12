@@ -106,6 +106,95 @@ def area_search(sample_txtdata,centerYX,search_area_XY):
 
     print(count)
 
+
+def print_area_search(sample_txtdata,centerYX,search_area_XY):
+    shape = np.shape(sample_txtdata)
+    radius = search_area_XY // 2
+
+    count = 0
+
+    for line in range(np.shape(centerYX)[1]):
+        set_y,set_x = centerYX[0][line],centerYX[1][line]
+
+        start_x = set_x - radius
+        start_y = set_y - radius
+
+        Ssax = 0
+        Ssay = 0
+
+        finish_x = set_x + radius + 1
+        finish_y = set_y + radius + 1
+
+        Fsax = finish_x
+        Fsay = finish_y
+
+        if start_x < 0:
+            Ssax = start_x
+            start_x = 0
+
+        if start_y < 0:
+            Ssay = start_y
+            start_y = 0
+
+        if finish_x > (shape[1]):
+            finish_x = shape[1]
+        if finish_y > (shape[0]):
+            finish_y = shape[0]
+
+        Fsax = finish_x - Fsax
+        Fsay = finish_y - Fsay
+
+
+        search = np.array(sample_txtdata[start_y:finish_y, start_x:finish_x])
+        center = np.array([radius + (Ssay), radius + (Ssax)])
+
+        #-----------------------------------------------------------------------
+        search_copy = np.array(search,dtype=str)
+        search_copy[search == 0] = "･"
+        search_copy[search == 1] = " "
+        
+        search_copy[center[0],center[1]] = "+"
+
+        data_copy = np.array(sample_txtdata,dtype=str)
+        data_copy[start_y:finish_y, start_x:finish_x] = search_copy
+
+        #-----------------------------------------------------------------------
+
+        center = np.array([radius + (Ssay), radius + (Ssax)])
+
+        where_search0 = np.where(search == 0)
+
+        sa = np.abs(where_search0 - center.reshape(2, 1))
+        sa = sa[0] ** 2 + sa[1] ** 2
+        #sa = np.sqrt(sa)
+        if np.shape(sa)[0] != 0:
+            min = np.min(sa)
+            #print(f"MIN: {min}")
+            count += min
+
+            where_min = np.where(sa == min)
+            where_min = np.array((where_search0[0][where_min],where_search0[1][where_min]))
+
+            search_copy[where_min[0],where_min[1]] = "#"
+
+            data_print(search_copy,1)
+
+        else:
+            center = np.array((set_y,set_x)).reshape(2, 1)
+            sa = np.abs(np.where(sample_txtdata == 0) - center)
+            sa = sa[0] ** 2 + sa[1] ** 2
+            #sa = np.sqrt(sa)
+
+            if np.shape(sa)[0] != 0:
+                min = np.min(sa)
+                #print(f"MIN: ？{min}")
+                count += min
+            else:
+                print("は？")
+
+    print(count)
+
+
 '''
 
 <seach_area_XY>
@@ -226,14 +315,14 @@ anser1,anser2 = NEW_search(txtimage,search_txtdata,dataslist)
 
 print("( \\ : - )")
 if np.shape(anser1[1])[1] != 0:
-    area_search(anser1[0],anser1[1],5)
+    print_area_search(anser1[0],anser1[1],5)
 else:
     print(0)
 print()
 
 print("( + )")
 if np.shape(anser2[1])[1] != 0:
-    area_search(anser2[0],anser2[1],5)
+    print_area_search(anser2[0],anser2[1],5)
 else:
     print(0)
 print()
