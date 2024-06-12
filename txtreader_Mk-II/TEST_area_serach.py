@@ -513,7 +513,19 @@ def print_area_search(sample_txtdata,centerYX,search_area_XY):
 
         
         printline.append("")
+
+        if np.shape(where_search0[0])[0] != 0:
+            for nouse in range(search_area_XY - np.shape(search)[0]):
+                printline.append("")
+
         printline.append(f" > MIN: {np.sqrt(min)}")
+        #printline.append(f" ▶ count += {min}")
+        printline.append(f"")
+
+        numbers = SET_numbers([min,count],1)[0]
+
+        printline.append(f" [ count / plus: {numbers[0]}")
+        printline.append(f"        / total: {numbers[1]} ]")
 
         printlist.append(printline)
 
