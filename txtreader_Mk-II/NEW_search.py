@@ -331,8 +331,8 @@ Alltxtimages = dataslist["Alltxtimages"][0]
 
 #------------------------------------------------------------------------------------------------------------------------
 
-txtimage = "P"
-search_txtdata = "R"
+txtimage = "R"
+search_txtdata = "P"
 
 import copy
 
