@@ -211,9 +211,14 @@ def data_print(data,print_on_off):
     return printlist
 
 
-def SET_data(datas):
+def SET_data(datas,mode):
+
+    if isinstance(datas[0][0], list) == False:
+        datas = [datas]
+        mode = 1
 
     Allprint_txt = []
+    Lineslist = []
     for line in datas:
         # [[],[],[]]
         #  ^  ^  ^
@@ -222,17 +227,13 @@ def SET_data(datas):
             # [ [ [],[] ], [ [],[] ] ,[ [],[] ] ]
             #      ^  ^       ^  ^       ^  ^
 
-            print(len(data))
             if len(data) > max:
                 max = len(data)
-
-        print(f"MAX: {max}")
 
         printline = []
         for nouse in range(max):
             printline.append([])
         for data in line:
-            print(f"配列数: {len(data)}")
             for dataline in range(len(data)):
                 printline[dataline].append(data[dataline])
 
@@ -242,10 +243,72 @@ def SET_data(datas):
         for line in printline:
             Allprint_txt.append(line)
         
-        print(Allprint_txt[1][3])
-
+        Lineslist.append(len(Allprint_txt)-1)
+    
     #return Allprint_txt
-    return SET_txts(Allprint_txt,0,0)
+    print("\nSET_data(datas) ソート結果\n")
+    for line in Allprint_txt:
+        print(line[:10])
+
+    set_datas = SET_txts(Allprint_txt,mode,0)
+
+    set_shape = []
+    start = 0
+    finish = Lineslist[0] + 1
+    set_shape.append(set_datas[start:finish])
+
+
+    for linenum in range(len(Lineslist)-1):
+        linenum += 1
+
+        start = Lineslist[linenum-1] + 1
+        finish = Lineslist[linenum] + 1
+        set_shape.append(set_datas[start:finish])
+
+    return set_shape
+
+def data_border_print(set_data):
+    printlist = []
+    linelen0 = 0
+
+    for linenum in range(len(set_data)):
+        dataline = set_data[linenum]
+        if len(dataline) != 0:
+            writeline = []
+            for line in dataline:
+                printline = ""
+                for txt in line:
+                    printline = printline + "  |  " + txt
+                printline = printline[2:] + "  |"
+
+                writeline.append(printline)
+        
+            linelen1 = len(printline)
+
+            if linelen0 > linelen1:
+                printlist.append(f"{'-'*linelen0}\n\n")
+            else:
+                printlist.append(f"{'-'*linelen1}\n\n")
+            
+            linelen0 = linelen1
+
+            for line in writeline:
+                printlist.append(f"{line}\n")
+            printlist.append("\n")
+        
+        else:
+            printlist.append(f"{'-'*linelen0}\n\n")
+            if linenum != len(set_data)-1:
+                printlist.append(f" >> Xx_None_data_xX\n\n")
+            else:
+                printlist.append(f" >> Xx_None_data_xX")
+            linelen0 = 0
+
+    if len(set_data[-1]) != 0:
+        printlist.append(f"{'-'*linelen1}")
+
+    return printlist
+
 
 
 
@@ -296,44 +359,43 @@ def list_random_del(datalist):
 
     return datalist
 
+import cv2
+import matplotlib.pyplot as plt
+import numpy as np
 
 import pickle
 
 ### pickleで保存したファイルを読み込み
-with open('/Users/matsuurakenshin/WorkSpace/development/txtreader/search_area_anser.pickle', mode='br') as fi:
-    M_printlist,P_printlist,printlist = pickle.load(fi)
+with open('/Users/matsuurakenshin/WorkSpace/development/sample_txtdata.pickle', mode='br') as fi:
+    dataslist,insert_txtdatas,seach_textdatas = pickle.load(fi)
 
-M_printlist = [M_printlist]
-M_printlist = SET_data(M_printlist)
+def keys_print():
+    print(f"\ndataslist_keys:")
+    for info_key in dataslist:
+        print(f">> {info_key}")
+    print()
 
-P_printlist = [P_printlist]
-P_printlist = SET_data(P_printlist)
+#------------------------------------------------------------------------------------------------------------------------
 
-with open("area_search_printfilea.txt","w")as f:
-    for line in printlist:
-        f.write(line)
-
-    for line in M_printlist:
-        printline = ""
-        for txtline in line:
-            printline = printline + "  " + txtline + "  |"
-
-        f.write(f"{printline[2:]}\n")
-        #print(line[:4])
+def data_print(data,print_on_off):
+    printlist = []
+    for line in data:
+        printtxt = " ["
+        for txt in line:
+            printtxt = printtxt + txt + " "
+        
+        printtxt = printtxt[:-1] + "]"
     
-    f.write(f"\n")
+        printlist.append(printtxt)
 
-    count = 0
-    for line in P_printlist[0]:
-        count += len(line) + 5
-    f.write(f"{(count - 2) * '-'}\n\n")
+    printlist[0] = "[" + printlist[0][1:]
+    printlist[-1] = printlist[-1] + "]"
 
-    for line in P_printlist:
-        printline = ""
-        for txtline in line:
-            printline = printline + "  " + txtline + "  |"
-        f.write(F"{printline[2:]}\n")
-
+    if print_on_off == 1:
+        for line in printlist:
+            print(line)
+        
+    return printlist
 
 
 """
@@ -342,7 +404,7 @@ numberslist = []
 for i in range(50):
     numberslist.append(Myrandom(8, -2000,2000, 2))
 
-numberslist = list_random_del(numberslist)
+#numberslist = list_random_del(numberslist)
 
 
 print(f"\n\nnormal_print\n")
@@ -396,25 +458,129 @@ if set_numbers == 1:
     for line in set_number:
         print(line)
     print()
-"""
 
 """
-for line in numberslist:
-    printtxt = ""
-    if isinstance(line, list) == True:
-        for txt in line:
-            printtxt = printtxt + ", " + txt
+
+import pickle
+
+### pickleで保存したファイルを読み込み
+with open('/Users/matsuurakenshin/WorkSpace/development/txtreader/sample_datas.pickle', mode='br') as fi:
+    sample_datas = pickle.load(fi)
+
+
+#サンプルのデータ
+data_GC_G = sample_datas[0][0]
+data_GC_C = sample_datas[0][1]
+data_B3_B = sample_datas[1][0]
+data_B3_3 = sample_datas[1][1]
+data_Il_I = sample_datas[2][0]
+data_Il_l = sample_datas[2][1]
+data_xa_x = sample_datas[3][0]
+data_xa_a = sample_datas[3][1]
+
+
+#サンプルデータの表示
+set_data = data_B3_3[:4]
+
+print(set_data)
+if isinstance(set_data[0], list) == False:
+    set_data = [set_data]
+#set_data = data_xa_x[:4]
+print(f"\n\n配列の縦表示\n")
+
+txtlen0 = 0
+
+for data in set_data:
+    printlist = []
+    Max = 0
+    for line in data:
+        printlist.append(f" '{line}'")
+        if len(printlist[-1]) > Max:
+            Max = len(printlist[-1])
+
+    printlist.insert(0,"[")
+    printlist.append("]")
+    
+    txtlen1 = (Max + 2) * 2 + 1
+    if txtlen0 > txtlen1:
+        print(txtlen0*"-")
     else:
-        printtxt = line
+        print(txtlen1*"-")
 
-    print(printtxt)
-"""
+    for linenum in range(len(printlist)):
+        line = printlist[linenum]
+        if linenum != 0 and linenum != len(printlist)-1:
+            print(f"{line}{(Max - len(line))*' '}  |  {(len(line)-3)*'*'}{(Max - len(line))*'.'}  |")
+        else:
+            print(f"{line}{(Max - len(line))*' '}  |  {(Max-1)*' '}|")
+    txtlen0 = txtlen1
+        
+
+print(txtlen0*"-")
+
+SET_data(set_data,1)
 
 """
-for line in numberslist:
-    for txt in line:
-        print(f'{"-"*10} {txt} {"-"*30}')
-    for i in range(2):
-        print()
-"""
+#データの整列化
+#set_sample = [data_GC_G[:8],data_Il_l[:2],"",data_B3_3[:4],""]
+set_sample = [data_B3_3[:3],data_xa_x[:4]]
 
+#配列の状態をプリントするプログラム
+
+print()
+print()
+print(25*'-/-\\')
+print()
+
+txtlen0 = 0
+print("配列状態:")
+for linenum in range(len(set_sample)):
+    if txtlen0 != 0:
+        print(f"{txtlen0*'-'}\n")
+    print(f"\n{100*'='}")
+    linetxt = f" line: {linenum+1} "
+    print(f"[{linetxt}]\n")
+    datasline = set_sample[linenum]
+    for line in datasline:
+        printdata = []
+        Max = 0
+        for txt in line:
+            printdata.append("|  " + txt)
+            if len(printdata[-1]) > Max:
+                Max = len(printdata[-1])
+        txtlen1 = (Max + 2) * 2 + 1
+        if txtlen0 > txtlen1:
+            print(txtlen0*"-")
+        else:
+            print(txtlen1*"-")
+        for line in printdata:
+            print(f"{line}{(Max - len(line))*' '}  |  {(len(line)-3)*'*'}{(Max - len(line))*'.'}  |")
+        txtlen0 = txtlen1
+    
+    if len(datasline) == 0:
+        print(" >> Xx_None_data_xX")
+        txtlen0 = 0
+
+#print(f"\n\n{25*'=/=\\'}\n")
+print()
+print()
+print(25*'-/-\\')
+print()
+
+
+TEST_datas = SET_data(set_sample,0)
+
+
+set_datas = data_border_print(TEST_datas)
+
+with open("Remake_SET.txt","w") as f:
+    for line in set_datas:
+        f.write(f"{line}")
+
+
+print()
+print()
+print(25*'-/-\\')
+print()
+
+"""

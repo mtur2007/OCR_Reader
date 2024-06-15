@@ -242,7 +242,7 @@ def SET_data(datas):
         Lineslist.append(len(Allprint_txt)-1)
     
     #return Allprint_txt
-    
+
     for line in Allprint_txt:
         print(line[:9])
 
@@ -807,21 +807,16 @@ def TEST_area_search(txtimage,search_txtdata):
 
         #test = SET_data([M_printlist,P_printlist])
 
-        if M_count != 0 or P_count != 0:
+        if len(M_printlist) != 0 and len(P_printlist) != 0:
             TEST_datas = SET_data([M_printlist,P_printlist])
             printlist = data_border_print(TEST_datas,"Remake_SET.txt")
 
             for printline in printlist:
                 f.write(printline)
-    
-    return M_printlist,P_printlist
 
 linelen = 110
 
 if01 = 0
-
-sampledatas = []
-
 while if01 == 0:
 
     search = input(f"\n⬇ {'='*(linelen-2)}\n\n ➡️ 調べたい文字を入力\n ▶️ 調査終了(END)\n回答: ")
@@ -838,16 +833,10 @@ while if01 == 0:
 
 
 
-    sampledatas.append(TEST_area_search(search,search2))
+    TEST_area_search(search,search2)
 
 
 
 
             
 print(f"\n終了します。\n\n⬆ {'='*(linelen-2)}\n")
-"""
-import pickle
-
-with open('sample_datas.pickle', mode='wb') as fo:
-    pickle.dump((sampledatas), fo)
-"""

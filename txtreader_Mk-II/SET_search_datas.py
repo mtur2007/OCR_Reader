@@ -63,7 +63,7 @@ def image_removal_background(imagename,RGB,kyoyou):
 
     code0list = removal_background(color_image,RGB,kyoyou)
 
-    with open("coode0list_printfile.txt","w") as f:
+    with open("Search_coode0list_printfile.txt","w") as f:
         for y in range(code0list.shape[0]):
             txt = ""
             for x in range(code0list.shape[1]):
@@ -641,7 +641,7 @@ def seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
 dataimage = "/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader_Mk-II/textdata.jpeg"
 
 #dataslist = image_removal_background(dataimage,[31,31,31],180)
-dataslist = image_removal_background(dataimage,"auto",180)
+dataslist = image_removal_background(dataimage,"auto",150)
 
 image = dataslist['image']
 imageshape = np.shape(image)
@@ -651,13 +651,17 @@ imageshape = np.shape(image)
 dataslist = seach_txtposition(dataslist,100)
 dataslist = txtdatas_insert(dataslist)
 
-print_textdatas(dataslist,"Alltextimages.text")
 txtimage = dataslist["Alltxtimages"]
 txtdata = dataslist["Alltxtdatas"]
 #plt.imshow(readtxt_imshow(dataslist))
 #plt.imshow(cv2.resize(txtimage[0][0],dsize=(10,30)))
 print(len(txtdata[0][72][0]))
-print_textdatas(dataslist,"Serach_textdataslist_printfile.txt")
+#print_textdatas(dataslist,"Serach_textdataslist_printfile.txt")
+
+print_textdatas(dataslist,"Search_Alltxtimages.txt")
+
+print(f"\nは\n")
+
 
 #-----------------------------------------------------------------------------------------------------------
 
@@ -690,7 +694,8 @@ retest = Saerch_retest()
 def test(linelen):
 
     print()
-    print(f'>> test >> {"~" * (linelen - len('>> test >> '))}')
+
+    print(f'>> test >> {"~" * (linelen - len(">> test >> "))}')
 
     line,lennum = 0,92
     Falselist = []
@@ -722,7 +727,7 @@ def test(linelen):
 
     print(f"検証結果[合致数{true}, 誤検知{false}]\n")
 
-    print(f'{"~" * (linelen - len(' << test <<'))} << test <<')
+    print(f'{"~" * (linelen - len(" << test <<"))} << test <<')
     print()
 
 
