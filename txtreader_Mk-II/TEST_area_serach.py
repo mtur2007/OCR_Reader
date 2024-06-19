@@ -627,7 +627,7 @@ def print_area_search(sample_txtdata,centerYX,search_area_XY):
         #printline.append(f" ▶ count += {min}")
         printline.append(f"")
 
-        numbers = SET_numbers([min,count],1)[0]
+        numbers = SET_numbers([[min,count]],1)[0]
 
         printline.append(f" [ count / plus: {numbers[0]}")
         printline.append(f"        / total: {numbers[1]} ]")
@@ -682,6 +682,10 @@ def NEW_search(txtimage,search_txtdata,dataslist):
     set_image = removal_background(cv2.resize(txtimage,dsize=(shape[1],shape[0])),rgb,kyoyoucolor)
 
     anser_data = np.array(set_image,dtype=str)
+    image_str = anser_data.copy()
+    image_str[image_str == "0"] = "."
+    image_str[image_str == "1"] = " "
+
 
     true0_position = np.where(anser_data[search_txtdata[2]] == "0")
     false0_position = np.where(anser_data[search_txtdata[2]] == "1")
@@ -704,21 +708,41 @@ def NEW_search(txtimage,search_txtdata,dataslist):
     anser_data = data_print(anser_data,0)
 
 
-    seach_data = np.ones(shape,dtype='i1')
-    seach_data[search_txtdata[2]] = np.array(0)
+    image_str[false0_position] = "+"
+    image_str = data_print(image_str,0)
+
+
+    search_data = np.ones(shape,dtype='i1')
+    search_data[search_txtdata[2]] = np.array(0)
+    search_str = np.array(search_data,dtype=str)
+    search_str[search_str == "0"] = "."
+    search_str[search_str == "1"] = " "
+    search_str[rest0_position] = "+"
+
+    search_str = data_print(search_str,0)
+
+    plus_anser = SET_data([[image_str,search_str]])[0]
 
     printlist = []
 
     printlist.append(f"\n<picture>{((np.shape(set_image)[1])*2 + 1 - 9 + 5)*' '}<search>{((np.shape(set_image)[1])*2 + 1 - 8 + 5)*' '}<anser>\n")
     #print(f"\n<picture>{((np.shape(set_image)[1])*2 + 1 - 9 + 5)*' '}<search>{((np.shape(set_image)[1])*2 + 1 - 8 + 5)*' '}<anser>")
 
+
     for i in range(np.shape(set_image)[0]):
         if i+1 == np.shape(set_image)[0] // 2:
-            printlist.append(f'{set_image[i]} --- {seach_data[i]} === {anser_data[i]}\n')
+            printlist.append(f'{set_image[i]} --- {search_data[i]} === {anser_data[i]}\n')
             #print(f'{set_image[i]} --- {seach_data[i]} === {anser_data[i]}')
         else:
-            printlist.append(f'{set_image[i]}     {seach_data[i]}     {anser_data[i]}\n')
+            printlist.append(f'{set_image[i]}     {search_data[i]}     {anser_data[i]}\n')
             #print(f'{set_image[i]}     {seach_data[i]}     {anser_data[i]}')
+
+    printlist.append(f"\n<picture>{((np.shape(set_image)[1])*2 + 1 - 9 + 5)*' '}<search>{((np.shape(set_image)[1])*2 + 1 - 8 + 5)*' '}<anser>\n")
+    for linenum in range(len(plus_anser)):
+        line = plus_anser[linenum]
+        printlist.append(f'{line[0][1:-1]}     {line[1][1:-1]}     {anser_data[linenum]}\n')
+        #print(f'{set_image[i]}     {seach_data[i]}     {anser_data[i]}')
+
 
     printlist.append(f"\n{(((np.shape(set_image)[1])*2 + 1 + 5)*' ')*2} ▶ [  \\ :無し ][  + :多い ]\n\n")
     printlist.append(f"{(((np.shape(set_image)[1])*2 + 1 + 5)*' ')*2} > [  . : 文字判定一致 ]\n")
@@ -733,7 +757,7 @@ def NEW_search(txtimage,search_txtdata,dataslist):
     #print(f"{(((np.shape(set_image)[1])*2 + 1 + 5)*' ')*2} > [  . : 文字判定一致 ]")
     #print(f"{(((np.shape(set_image)[1])*2 + 1 + 5)*' ')*2} > [ ' ': 背景判定一致 ]")
 
-    return [set_image,false0_position],[seach_data,rest0_position],printlist
+    return [set_image,false0_position],[search_data,rest0_position],printlist
 
 
 #------------------------------------------------------------------------------------------------------------------------
