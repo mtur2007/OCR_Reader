@@ -228,8 +228,40 @@ def txtdatas_insert(dataslist):
 
     dataslist["Alltxtimages"] = Alltxtimages
     dataslist["Alltxtdatas"] = Alltxtdatas
-    return dataslist
 
+    #-------------------------------------------------------------------------------------------------------
+
+    rgb = dataslist["background_color"]
+    kyoyoucolor = dataslist["kyoyou"]
+
+    maxY,maxX = 0,0
+    for image in Alltxtimages[0]:
+        shape = np.shape(image)
+        if shape[0] > maxY:
+            maxY = shape[0]
+        if shape[1] > maxX:
+            maxX = shape[1]
+    
+    txtdatas = []
+    for image in Alltxtimages[0]:
+        shape = np.shape(image)
+        if shape[0] > shape[1]:
+            hiritu = maxY / shape[0]
+            image = cv2.resize(image,None,fx=hiritu,fy=hiritu)
+            txtdatas.append(removal_background(image,rgb,kyoyoucolor))
+        else:
+            hiritu = maxX / shape[1]
+            image = cv2.resize(image,None,fx=hiritu,fy=hiritu)
+            txtdatas.append(removal_background(image,rgb,kyoyoucolor))
+
+    dataslist["Alltxtdatas"] = [txtdatas]
+
+    print("長さ: ",len(txtdatas[0]))
+
+    #-------------------------------------------------------------------------------------------------------
+
+    return dataslist
+    
 
 #-----------------------------------------------------------------------------------------------------------
 
@@ -663,7 +695,7 @@ print_textdatas(dataslist,"Search_Alltxtimages.txt")
 print(f"\nは\n")
 
 
-#-----------------------------------------------------------------------------------------------------------
+#===========================================================================================================
 
 Alltxtdatas = dataslist["Alltxtdatas"][0]
 
@@ -689,7 +721,7 @@ for dataline in range(len(Alltxtdatas)):
 
 retest = Saerch_retest()
 
-
+#-----------------------------------------------------------------------------------------------------------
 
 def test(linelen):
 
@@ -805,7 +837,7 @@ print(f"\n終了します。\n\n⬆ {'='*(linelen-2)}\n")
 import pickle
 
 ### pickleで保存（書き出し
-with open('sample_txtdata.pickle', mode='wb') as fo:
+with open('SET_sample_txtdata.pickle', mode='wb') as fo:
     pickle.dump((dataslist,insert_txtdatas,seach_textdatas), fo)
 
 

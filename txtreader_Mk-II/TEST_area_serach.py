@@ -355,44 +355,6 @@ def list_random_del(datalist):
 
     return datalist
 
-import cv2
-import matplotlib.pyplot as plt
-import numpy as np
-
-import pickle
-
-### pickleで保存したファイルを読み込み
-with open('/Users/matsuurakenshin/WorkSpace/development/sample_txtdata.pickle', mode='br') as fi:
-    dataslist,insert_txtdatas,seach_textdatas = pickle.load(fi)
-
-def keys_print():
-    print(f"\ndataslist_keys:")
-    for info_key in dataslist:
-        print(f">> {info_key}")
-    print()
-
-#------------------------------------------------------------------------------------------------------------------------
-
-def data_print(data,print_on_off):
-    printlist = []
-    for line in data:
-        printtxt = " ["
-        for txt in line:
-            printtxt = printtxt + txt + " "
-        
-        printtxt = printtxt[:-1] + "]"
-    
-        printlist.append(printtxt)
-
-    printlist[0] = "[" + printlist[0][1:]
-    printlist[-1] = printlist[-1] + "]"
-
-    if print_on_off == 1:
-        for line in printlist:
-            print(line)
-        
-    return printlist
-
 #------------------------------------------------------------------------------------------------------------------------
 
 import cv2
@@ -402,7 +364,10 @@ import numpy as np
 import pickle
 
 ### pickleで保存したファイルを読み込み
-with open('/Users/matsuurakenshin/WorkSpace/development/sample_txtdata.pickle', mode='br') as fi:
+normal = '/Users/matsuurakenshin/WorkSpace/development/sample_txtdata.pickle'
+set = "/Users/matsuurakenshin/WorkSpace/development/txtreader/SET_sample_txtdata.pickle"
+
+with open(set, mode='br') as fi:
     dataslist,insert_txtdatas,seach_textdatas = pickle.load(fi)
 
 def keys_print():
@@ -708,7 +673,7 @@ def NEW_search(txtimage,search_txtdata,dataslist):
     anser_data = data_print(anser_data,0)
 
 
-    image_str[false0_position] = "+"
+    image_str[false0_position] = "#"
     image_str = data_print(image_str,0)
 
 
@@ -717,7 +682,7 @@ def NEW_search(txtimage,search_txtdata,dataslist):
     search_str = np.array(search_data,dtype=str)
     search_str[search_str == "0"] = "."
     search_str[search_str == "1"] = " "
-    search_str[rest0_position] = "+"
+    search_str[rest0_position] = "#"
 
     search_str = data_print(search_str,0)
 
@@ -837,6 +802,9 @@ def TEST_area_search(txtimage,search_txtdata):
 
             for printline in printlist:
                 f.write(printline)
+
+        else:
+            f.write(" >> Xx_None_data_xX\n\n >> Xx_None_data_xX\n")
     
     return M_printlist,P_printlist
 
