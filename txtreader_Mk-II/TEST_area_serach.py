@@ -242,9 +242,6 @@ def SET_data(datas):
         Lineslist.append(len(Allprint_txt)-1)
     
     #return Allprint_txt
-    
-    for line in Allprint_txt:
-        print(line[:9])
 
     set_datas = SET_txts(Allprint_txt,0,0)
 
@@ -377,7 +374,7 @@ def data_print(data,print_on_off):
         
     return printlist
 
-#------------------------------------------------------------------------------------------------------------------------
+#========================================================================================================================
 
 def area_search(sample_txtdata,centerYX,search_area_XY):
     shape = np.shape(sample_txtdata)
@@ -447,6 +444,7 @@ def area_search(sample_txtdata,centerYX,search_area_XY):
 
     print(count)
 
+#------------------------------------------------------------------------------------------------------------------------
 
 def print_area_search(sample_txtdata,centerYX,search_area_XY):
 
@@ -604,6 +602,8 @@ radius .
 
 '''
 
+#========================================================================================================================
+
 def removal_background(color_image,RGB,kyoyou): #写真のNumPy配列を渡すと戻り値として背景を１とし、それ以外を0に置き換えた配列が戻ってくる。
     background_color = np.array(RGB)
 
@@ -719,6 +719,11 @@ set = "/Users/matsuurakenshin/WorkSpace/development/txtreader/SET_sample_txtdata
 with open(set, mode='br') as fi:
     dataslist,insert_txtdatas,seach_textdatas = pickle.load(fi)
 
+with open('/Users/matsuurakenshin/WorkSpace/development/txtreader/picture_datas.pickle', mode='br') as fi:
+    dataslist = pickle.load(fi)
+
+
+
 def keys_print():
     print(f"\ndataslist_keys:")
     for info_key in dataslist:
@@ -735,12 +740,15 @@ def TEST_area_search(txtimage,search_txtdata):
     txtimage_copy = copy.copy(txtimage)
     search_txtdata_copy = copy.copy(search_txtdata)
 
+    """
     for line in range (len(Alltxtimages)):
         txt = seach_textdatas[line][3]
 
         if txt == txtimage:
             txtimage = Alltxtimages[line]
             break
+    """
+    txtimage = Alltxtimages[int(txtimage)]
 
     for line in range (len(seach_textdatas)):
         txt = seach_textdatas[line][3]
@@ -814,11 +822,13 @@ sampledatas = []
 
 while if01 == 0:
 
-    search = input(f"\n⬇ {'='*(linelen-2)}\n\n ➡️ 調べたい文字を入力\n ▶️ 調査終了(END)\n回答: ")
+    search,search2=input(f"\n⬇ {'='*(linelen-2)}\n\n ➡️ 調べたい文字を入力\n ▶️ 調査終了(END)\n回答: ").split()
+    print(f"1: {search}, 2: {search2}")
+    #search = input(f"\n⬇ {'='*(linelen-2)}\n\n ➡️ 調べたい文字を入力\n ▶️ 調査終了(END)\n回答: ")
     if len(search) >= 3 and ((search[0] == "E" or search[0] == "e") and (search[1] == "N" or search[1] == "n") and (search[2] == "D" or search[2] == "d" )): #片方は自分のタイプミスに対応する為のものです。笑
         break
     print(f"\n{'-'*linelen}")
-    search2 = input(f"\n ➡️ 比較したい文字を入力、なければ''と入力\n ▶️ 調査終了(END)\n回答: ")
+    #search2 = input(f"\n ➡️ 比較したい文字を入力、なければ''と入力\n ▶️ 調査終了(END)\n回答: ")
     if len(search2) >= 3 and ((search2[0] == "E" or search2[0] == "e") and (search2[1] == "N" or search2[1] == "n") and (search2[2] == "D" or search2[2] == "d" )):
         break
 

@@ -46,9 +46,43 @@ def image_removal_background(imagename,RGB,kyoyou):
     image = cv2.cvtColor(cv2.imread(imagename),cv2.COLOR_BGR2RGB)
     color_image = np.array(image)
 
+
+    if RGB == "auto":
+
+        #自動背景検出機能
+
+        shape = np.shape(image)
+        a = image.reshape(shape[0] * shape[1],3)
+        u, indices, inverse, counts = np.unique(a, axis=0, return_index=True, return_inverse=True, return_counts=True)
+        #print(u)
+        # [[ 0  0 10 30]
+        #  [20 20 10 10]]
+
+        print()
+
+        #print(indices)
+        # [1 0]
+
+        #print(a[indices])
+        # [[ 0  0 10 30]
+        #  [20 20 10 10]]
+
+        Max = np.amax(counts)
+        print(Max)
+        posishon = np.where(counts == Max)[0]
+        
+        RGB = u[posishon][0].tolist()
+
+        #RGB = [31,31,31]
+
+        print(f"背景色自動検出: {RGB}")
+    else:
+        print(f"背景色指定: {RGB}")
+
+
     dataslist = {}
     dataslist["image"] = image
-    dataslist["RGB"] = RGB
+    dataslist["background_color"] = RGB
     dataslist["kyoyou"] = kyoyou
 
     code0list = removal_background(color_image,RGB,kyoyou)
@@ -327,7 +361,7 @@ with open('/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader_Mk-I
 
 
 def seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
-    rgb = dataslist["RGB"]
+    rgb = dataslist["background_color"]
     kyoyoucolor = dataslist["kyoyou"]
     hiritu = np.shape(txtimage)[1]/np.shape(txtimage)[0]        
     Max = 0
@@ -390,7 +424,7 @@ for imagename in imageslist:
     if imageslist[0] == "/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader_Mk-II/textdata.jpeg":
         dataslist = image_removal_background(imagename,[36,36,36],180)
     else:
-        dataslist = image_removal_background(imagename,[36,36,36],60)
+        dataslist = image_removal_background(imagename,'auto',100)
         
     dataslist = seach_txtposition(dataslist,100)
     dataslist = txtdatas_insert(dataslist)
@@ -401,7 +435,15 @@ for imagename in imageslist:
     #plt.imshow(readtxt_imshow(dataslist))
     #plt.imshow(cv2.resize(txtimage[0][0],dsize=(10,30)))
     #print(txtdata[0][1])
-    #print_textdatas(dataslist,"textdataslist_printfile.txt")
+    print_textdatas(dataslist,"picture_Alltxtdatas.txt")
+
+#-----------------------------------------------------------------------------------------------------------
+
+import pickle
+
+### pickleで保存（書き出し
+with open('picture_datas.pickle', mode='wb') as fo:
+    pickle.dump(dataslist, fo)
 
 #-----------------------------------------------------------------------------------------------------------
 
