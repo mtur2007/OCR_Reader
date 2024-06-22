@@ -357,27 +357,6 @@ def list_random_del(datalist):
 
 #------------------------------------------------------------------------------------------------------------------------
 
-import cv2
-import matplotlib.pyplot as plt
-import numpy as np
-
-import pickle
-
-### pickleで保存したファイルを読み込み
-normal = '/Users/matsuurakenshin/WorkSpace/development/sample_txtdata.pickle'
-set = "/Users/matsuurakenshin/WorkSpace/development/txtreader/SET_sample_txtdata.pickle"
-
-with open(set, mode='br') as fi:
-    dataslist,insert_txtdatas,seach_textdatas = pickle.load(fi)
-
-def keys_print():
-    print(f"\ndataslist_keys:")
-    for info_key in dataslist:
-        print(f">> {info_key}")
-    print()
-
-#------------------------------------------------------------------------------------------------------------------------
-
 def data_print(data,print_on_off):
     printlist = []
     for line in data:
@@ -726,6 +705,25 @@ def NEW_search(txtimage,search_txtdata,dataslist):
 
 
 #------------------------------------------------------------------------------------------------------------------------
+
+import cv2
+import matplotlib.pyplot as plt
+import numpy as np
+
+import pickle
+
+### pickleで保存したファイルを読み込み
+normal = '/Users/matsuurakenshin/WorkSpace/development/sample_txtdata.pickle'
+set = "/Users/matsuurakenshin/WorkSpace/development/txtreader/SET_sample_txtdata.pickle"
+
+with open(set, mode='br') as fi:
+    dataslist,insert_txtdatas,seach_textdatas = pickle.load(fi)
+
+def keys_print():
+    print(f"\ndataslist_keys:")
+    for info_key in dataslist:
+        print(f">> {info_key}")
+    print()
 
 #keys_print()
 Alltxtimages = dataslist["Alltxtimages"][0]
