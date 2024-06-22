@@ -731,7 +731,7 @@ def keys_print():
     print()
 
 #keys_print()
-Alltxtimages = dataslist["Alltxtimages"][0]
+Alltxtimages = dataslist["Alltxtimages"]
 
 def TEST_area_search(txtimage,search_txtdata):
 
@@ -748,7 +748,7 @@ def TEST_area_search(txtimage,search_txtdata):
             txtimage = Alltxtimages[line]
             break
     """
-    txtimage = Alltxtimages[int(txtimage)]
+    txtimage = Alltxtimages[txtimage[0]][txtimage[1]]
 
     for line in range (len(seach_textdatas)):
         txt = seach_textdatas[line][3]
@@ -793,12 +793,21 @@ def TEST_area_search(txtimage,search_txtdata):
     with open('/Users/matsuurakenshin/WorkSpace/development/txtreader/search_area_anser.pickle', mode='br') as fi:
         M_printlist,P_printlist,printlist = pickle.load(fi)
     """
-
     with open("area_search_printfilea.txt","w")as f:
         for line in printlist:
             f.write(line)
-        f.write(f"( \\ : - )\n{M_count}\n\n")
-        f.write(f"( + )\n{P_count}\n\n\n")
+        
+        M_quantity = np.shape(anser1[1])[1]
+        if M_quantity != 0:
+            f.write(f"( \\ : - )\n 要素数: {M_quantity} | 距離配分: {M_count}\n anser > 平均 ; {M_count/M_quantity}\n\n")
+        else:
+            f.write(f"( \\ : - )\n 要素数: -- | 距離配分: --\n anser > 平均 ; --\n\n")
+        
+        P_quantity = np.shape(anser2[1])[1]
+        if P_quantity != 0:
+            f.write(f"( + )\n 要素数: {P_quantity} | 距離配分: {P_count}\n anser > 平均 ; {P_count/P_quantity}\n\n\n")
+        else:
+            f.write(f"( \\ : - )\n 要素数: -- | 距離配分: --\n anser > 問題なし\n\n")
 
         #test = SET_data([M_printlist,P_printlist])
 
@@ -822,13 +831,14 @@ sampledatas = []
 
 while if01 == 0:
 
-    search,search2=input(f"\n⬇ {'='*(linelen-2)}\n\n ➡️ 調べたい文字を入力\n ▶️ 調査終了(END)\n回答: ").split()
-    print(f"1: {search}, 2: {search2}")
-    #search = input(f"\n⬇ {'='*(linelen-2)}\n\n ➡️ 調べたい文字を入力\n ▶️ 調査終了(END)\n回答: ")
-    if len(search) >= 3 and ((search[0] == "E" or search[0] == "e") and (search[1] == "N" or search[1] == "n") and (search[2] == "D" or search[2] == "d" )): #片方は自分のタイプミスに対応する為のものです。笑
+    a,b = input(f"\n⬇ {'='*(linelen-2)}\n\n ➡️ 調べたい文字を入力\n ▶️ 調査終了(END)\n回答: ").split()
+    if a == "#" or b == "#":
         break
+    else:
+        position = [int(a),int(b)]
+
     print(f"\n{'-'*linelen}")
-    #search2 = input(f"\n ➡️ 比較したい文字を入力、なければ''と入力\n ▶️ 調査終了(END)\n回答: ")
+    search2 = input(f"\n ➡️ 比較したい文字を入力、なければ''と入力\n ▶️ 調査終了(END)\n回答: ")
     if len(search2) >= 3 and ((search2[0] == "E" or search2[0] == "e") and (search2[1] == "N" or search2[1] == "n") and (search2[2] == "D" or search2[2] == "d" )):
         break
 
@@ -838,7 +848,7 @@ while if01 == 0:
 
 
 
-    sampledatas.append(TEST_area_search(search,search2))
+    sampledatas.append(TEST_area_search(position,search2))
 
 
 

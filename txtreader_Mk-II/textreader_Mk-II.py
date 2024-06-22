@@ -424,7 +424,7 @@ for imagename in imageslist:
     if imageslist[0] == "/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader_Mk-II/textdata.jpeg":
         dataslist = image_removal_background(imagename,[36,36,36],180)
     else:
-        dataslist = image_removal_background(imagename,'auto',100)
+        dataslist = image_removal_background(imagename,'auto',120)
         
     dataslist = seach_txtposition(dataslist,100)
     dataslist = txtdatas_insert(dataslist)
