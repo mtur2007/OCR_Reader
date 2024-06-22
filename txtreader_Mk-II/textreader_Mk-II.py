@@ -284,10 +284,25 @@ def print_textdatas(dataslist,writefilename):
         for txt in range(len(txtline)):
             if len(txtline[txt]) != 0:
                 if np.shape(txtline[txt])[1] > lineMaxlenx[txt]:
-                    lineMaxlenx[txt] = np.shape(txtline[txt])[1]
-
+                    lineMaxlenx[txt] = np.shape(txtline[txt])[1]    
 
     with open(writefilename,"w") as f:
+        Allprintlist = []
+        print(lineMaxlenx)
+        guide_X = "| "
+        for linenum in range(len(lineMaxlenx)):
+            linelen = (lineMaxlenx[linenum])*2+1
+            Air0 = ( (linelen//2) - len(str(linenum)) ) * " "
+            Air1 = ( (linelen//2) + (linelen%2) )*" "
+            
+            guide_X += Air0 + str(linenum) + Air1 +  " | "
+            #guide_X += Air0 + str(linenum) + Air1 + " | "
+        guide_X = guide_X[:-3]
+        Allprintlist.append(guide_X[:890])
+        Allprintlist.append("")
+        
+        #f.write(f"{guide_X[:890]}\n\n")
+        
         for line in range(len(txtdatas)):
             printlist = []
             txtline = txtdatas[line]
@@ -326,31 +341,76 @@ def print_textdatas(dataslist,writefilename):
                         printlist[y] = (f"{printlist[y]}{Textlen * ' '} | ")
                         y += 1
             
-            printlen = len(printlist[0][:894])
+            printlen = len(printlist[0][:890])
 
             if line != 0:
                 b = printlen
                 if a > b:
-                    f.write(f"\n{a*'-'}\n\n")
+                    Allprintlist.append("")
+                    Allprintlist.append(a*'-')
+                    Allprintlist.append("")
+                    #f.write(f"\n{a*'-'}\n\n")
                 else:
-                    f.write(f"\n{b*'-'}\n\n")
+                    Allprintlist.append("")
+                    Allprintlist.append(b*'-')
+                    Allprintlist.append("")
+                    #f.write(f"\n{b*'-'}\n\n")
                 a = printlen
 
             else:
-                f.write(f"{printlen*'-'}\n\n")
+                Allprintlist.append(printlen*'-')
+                Allprintlist.append("")
+                #f.write(f"{printlen*'-'}\n\n")
                 a = printlen
             
 
             for printline in printlist:
-                f.write("| "+printline[:894]+ "\n")
+                Allprintlist.append("| "+printline[:890])
+                #f.write("| "+printline[:890]+ "\n")
 
-        f.write(f"\n{len(printline[:894])*'-'}")
+        Allprintlist.append("")
+        Allprintlist.append(len(printline[:890])*'-')
+        Allprintlist.append("")
+
+        nowline = 3
+
+        Allprintlist[0] = "   " + Allprintlist[0]
+        Allprintlist[1] = "   " + Allprintlist[1]
+        Allprintlist[2] = " - " + Allprintlist[2]
+        Allprintlist[3] = "   " + Allprintlist[3]
+        
+        for linenum in range(len(lineMaxleny)-0):
+            linelen = lineMaxleny[linenum]
+
+            half = nowline + linelen//2
+
+            for i in range(linelen):
+                i += nowline + 1
+
+                if i == half:
+                    Allprintlist[i] = " " + str(linenum) + " " + Allprintlist[i]
+                else:
+                    Allprintlist[i] = "   " + Allprintlist[i]
+            print(i+2)
+            Allprintlist[i+1] = "   " + Allprintlist[i+1]
+            Allprintlist[i+2] = " - " + Allprintlist[i+2]
+            Allprintlist[i+3] = "   " + Allprintlist[i+3]
+            
+            nowline += linelen + 3
+            #print(nowline)
+
+        for line in Allprintlist:
+            f.write(line + "\n")
+
+        
+        print("長さ: ",nowline)
+
+        #f.write(f"\n{len(printline[:890])*'-'}")
 
 
 #===========================================================================================================
 
 import pickle
-
 
 # seach_textdatas
 with open('/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader_Mk-II/Save_retest.pickle', mode='br') as fi:
