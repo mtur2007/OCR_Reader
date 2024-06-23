@@ -800,16 +800,28 @@ def TEST_area_search(txtimage,search_txtdata,mode,dataslist):
             f.write(line)
         
         M_quantity = np.shape(anser1[1])[1]
+
         if M_quantity != 0:
-            f.write(f"( \\ : - )\n 要素数: {M_quantity} | 距離配分: {M_count}\n anser > 平均 ; {M_count/M_quantity}\n\n")
+            f.write(f"( \\ : - )\n 要素数: {M_quantity} | 距離配分: {M_count}\n > 平均 ; {M_count/M_quantity}\n\n")
+            print(f"( \\ : - )\n 要素数: {M_quantity} | 距離配分: {M_count}\n > 平均 ; {M_count/M_quantity}\n")
+
         else:
-            f.write(f"( \\ : - )\n 要素数: -- | 距離配分: --\n anser > 問題なし\n\n")
+            f.write(f"( \\ : - )\n 要素数: -- | 距離配分: --\n > 平均: --\n\n")
+            print(f"( \\ : - )\n 要素数: -- | 距離配分: --\n > 平均: --\n")
         
         P_quantity = np.shape(anser2[1])[1]
         if P_quantity != 0:
-            f.write(f"( + )\n 要素数: {P_quantity} | 距離配分: {P_count}\n anser > 平均 ; {P_count/P_quantity}\n\n\n")
+            f.write(f"( + )\n 要素数: {P_quantity} | 距離配分: {P_count}\n > 平均 ; {P_count/P_quantity}\n\n")
+            print(f"( + )\n 要素数: {P_quantity} | 距離配分: {P_count}\n > 平均 ; {P_count/P_quantity}\n\n")
+
         else:
-            f.write(f"( \\ : - )\n 要素数: -- | 距離配分: --\n anser > 問題なし\n\n")
+            f.write(f"( \\ : - )\n 要素数: -- | 距離配分: --\n > 平均: --\n\n")
+            print(f"( \\ : - )\n 要素数: -- | 距離配分: --\n > 平均: --\n\n")
+
+        f.write(f"\n >> anser/総距離配分; {M_count+P_count}\n\n\n\n")
+
+
+        print(f" >> anser/総距離配分; {M_count+P_count}")
 
         #test = SET_data([M_printlist,P_printlist])
 
@@ -831,17 +843,13 @@ loop = 0
 
 sampledatas = []
 mode = 0
+modetype = "picture & sample"
+sample = "indent(Y X)"
 
 while loop == 0:
 
     flag = False
     while loop == 0:
-        if mode == 0:
-            modetype = "picture & sample"
-            sample = "indent(Y X)"
-        elif mode == 1:
-            modetype = "sample & sample"
-            sample = "txt"
 
         search = list(input(f"\n{'='*linelen}\n\n ➡️ 調べたい文字を入力  {sample}\n   [ 現在のサーチタイプ: {modetype} ]\n > サーチタイプの変更 : set\n ▶️ 調査終了(END)\n回答: ").split())
         anser0 = search[0]
@@ -851,7 +859,21 @@ while loop == 0:
             break
 
         elif anser0[:3] == "set":
-            mode = int(input(f"\n{'- '*(linelen//2)}\n\n >> サーチタイプの指定 / 0: picture & sample\n    　　　　　　　　　   1: sample  & sample\n回答: "))
+            #mode = int(input(f"\n{'- '*(linelen//2)}\n\n >> サーチタイプの指定 / 0: picture & sample\n    　　　　　　　　　   1: sample  & sample\n回答: "))
+            mode0 = modetype
+
+            if mode == 0:
+                mode = 1
+                modetype = "sample & sample"
+                sample = "txt"
+
+            else:
+                mode = 0
+                modetype = "picture & sample"
+                sample = "indent(Y X)"
+            
+
+            print(f"\n{'- '*(linelen//2)}\n\nサーチタイプを変更しました。\n[ '{mode0}' > '{modetype}' ]")
 
         else:
             if mode == 0:
