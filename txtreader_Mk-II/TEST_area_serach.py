@@ -717,38 +717,40 @@ normal = '/Users/matsuurakenshin/WorkSpace/development/sample_txtdata.pickle'
 set = "/Users/matsuurakenshin/WorkSpace/development/txtreader/SET_sample_txtdata.pickle"
 
 with open(set, mode='br') as fi:
-    dataslist,insert_txtdatas,seach_textdatas = pickle.load(fi)
+    S_dataslist,insert_txtdatas,seach_textdatas = pickle.load(fi)
 
 with open('/Users/matsuurakenshin/WorkSpace/development/txtreader/picture_datas.pickle', mode='br') as fi:
-    dataslist = pickle.load(fi)
+    P_dataslist = pickle.load(fi)
 
 
 
 def keys_print():
     print(f"\ndataslist_keys:")
-    for info_key in dataslist:
+    for info_key in P_dataslist:
         print(f">> {info_key}")
     print()
 
 #keys_print()
-Alltxtimages = dataslist["Alltxtimages"]
 
-def TEST_area_search(txtimage,search_txtdata):
+def TEST_area_search(txtimage,search_txtdata,mode,dataslist):
+
+    Alltxtimages = dataslist["Alltxtimages"]
 
     import copy
 
     txtimage_copy = copy.copy(txtimage)
     search_txtdata_copy = copy.copy(search_txtdata)
 
-    """
-    for line in range (len(Alltxtimages)):
-        txt = seach_textdatas[line][3]
+    if mode == 0:
+        txtimage = Alltxtimages[txtimage[0]][txtimage[1]]
+    else:
+        Alltxtimages = Alltxtimages[0]
+        for line in range (len(Alltxtimages)):
+            txt = seach_textdatas[line][3]
 
-        if txt == txtimage:
-            txtimage = Alltxtimages[line]
-            break
-    """
-    txtimage = Alltxtimages[txtimage[0]][txtimage[1]]
+            if txt == txtimage:
+                txtimage = Alltxtimages[line]
+                break
 
     for line in range (len(seach_textdatas)):
         txt = seach_textdatas[line][3]
@@ -801,7 +803,7 @@ def TEST_area_search(txtimage,search_txtdata):
         if M_quantity != 0:
             f.write(f"( \\ : - )\n 要素数: {M_quantity} | 距離配分: {M_count}\n anser > 平均 ; {M_count/M_quantity}\n\n")
         else:
-            f.write(f"( \\ : - )\n 要素数: -- | 距離配分: --\n anser > 平均 ; --\n\n")
+            f.write(f"( \\ : - )\n 要素数: -- | 距離配分: --\n anser > 問題なし\n\n")
         
         P_quantity = np.shape(anser2[1])[1]
         if P_quantity != 0:
@@ -825,36 +827,63 @@ def TEST_area_search(txtimage,search_txtdata):
 
 linelen = 110
 
-if01 = 0
+loop = 0
 
 sampledatas = []
+mode = 0
 
-while if01 == 0:
+while loop == 0:
 
-    a,b = input(f"\n⬇ {'='*(linelen-2)}\n\n ➡️ 調べたい文字を入力\n ▶️ 調査終了(END)\n回答: ").split()
-    if a == "#" or b == "#":
+    flag = False
+    while loop == 0:
+        if mode == 0:
+            modetype = "picture & sample"
+            sample = "indent(Y X)"
+        elif mode == 1:
+            modetype = "sample & sample"
+            sample = "txt"
+
+        search = list(input(f"\n{'='*linelen}\n\n ➡️ 調べたい文字を入力  {sample}\n   [ 現在のサーチタイプ: {modetype} ]\n > サーチタイプの変更 : set\n ▶️ 調査終了(END)\n回答: ").split())
+        anser0 = search[0]
+
+        if len(anser0) >= 3 and ((anser0[0] == "E" or anser0[0] == "e") and (anser0[1] == "N" or anser0[1] == "n") and (anser0[2] == "D" or anser0[2] == "d" )):
+            flag = True
+            break
+
+        elif anser0[:3] == "set":
+            mode = int(input(f"\n{'- '*(linelen//2)}\n\n >> サーチタイプの指定 / 0: picture & sample\n    　　　　　　　　　   1: sample  & sample\n回答: "))
+
+        else:
+            if mode == 0:
+                position = [int(search[0]),int(search[1])]
+            else:
+                position = anser0
+            break
+    if flag:
         break
-    else:
-        position = [int(a),int(b)]
+    
 
     print(f"\n{'-'*linelen}")
     search2 = input(f"\n ➡️ 比較したい文字を入力、なければ''と入力\n ▶️ 調査終了(END)\n回答: ")
     if len(search2) >= 3 and ((search2[0] == "E" or search2[0] == "e") and (search2[1] == "N" or search2[1] == "n") and (search2[2] == "D" or search2[2] == "d" )):
         break
 
-    print(f"\n⬆ {'='*(linelen-2)}\n")
+    print(f"\n{'='*linelen}\n")
 
 
 
 
-
-    sampledatas.append(TEST_area_search(position,search2))
+    if mode == 0:
+        dataslist = P_dataslist
+    else:
+        dataslist = S_dataslist
+    sampledatas.append(TEST_area_search(position,search2,mode,dataslist))
 
 
 
 
             
-print(f"\n終了します。\n\n⬆ {'='*(linelen-2)}\n")
+print(f"\n{'='*linelen}\n\n終了します。\n")
 """
 import pickle
 
