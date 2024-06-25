@@ -621,9 +621,31 @@ def removal_background(color_image,RGB,kyoyou): #写真のNumPy配列を渡す�
 def NEW_search(txtimage,search_txtdata,dataslist):
     rgb = dataslist["background_color"]
     kyoyoucolor = dataslist["kyoyou"]
-    shape = np.array(search_txtdata[1])
+    S_shape = np.array(search_txtdata[1])
+    P_shape = np.shape(txtimage)
 
-    set_image = removal_background(cv2.resize(txtimage,dsize=(shape[1],shape[0])),rgb,kyoyoucolor)
+    if abs(P_shape[0]-S_shape[0]) < abs(P_shape[1]-S_shape[1]):
+        hiritu = S_shape[0]/P_shape[0]
+        set_image = cv2.resize(txtimage,None,fx=hiritu,fy=hiritu)
+    else:
+        hiritu = S_shape[1]/P_shape[1]
+        set_image = cv2.resize(txtimage,None,fx=hiritu,fy=hiritu)
+
+    
+    set_image = removal_background(set_image,rgb,kyoyoucolor)
+    
+    P_resize = np.shape(set_image)
+    print("picture: ",P_shape)
+    print("picture: ",P_resize)
+    print("search : ",S_shape)
+    sa = S_shape - P_resize
+    
+    s_one = np.ones(S_shape,dtype="i1")
+    start_Y = 0+sa[0]//2
+    start_X = 0+sa[1]//2
+
+    set_image = s_one[start_Y:start_Y+P_resize[0],start_X:start_X+P_resize[1]] = set_image
+    #set_image = removal_background(cv2.resize(txtimage,dsize=(S_shape[1],S_shape[0])),rgb,kyoyoucolor)
 
     anser_data = np.array(set_image,dtype=str)
     image_str = anser_data.copy()
@@ -656,7 +678,7 @@ def NEW_search(txtimage,search_txtdata,dataslist):
     image_str = data_print(image_str,0)
 
 
-    search_data = np.ones(shape,dtype='i1')
+    search_data = np.ones(S_shape,dtype='i1')
     search_data[search_txtdata[2]] = np.array(0)
     search_str = np.array(search_data,dtype=str)
     search_str[search_str == "0"] = "."
@@ -780,14 +802,12 @@ def TEST_area_search(txtimage,search_txtdata,mode,dataslist):
     #anser_area_search = [M_printlist,P_printlist]
 
     
-
+    """
     import pickle
 
     ### pickleで保存（書き出し
     with open('search_area_anser.pickle', mode='wb') as fo:
         pickle.dump((M_printlist,P_printlist,printlist), fo)
-
-    """
 
     import pickle
 
@@ -795,6 +815,7 @@ def TEST_area_search(txtimage,search_txtdata,mode,dataslist):
     with open('/Users/matsuurakenshin/WorkSpace/development/txtreader/search_area_anser.pickle', mode='br') as fi:
         M_printlist,P_printlist,printlist = pickle.load(fi)
     """
+
     with open("area_search_printfilea.txt","w")as f:
         for line in printlist:
             f.write(line)
@@ -837,6 +858,11 @@ def TEST_area_search(txtimage,search_txtdata,mode,dataslist):
     
     return M_printlist,P_printlist
 
+
+
+import time
+
+
 linelen = 110
 
 loop = 0
@@ -844,49 +870,52 @@ loop = 0
 sampledatas = []
 mode = 0
 modetype = "picture & sample"
-sample = "indent(Y X)"
+modetype0 = "sample  & sample"
+example = "indent(Y X)"
+example0 = "    txt    "
+needdatanum0 = 1
+needdatanum = 2
 
 while loop == 0:
 
-    flag = False
-    while loop == 0:
 
-        search = list(input(f"\n{'='*linelen}\n\n ➡️ 調べたい文字を入力  {sample}\n   [ 現在のサーチタイプ: {modetype} ]\n > サーチタイプの変更 : set\n ▶️ 調査終了(END)\n回答: ").split())
-        anser0 = search[0]
+    search = list(input(f"\n{'='*linelen}\n\n → 調べたい文字を入力  {example}\n   [ 現サーチタイプ: '{modetype}', 必要要素数: '{needdatanum}', 入力情報: '{example}' ]" + f'\n   [ 他サーチタイプ: "{modetype0}", 必要要素数: "{needdatanum0}", 入力情報: "{example0}" ]\n ▶ 調査終了(END)\n回答: ').split())
+    anser0 = search[0]
 
-        if len(anser0) >= 3 and ((anser0[0] == "E" or anser0[0] == "e") and (anser0[1] == "N" or anser0[1] == "n") and (anser0[2] == "D" or anser0[2] == "d" )):
-            flag = True
-            break
+    if len(anser0) >= 3 and ((anser0[0] == "E" or anser0[0] == "e") and (anser0[1] == "N" or anser0[1] == "n") and (anser0[2] == "D" or anser0[2] == "d" )):
+        flag = True
+        break
 
-        elif anser0[:3] == "set":
-            #mode = int(input(f"\n{'- '*(linelen//2)}\n\n >> サーチタイプの指定 / 0: picture & sample\n    　　　　　　　　　   1: sample  & sample\n回答: "))
-            mode0 = modetype
+    elif len(search) != needdatanum:
+        #mode = int(input(f"\n{'- '*(linelen//2)}\n\n >> サーチタイプの指定 / 0: picture & sample\n    　　　　　　　　　   1: sample  & sample\n回答: "))
+        modetype0 = modetype
+        example0 = example
+        needdatanum0 = needdatanum
 
-            if mode == 0:
-                mode = 1
-                modetype = "sample & sample"
-                sample = "txt"
-
-            else:
-                mode = 0
-                modetype = "picture & sample"
-                sample = "indent(Y X)"
-            
-
-            print(f"\n{'- '*(linelen//2)}\n\nサーチタイプを変更しました。\n[ '{mode0}' > '{modetype}' ]")
+        if mode == 0:
+            mode = 1
+            modetype = "sample  & sample"
+            example = "    txt    "
+            needdatanum = 1
 
         else:
-            if mode == 0:
-                position = [int(search[0]),int(search[1])]
-            else:
-                position = anser0
-            break
-    if flag:
-        break
-    
+            mode = 0
+            modetype = "picture & sample"
+            example = "indent(Y X)"
+            needdatanum = 2
+
+
+        print(f"\n{'- '*(linelen//2)}\n\nサーチタイプを変更しました。\n[ '{modetype0}' > '{example}' ]")
+
+
+    if mode == 0:
+        position = [int(search[0]),int(search[1])]
+    else:
+        position = anser0
+
 
     print(f"\n{'-'*linelen}")
-    search2 = input(f"\n ➡️ 比較したい文字を入力、なければ''と入力\n ▶️ 調査終了(END)\n回答: ")
+    search2 = input(f"\n → 比較したい文字を入力、なければ''と入力\n ▶ 調査終了(END)\n回答: ")
     if len(search2) >= 3 and ((search2[0] == "E" or search2[0] == "e") and (search2[1] == "N" or search2[1] == "n") and (search2[2] == "D" or search2[2] == "d" )):
         break
 
@@ -899,16 +928,24 @@ while loop == 0:
         dataslist = P_dataslist
     else:
         dataslist = S_dataslist
+
+
+
+    start = time.time()  # 現在時刻（処理開始前）を取得
+
     sampledatas.append(TEST_area_search(position,search2,mode,dataslist))
 
+    end = time.time()  # 現在時刻（処理完了後）を取得
+
+    time_diff = end - start  # 処理完了後の時刻から処理開始前の時刻を減算する
+    print(f"\ntime: {time_diff}")  # 処理にかかった時間データを使用
 
 
-
-            
-print(f"\n{'='*linelen}\n\n終了します。\n")
 """
 import pickle
 
 with open('sample_datas.pickle', mode='wb') as fo:
     pickle.dump((sampledatas), fo)
 """
+
+print(f"\n{'='*linelen}\n\n終了します。\n")
