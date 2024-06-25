@@ -624,29 +624,37 @@ def NEW_search(txtimage,search_txtdata,dataslist):
     S_shape = np.array(search_txtdata[1])
     P_shape = np.shape(txtimage)
 
-    if abs(P_shape[0]-S_shape[0]) < abs(P_shape[1]-S_shape[1]):
+    if abs(P_shape[0]-S_shape[0])/P_shape[0] < abs(P_shape[1]-S_shape[1])/P_shape[1]:
         hiritu = S_shape[0]/P_shape[0]
         set_image = cv2.resize(txtimage,None,fx=hiritu,fy=hiritu)
+        print("縦")
     else:
         hiritu = S_shape[1]/P_shape[1]
         set_image = cv2.resize(txtimage,None,fx=hiritu,fy=hiritu)
-
+        print("横")
     
     set_image = removal_background(set_image,rgb,kyoyoucolor)
     
     P_resize = np.shape(set_image)
-    print("picture: ",P_shape)
-    print("picture: ",P_resize)
-    print("search : ",S_shape)
+    print("picture : ",P_shape)
+    print("picture : ",P_resize)
+    print("search  : ",S_shape)
     sa = S_shape - P_resize
-    
+
     s_one = np.ones(S_shape,dtype="i1")
+    print(np.shape(s_one))
     start_Y = 0+sa[0]//2
     start_X = 0+sa[1]//2
+    print(f"{start_Y}:{start_Y+P_resize[0]}, {start_X}:{start_X+P_resize[1]}")
 
-    set_image = s_one[start_Y:start_Y+P_resize[0],start_X:start_X+P_resize[1]] = set_image
+    s_one[start_Y:start_Y+P_resize[0],start_X:start_X+P_resize[1]] = set_image
+    set_image = s_one
+
+    print(set_image)
+    print("set_image; ",np.shape(set_image))
     #set_image = removal_background(cv2.resize(txtimage,dsize=(S_shape[1],S_shape[0])),rgb,kyoyoucolor)
-
+    "|c|"
+    "|C|"
     anser_data = np.array(set_image,dtype=str)
     image_str = anser_data.copy()
     image_str[image_str == "0"] = "."
