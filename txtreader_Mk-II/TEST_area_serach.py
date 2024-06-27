@@ -624,7 +624,10 @@ def NEW_search(txtimage,search_txtdata,dataslist):
     S_shape = np.array(search_txtdata[1])
     P_shape = np.shape(txtimage)
 
-    if abs(P_shape[0]-S_shape[0])/P_shape[0] < abs(P_shape[1]-S_shape[1])/P_shape[1]:
+    P_XYwariai = P_shape[1] / P_shape[0]
+
+    #if abs(P_shape[0]-S_shape[0])/P_shape[0] < abs(P_shape[1]-S_shape[1])/P_shape[1]:
+    if P_XYwariai < search_txtdata[0]:
         hiritu = S_shape[0]/P_shape[0]
         set_image = cv2.resize(txtimage,None,fx=hiritu,fy=hiritu)
         print("縦")
