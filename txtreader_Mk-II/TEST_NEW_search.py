@@ -684,7 +684,7 @@ while loop == 0:
 
     if search2 != "se":
         print(TEST_area_search(position,search2,mode,dataslist))
-    else:
+    elif search[0] != "all":
         searchlen = len(seach_textdatas)
         dataslist = P_dataslist
         Alltxtimages = dataslist["Alltxtimages"]
@@ -695,7 +695,6 @@ while loop == 0:
 
         Min = 5000
         ansertxt = "?"
-
         for i in range(len(seach_textdatas)):
             if abs(seach_textdatas[i][0] - wariai) < kyoyou:
                 searchtxt = seach_textdatas[i][3]
@@ -705,6 +704,37 @@ while loop == 0:
                     ansertxt = searchtxt
 
         print(f"写真,{position}の\n答えは ' {ansertxt} ' ですか？")
+
+    else:
+
+        dataslist = P_dataslist
+        Alltxtimages = dataslist["Alltxtimages"]
+        searchlen = len(seach_textdatas)
+        kyoyou = 0.15
+
+        for line in range(len(Alltxtimages)):
+            printline = ""
+            for txt in range(len(Alltxtimages[line])):
+    
+                txtimage = Alltxtimages[line][txt]
+
+                wariai = np.shape(txtimage)[1] / np.shape(txtimage)[0]
+                Min = 5000
+                ansertxt = "?"
+                
+                for i in range(searchlen):
+                    if abs(seach_textdatas[i][0] - wariai) < kyoyou:
+                        searchtxt = seach_textdatas[i][3]
+                        anser = TEST_area_search((line,txt),searchtxt,0,dataslist)
+                        if anser < Min:
+                            Min = anser
+                            ansertxt = searchtxt
+                
+                printline += ansertxt
+
+                #print(f"写真,{position}の\n答えは ' {ansertxt} ' ですか？")
+            print(printline)
+
 
 
     end = time.time()  # 現在時刻（処理完了後）を取得
