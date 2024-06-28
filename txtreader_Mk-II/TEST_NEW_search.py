@@ -523,15 +523,12 @@ def NEW_search(txtimage,search_txtdata,dataslist):
     s_one[start_Y:start_Y+P_resize[0],start_X:start_X+P_resize[1]] = set_image
     set_image = s_one
 
-    print(set_image)
-    print("set_image; ",np.shape(set_image))
     #set_image = removal_background(cv2.resize(txtimage,dsize=(S_shape[1],S_shape[0])),rgb,kyoyoucolor)
     "|c|"
     "|C|"
 
     search_data = np.ones(S_shape,dtype='i1')
     search_data[search_txtdata[2]] = np.array(0)
-    print(search_data)
 
     False_position = np.where(set_image != search_data)
     False0_FalsePosition = np.where(search_data[False_position] == 0)
@@ -576,11 +573,6 @@ def TEST_area_search(txtimage,search_txtdata,mode,dataslist):
 
     Alltxtimages = dataslist["Alltxtimages"]
 
-    import copy
-
-    txtimage_copy = copy.copy(txtimage)
-    search_txtdata_copy = copy.copy(search_txtdata)
-
     if mode == 0:
         txtimage = Alltxtimages[txtimage[0]][txtimage[1]]
     else:
@@ -603,8 +595,6 @@ def TEST_area_search(txtimage,search_txtdata,mode,dataslist):
 
     anser1,anser2 = NEW_search(txtimage,search_txtdata,dataslist)
 
-    M_printlist,P_printlist = "",""
-
     if np.shape(anser1[1])[1] != 0:
         M_count = area_search(anser1[0],anser1[1],5)
     else:
@@ -615,21 +605,8 @@ def TEST_area_search(txtimage,search_txtdata,mode,dataslist):
     else:
         P_count = 0
 
-    return [[np.shape(anser1[1])[1],M_count],[np.shape(anser2[1])[1],P_count]]
+    return M_count + P_count
     
-    """
-    import pickle
-
-    ### pickleで保存（書き出し
-    with open('search_area_anser.pickle', mode='wb') as fo:
-        pickle.dump((M_printlist,P_printlist,printlist), fo)
-
-    import pickle
-
-    ### pickleで保存したファイルを読み込み
-    with open('/Users/matsuurakenshin/WorkSpace/development/txtreader/search_area_anser.pickle', mode='br') as fi:
-        M_printlist,P_printlist,printlist = pickle.load(fi)
-    """
 
 
 import time
@@ -687,7 +664,7 @@ while loop == 0:
 
 
     print(f"\n{'-'*linelen}")
-    search2 = input(f"\n → 比較したい文字を入力、なければ''と入力\n ▶ 調査終了(END)\n回答: ")
+    search2 = input(f"\n → 比較したい文字を入力、調査は'se'と入力\n ▶ 調査終了(END)\n回答: ")
     if len(search2) >= 3 and ((search2[0] == "E" or search2[0] == "e") and (search2[1] == "N" or search2[1] == "n") and (search2[2] == "D" or search2[2] == "d" )):
         break
 
@@ -705,7 +682,30 @@ while loop == 0:
 
     start = time.time()  # 現在時刻（処理開始前）を取得
 
-    print(TEST_area_search(position,search2,mode,dataslist))
+    if search2 != "se":
+        print(TEST_area_search(position,search2,mode,dataslist))
+    else:
+        searchlen = len(seach_textdatas)
+        dataslist = P_dataslist
+        Alltxtimages = dataslist["Alltxtimages"]
+        txtimage = Alltxtimages[position[0]][position[1]]
+
+        wariai = np.shape(txtimage)[1] / np.shape(txtimage)[0]
+        kyoyou = 0.15
+
+        Min = 5000
+        ansertxt = "?"
+
+        for i in range(len(seach_textdatas)):
+            if abs(seach_textdatas[i][0] - wariai) < kyoyou:
+                searchtxt = seach_textdatas[i][3]
+                anser = TEST_area_search(position,searchtxt,0,dataslist)
+                if anser < Min:
+                    Min = anser
+                    ansertxt = searchtxt
+
+        print(f"写真,{position}の\n答えは ' {ansertxt} ' ですか？")
+
 
     end = time.time()  # 現在時刻（処理完了後）を取得
 
