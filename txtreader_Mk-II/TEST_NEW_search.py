@@ -376,79 +376,8 @@ def data_print(data,print_on_off):
 
 #========================================================================================================================
 
+
 def area_search(sample_txtdata,centerYX,search_area_XY):
-    shape = np.shape(sample_txtdata)
-    radius = search_area_XY // 2
-
-    count = 0
-
-    for line in range(np.shape(centerYX)[1]):
-        set_y,set_x = centerYX[0][line],centerYX[1][line]
-
-        start_x = set_x - radius
-        start_y = set_y - radius
-
-        Ssax = 0
-        Ssay = 0
-
-        finish_x = set_x + radius + 1
-        finish_y = set_y + radius + 1
-
-        Fsax = finish_x
-        Fsay = finish_y
-
-        if start_x < 0:
-            Ssax = start_x
-            start_x = 0
-
-        if start_y < 0:
-            Ssay = start_y
-            start_y = 0
-
-        if finish_x > (shape[1]):
-            finish_x = shape[1]
-        if finish_y > (shape[0]):
-            finish_y = shape[0]
-
-        Fsax = finish_x - Fsax
-        Fsay = finish_y - Fsay
-
-
-        data_copy = np.array(sample_txtdata.copy())
-        search = np.array(data_copy[start_y:finish_y, start_x:finish_x])
-
-        #data_copy[start_y:finish_y, start_x:finish_x] = search
-
-        center = np.array([radius + (Ssay), radius + (Ssax)])
-        #data_copy[set_y,set_x] = "+"
-
-        sa = np.abs(np.where(search == 0) - center.reshape(2, 1))
-        sa = sa[0] ** 2 + sa[1] ** 2
-        #sa = np.sqrt(sa)
-        if np.shape(sa)[0] != 0:
-            min = np.min(sa)
-            #print(f"MIN: {min}")
-            count += min
-        else:
-            center = np.array((set_y,set_x)).reshape(2, 1)
-            sa = np.abs(np.where(sample_txtdata == 0) - center)
-            sa = sa[0] ** 2 + sa[1] ** 2
-            #sa = np.sqrt(sa)
-
-            if np.shape(sa)[0] != 0:
-                min = np.min(sa)
-                #print(f"MIN: ？{min}")
-                count += min
-            else:
-                print("は？")
-
-    print(count)
-
-#------------------------------------------------------------------------------------------------------------------------
-
-def print_area_search(sample_txtdata,centerYX,search_area_XY):
-
-    printlist = []
 
     shape = np.shape(sample_txtdata)
     radius = search_area_XY // 2
@@ -492,24 +421,7 @@ def print_area_search(sample_txtdata,centerYX,search_area_XY):
 
         #-----------------------------------------------------------------------
 
-        printline = []
-
-        search_copy = np.array(search,dtype=str)
-        search_copy[search == 0] = "."
-        search_copy[search == 1] = " "
-        search_copy[center[0],center[1]] = "+"
-
-        data_copy = np.array(sample_txtdata,dtype=str)
-        data_copy[start_y:finish_y, start_x:finish_x] = search_copy
-
-        for line in data_print(data_copy,0):
-            printline.append(line)
-
         
-        printline.append("")
-
-        #-----------------------------------------------------------------------
-
         center = np.array([radius + (Ssay), radius + (Ssax)])
 
         where_search0 = np.where(search == 0)
@@ -521,15 +433,6 @@ def print_area_search(sample_txtdata,centerYX,search_area_XY):
             min = np.min(sa)
             #print(f"MIN: {min}")
             count += min
-
-            where_min = np.where(sa == min)
-            where_min = np.array((where_search0[0][where_min],where_search0[1][where_min]))
-
-            search_copy[where_min[0],where_min[1]] = "#"
-
-            for line in data_print(search_copy,0):
-                printline.append(line)
-            
 
         else:
 
@@ -545,38 +448,11 @@ def print_area_search(sample_txtdata,centerYX,search_area_XY):
                 #print(f"MIN: ？{min}")
                 count += min
 
-                where_min = np.where(sa == min)
-                where_min = np.array((where_sample0[0][where_min],where_sample0[1][where_min]))
-
-                data_copy[data_copy == "0"] = "."
-                data_copy[data_copy == "1"] = " "
-                data_copy[where_min[0],where_min[1]] = "#"
-
-                for line in data_print(data_copy,0):
-                    printline.append(line)
-
             else:
                 print("は？")
 
-        
-        printline.append("")
 
-        if np.shape(where_search0[0])[0] != 0:
-            for nouse in range(search_area_XY - np.shape(search)[0]):
-                printline.append("")
-
-        printline.append(f" > MIN: {np.sqrt(min)}")
-        #printline.append(f" ▶ count += {min}")
-        printline.append(f"")
-
-        numbers = SET_numbers([[min,count]],1)[0]
-
-        printline.append(f" [ count / plus: {numbers[0]}")
-        printline.append(f"        / total: {numbers[1]} ]")
-
-        printlist.append(printline)
-
-    return printlist,count
+    return count
 
 
 '''
@@ -630,26 +506,20 @@ def NEW_search(txtimage,search_txtdata,dataslist):
     if P_XYwariai < search_txtdata[0]:
         hiritu = S_shape[0]/P_shape[0]
         set_image = cv2.resize(txtimage,None,fx=hiritu,fy=hiritu)
-        print("縦")
+    
     else:
         hiritu = S_shape[1]/P_shape[1]
         set_image = cv2.resize(txtimage,None,fx=hiritu,fy=hiritu)
-        print("横")
     
     set_image = removal_background(set_image,rgb,kyoyoucolor)
     
     P_resize = np.shape(set_image)
-    print("picture : ",P_shape)
-    print("picture : ",P_resize)
-    print("search  : ",S_shape)
     sa = S_shape - P_resize
 
     s_one = np.ones(S_shape,dtype="i1")
-    print(np.shape(s_one))
     start_Y = 0+sa[0]//2
     start_X = 0+sa[1]//2
-    print(f"{start_Y}:{start_Y+P_resize[0]}, {start_X}:{start_X+P_resize[1]}")
-
+    
     s_one[start_Y:start_Y+P_resize[0],start_X:start_X+P_resize[1]] = set_image
     set_image = s_one
 
@@ -658,83 +528,20 @@ def NEW_search(txtimage,search_txtdata,dataslist):
     #set_image = removal_background(cv2.resize(txtimage,dsize=(S_shape[1],S_shape[0])),rgb,kyoyoucolor)
     "|c|"
     "|C|"
-    anser_data = np.array(set_image,dtype=str)
-    image_str = anser_data.copy()
-    image_str[image_str == "0"] = "."
-    image_str[image_str == "1"] = " "
-
-
-    true0_position = np.where(anser_data[search_txtdata[2]] == "0")
-    false0_position = np.where(anser_data[search_txtdata[2]] == "1")
-
-    #print(f"\nwhere_false0:\n{where_false0}\n")
-
-
-    true0_position = (search_txtdata[2][0][true0_position],search_txtdata[2][1][true0_position])
-    false0_position = (search_txtdata[2][0][false0_position],search_txtdata[2][1][false0_position])
-        
-    #print(f"\nfalse0:\n{where_false0}\n")
-
-    anser_data[true0_position] = "."
-    anser_data[false0_position] = "\\"
-    anser_data[anser_data == "1"] = " "
-
-    rest0_position = np.where(anser_data == "0")
-    anser_data[rest0_position] = '+'
-
-    anser_data = data_print(anser_data,0)
-
-
-    image_str[false0_position] = "#"
-    image_str = data_print(image_str,0)
-
 
     search_data = np.ones(S_shape,dtype='i1')
     search_data[search_txtdata[2]] = np.array(0)
-    search_str = np.array(search_data,dtype=str)
-    search_str[search_str == "0"] = "."
-    search_str[search_str == "1"] = " "
-    search_str[rest0_position] = "#"
+    print(search_data)
 
-    search_str = data_print(search_str,0)
+    False_position = np.where(set_image != search_data)
+    False0_FalsePosition = np.where(search_data[False_position] == 0)
+    false0_ImagePosition = (False_position[0][False0_FalsePosition],False_position[1][False0_FalsePosition])
 
-    plus_anser = SET_data([[image_str,search_str]])[0]
+    False1_FalsePosition = np.where(search_data[False_position] == 1)
+    false1_ImagePosition = (False_position[0][False1_FalsePosition],False_position[1][False1_FalsePosition])
+    #print(f"\nwhere_false0:\n{where_false0}\n")
 
-    printlist = []
-
-    printlist.append(f"\n<picture>{((np.shape(set_image)[1])*2 + 1 - 9 + 5)*' '}<search>{((np.shape(set_image)[1])*2 + 1 - 8 + 5)*' '}<anser>\n")
-    #print(f"\n<picture>{((np.shape(set_image)[1])*2 + 1 - 9 + 5)*' '}<search>{((np.shape(set_image)[1])*2 + 1 - 8 + 5)*' '}<anser>")
-
-
-    for i in range(np.shape(set_image)[0]):
-        if i+1 == np.shape(set_image)[0] // 2:
-            printlist.append(f'{set_image[i]} --- {search_data[i]} === {anser_data[i]}\n')
-            #print(f'{set_image[i]} --- {seach_data[i]} === {anser_data[i]}')
-        else:
-            printlist.append(f'{set_image[i]}     {search_data[i]}     {anser_data[i]}\n')
-            #print(f'{set_image[i]}     {seach_data[i]}     {anser_data[i]}')
-
-    printlist.append(f"\n<picture>{((np.shape(set_image)[1])*2 + 1 - 9 + 5)*' '}<search>{((np.shape(set_image)[1])*2 + 1 - 8 + 5)*' '}<anser>\n")
-    for linenum in range(len(plus_anser)):
-        line = plus_anser[linenum]
-        printlist.append(f'{line[0][1:-1]}     {line[1][1:-1]}     {anser_data[linenum]}\n')
-        #print(f'{set_image[i]}     {seach_data[i]}     {anser_data[i]}')
-
-
-    printlist.append(f"\n{(((np.shape(set_image)[1])*2 + 1 + 5)*' ')*2} ▶ [  \\ :無し ][  + :多い ]\n\n")
-    printlist.append(f"{(((np.shape(set_image)[1])*2 + 1 + 5)*' ')*2} > [  . : 文字判定一致 ]\n")
-    printlist.append(f"{(((np.shape(set_image)[1])*2 + 1 + 5)*' ')*2} > [ ' ': 背景判定一致 ]\n")
-
-
-    search0 = np.shape(search_txtdata[2])[1]
-    True0 = np.count_nonzero(set_image[search_txtdata[2]] == 0)
-    printlist.append(f"\n//旧式_合致率: {(True0/search0)*100}% [ 調査要素数: {search0}, 合致数: {True0} ]\n\n")
-
-    #print(f"\n{(((np.shape(set_image)[1])*2 + 1 + 5)*' ')*2} ▶ [  \\ :無し ][  + :多い ]\n")
-    #print(f"{(((np.shape(set_image)[1])*2 + 1 + 5)*' ')*2} > [  . : 文字判定一致 ]")
-    #print(f"{(((np.shape(set_image)[1])*2 + 1 + 5)*' ')*2} > [ ' ': 背景判定一致 ]")
-
-    return [set_image,false0_position],[search_data,rest0_position],printlist
+    return [set_image,false0_ImagePosition],[search_data, false1_ImagePosition]
 
 
 #------------------------------------------------------------------------------------------------------------------------
@@ -794,24 +601,21 @@ def TEST_area_search(txtimage,search_txtdata,mode,dataslist):
 
     #------------------------------------------------------------------------------------------------------------------------
 
-    anser1,anser2,printlist = NEW_search(txtimage,search_txtdata,dataslist)
+    anser1,anser2 = NEW_search(txtimage,search_txtdata,dataslist)
 
     M_printlist,P_printlist = "",""
 
-    printlist.insert(0,f"\n{txtimage_copy} > 比率調整 ▶ {search_txtdata_copy}\n")
-
     if np.shape(anser1[1])[1] != 0:
-        M_printlist,M_count = print_area_search(anser1[0],anser1[1],5)
+        M_count = area_search(anser1[0],anser1[1],5)
     else:
         M_count = 0
 
     if np.shape(anser2[1])[1] != 0:
-        P_printlist,P_count = print_area_search(anser2[0],anser2[1],5)
+        P_count = area_search(anser2[0],anser2[1],5)
     else:
         P_count = 0
 
-    #anser_area_search = [M_printlist,P_printlist]
-
+    return [[np.shape(anser1[1])[1],M_count],[np.shape(anser2[1])[1],P_count]]
     
     """
     import pickle
@@ -826,49 +630,6 @@ def TEST_area_search(txtimage,search_txtdata,mode,dataslist):
     with open('/Users/matsuurakenshin/WorkSpace/development/txtreader/search_area_anser.pickle', mode='br') as fi:
         M_printlist,P_printlist,printlist = pickle.load(fi)
     """
-
-    with open("area_search_printfilea.txt","w")as f:
-        for line in printlist:
-            f.write(line)
-        
-        M_quantity = np.shape(anser1[1])[1]
-
-        if M_quantity != 0:
-            f.write(f"( \\ : - )\n 要素数: {M_quantity} | 距離配分: {M_count}\n > 平均 ; {M_count/M_quantity}\n\n")
-            print(f"( \\ : - )\n 要素数: {M_quantity} | 距離配分: {M_count}\n > 平均 ; {M_count/M_quantity}\n")
-
-        else:
-            f.write(f"( \\ : - )\n 要素数: -- | 距離配分: --\n > 平均: --\n\n")
-            print(f"( \\ : - )\n 要素数: -- | 距離配分: --\n > 平均: --\n")
-        
-        P_quantity = np.shape(anser2[1])[1]
-        if P_quantity != 0:
-            f.write(f"( + )\n 要素数: {P_quantity} | 距離配分: {P_count}\n > 平均 ; {P_count/P_quantity}\n\n")
-            print(f"( + )\n 要素数: {P_quantity} | 距離配分: {P_count}\n > 平均 ; {P_count/P_quantity}\n\n")
-
-        else:
-            f.write(f"( \\ : - )\n 要素数: -- | 距離配分: --\n > 平均: --\n\n")
-            print(f"( \\ : - )\n 要素数: -- | 距離配分: --\n > 平均: --\n\n")
-
-        f.write(f"\n >> anser/総距離配分; {M_count+P_count}\n\n\n\n")
-
-
-        print(f" >> anser/総距離配分; {M_count+P_count}")
-
-        #test = SET_data([M_printlist,P_printlist])
-
-        if M_count != 0 or P_count != 0:
-            TEST_datas = SET_data([M_printlist,P_printlist])
-            printlist = data_border_print(TEST_datas,"Remake_SET.txt")
-
-            for printline in printlist:
-                f.write(printline)
-
-        else:
-            f.write(" >> Xx_None_data_xX\n\n >> Xx_None_data_xX\n")
-    
-    return M_printlist,P_printlist
-
 
 
 import time
@@ -944,7 +705,7 @@ while loop == 0:
 
     start = time.time()  # 現在時刻（処理開始前）を取得
 
-    sampledatas.append(TEST_area_search(position,search2,mode,dataslist))
+    print(TEST_area_search(position,search2,mode,dataslist))
 
     end = time.time()  # 現在時刻（処理完了後）を取得
 
