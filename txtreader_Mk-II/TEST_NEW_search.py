@@ -426,10 +426,10 @@ def area_search(sample_txtdata,centerYX,search_area_XY):
 
         where_search0 = np.where(search == 0)
 
-        sa = np.abs(where_search0 - center.reshape(2, 1))
-        sa = sa[0] ** 2 + sa[1] ** 2
         #sa = np.sqrt(sa)
-        if np.shape(sa)[0] != 0:
+        if np.shape(where_search0)[1] != 0:
+            sa = np.abs(where_search0 - center.reshape(2, 1))
+            sa = sa[0] ** 2 + sa[1] ** 2
             min = np.min(sa)
             #print(f"MIN: {min}")
             count += min
@@ -443,13 +443,9 @@ def area_search(sample_txtdata,centerYX,search_area_XY):
             sa = sa[0] ** 2 + sa[1] ** 2
             #sa = np.sqrt(sa)
 
-            if np.shape(sa)[0] != 0:
-                min = np.min(sa)
-                #print(f"MIN: ？{min}")
-                count += min
-
-            else:
-                print("は？")
+            min = np.min(sa)
+            #print(f"MIN: ？{min}")
+            count += min
 
 
     return count
@@ -655,10 +651,11 @@ def print_area_search(sample_txtdata,centerYX,search_area_XY):
 
         where_search0 = np.where(search == 0)
 
-        sa = np.abs(where_search0 - center.reshape(2, 1))
-        sa = sa[0] ** 2 + sa[1] ** 2
         #sa = np.sqrt(sa)
-        if np.shape(sa)[0] != 0:
+        if np.shape(where_search0)[1] != 0:
+
+            sa = np.abs(where_search0 - center.reshape(2, 1))
+            sa = sa[0] ** 2 + sa[1] ** 2
             min = np.min(sa)
             #print(f"MIN: {min}")
             count += min
@@ -670,7 +667,7 @@ def print_area_search(sample_txtdata,centerYX,search_area_XY):
 
             for line in data_print(search_copy,0):
                 printline.append(line)
-            
+
 
         else:
 
@@ -681,25 +678,22 @@ def print_area_search(sample_txtdata,centerYX,search_area_XY):
             sa = sa[0] ** 2 + sa[1] ** 2
             #sa = np.sqrt(sa)
 
-            if np.shape(sa)[0] != 0:
-                min = np.min(sa)
-                #print(f"MIN: ？{min}")
-                count += min
+            min = np.min(sa)
+            #print(f"MIN: ？{min}")
+            count += min
 
-                where_min = np.where(sa == min)
-                where_min = np.array((where_sample0[0][where_min],where_sample0[1][where_min]))
+            where_min = np.where(sa == min)
+            where_min = np.array((where_sample0[0][where_min],where_sample0[1][where_min]))
 
-                data_copy[data_copy == "0"] = "."
-                data_copy[data_copy == "1"] = " "
-                data_copy[where_min[0],where_min[1]] = "#"
+            data_copy[data_copy == "0"] = "."
+            data_copy[data_copy == "1"] = " "
+            data_copy[where_min[0],where_min[1]] = "#"
 
-                for line in data_print(data_copy,0):
-                    printline.append(line)
+            for line in data_print(data_copy,0):
+                printline.append(line)
 
-            else:
-                print("は？")
 
-        
+
         printline.append("")
 
         if np.shape(where_search0[0])[0] != 0:
@@ -1093,18 +1087,22 @@ while loop == 0:
         Alltxtimages = dataslist["Alltxtimages"]
         txtimage = Alltxtimages[position[0]][position[1]]
 
-        wariai = np.shape(txtimage)[1] / np.shape(txtimage)[0]
-        kyoyou = 0.15
+        if len(txtimage) == 0:
+            ansertxt = (f"[空白]")
 
-        Min = 5000
-        ansertxt = "?"
-        for i in range(len(seach_textdatas)):
-            if abs(seach_textdatas[i][0] - wariai) < kyoyou:
-                searchtxt = seach_textdatas[i][3]
-                anser = TEST_area_search(position,searchtxt,0,dataslist)
-                if anser < Min:
-                    Min = anser
-                    ansertxt = searchtxt
+        else:
+            wariai = np.shape(txtimage)[1] / np.shape(txtimage)[0]
+            kyoyou = 0.15
+
+            Min = 5000
+            ansertxt = "?"
+            for i in range(len(seach_textdatas)):
+                if abs(seach_textdatas[i][0] - wariai) < kyoyou:
+                    searchtxt = seach_textdatas[i][3]
+                    anser = TEST_area_search(position,searchtxt,0,dataslist)
+                    if anser < Min:
+                        Min = anser
+                        ansertxt = searchtxt
 
         print(f"写真,{position}の\n答えは ' {ansertxt} ' ですか？")
 
@@ -1128,20 +1126,23 @@ while loop == 0:
             for txt in range(len(Alltxtimages[line])):
     
                 txtimage = Alltxtimages[line][txt]
+                if len(txtimage) == 0:
+                    printline += " "
 
-                wariai = np.shape(txtimage)[1] / np.shape(txtimage)[0]
-                Min = 5000
-                ansertxt = "?"
-                
-                for i in range(searchlen):
-                    if abs(seach_textdatas[i][0] - wariai) < kyoyou:
-                        searchtxt = seach_textdatas[i][3]
-                        anser = TEST_area_search((line,txt),searchtxt,0,dataslist)
-                        if anser < Min:
-                            Min = anser
-                            ansertxt = searchtxt
-                
-                printline += ansertxt
+                else:
+                    wariai = np.shape(txtimage)[1] / np.shape(txtimage)[0]
+                    Min = 5000
+                    ansertxt = "?"
+                    
+                    for i in range(searchlen):
+                        if abs(seach_textdatas[i][0] - wariai) < kyoyou:
+                            searchtxt = seach_textdatas[i][3]
+                            anser = TEST_area_search((line,txt),searchtxt,0,dataslist)
+                            if anser < Min:
+                                Min = anser
+                                ansertxt = searchtxt
+                    
+                    printline += ansertxt
 
                 #print(f"写真,{position}の\n答えは ' {ansertxt} ' ですか？")
             print(printline)
@@ -1161,4 +1162,4 @@ with open('sample_datas.pickle', mode='wb') as fo:
     pickle.dump((sampledatas), fo)
 """
 
-print(f"\n{'='*linelen}\n\n終了します。\n")
+print(f"\n{'='*linelen}\n\n処理終了。\n")

@@ -493,9 +493,9 @@ for imagename in imageslist:
     if imageslist[0] == "/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader_Mk-II/textdata.jpeg":
         dataslist = image_removal_background(imagename,[36,36,36],180)
     else:
-        dataslist = image_removal_background(imagename,'auto',200)
+        dataslist = image_removal_background(imagename,'auto',120)
         
-    dataslist = seach_txtposition(dataslist,100)
+    dataslist = seach_txtposition(dataslist,'auto')
     dataslist = txtdatas_insert(dataslist)
 
     #print_textdatas(dataslist,"Alltextimages.text")
@@ -506,7 +506,7 @@ for imagename in imageslist:
     #print(txtdata[0][1])
 
     linestart = int(input("データ表示の開始位置\n>"))
-    linefinish = linestart + 2000
+    linefinish = linestart + int(input(f"データ表示の開始位置: {linestart} から表示する長さ\nfinish = strat + 'anser\n>"))
     print_textdatas(dataslist,"picture_Alltxtdatas.txt",linestart,linefinish)
 
 #-----------------------------------------------------------------------------------------------------------
