@@ -289,7 +289,6 @@ def print_textdatas(dataslist,writefilename,linestart,linefinish):
     with open(writefilename,"w") as f:
 
         Allprintlist = []
-        print(lineMaxlenx)
         guide_X = "| "
         for linenum in range(len(lineMaxlenx)):
             linelen = (lineMaxlenx[linenum])*2+1
@@ -342,7 +341,7 @@ def print_textdatas(dataslist,writefilename,linestart,linefinish):
                         printlist[y] = (f"{printlist[y]}{Textlen * ' '} | ")
                         y += 1
             
-            printlen = len(printlist[0])
+            printlen = len(printlist[0].replace('\n', ''))
 
             if line != 0:
                 b = printlen
@@ -383,12 +382,11 @@ def print_textdatas(dataslist,writefilename,linestart,linefinish):
 
         txt1 = Air*" "
         txt2 = Air*"-"
-        Allprintlist[0] = "  " + txt1 + "   " + Allprintlist[0]
+        Allprintlist[0] = "   " + txt1 + Allprintlist[0]
         Allprintlist[1] = "  " + txt1 + " | " + Allprintlist[1]
-        Allprintlist[2] = "  " + txt2 + "   " + Allprintlist[2]
+        Allprintlist[2] = "  " + txt2 + " + " + Allprintlist[2]
         Allprintlist[3] = "  " + txt1 + " | " + Allprintlist[3]
         
-        print("Air: ",Air)
         for linenum in range(len(lineMaxleny)-0):
             linelen = lineMaxleny[linenum]
 
@@ -402,10 +400,11 @@ def print_textdatas(dataslist,writefilename,linestart,linefinish):
                     Allprintlist[i] = " " + ((saAir)*" ") + str(linenum) + " " + " | " + Allprintlist[i]
                 else:
                     Allprintlist[i] = "  " + (Air*" ") + " | " + Allprintlist[i]
-            print(i+2)
+
             Allprintlist[i+1] = "  " + txt1 + " | " + Allprintlist[i+1]
-            Allprintlist[i+2] = "  " + txt2 + "   " + Allprintlist[i+2]
-            Allprintlist[i+3] = "  " + txt1 + " | " + Allprintlist[i+3]
+            Allprintlist[i+2] = "  " + txt2 + " + " + Allprintlist[i+2]
+            if linenum != len(lineMaxleny)-1:
+                Allprintlist[i+3] = "   " + txt1 + guide_X[linestart:linestart+len(Allprintlist[i+5])]
             
             nowline += linelen + 3
             #print(nowline)
@@ -414,7 +413,6 @@ def print_textdatas(dataslist,writefilename,linestart,linefinish):
         for line in Allprintlist:
             f.write(line.replace('\n', '')  + "\n")
         
-        print("長さ: ",nowline)
 
         #f.write(f"\n{len(printline[:890])*'-'}")
 
@@ -507,8 +505,8 @@ for imagename in imageslist:
     #plt.imshow(cv2.resize(txtimage[0][0],dsize=(10,30)))
     #print(txtdata[0][1])
 
-    linestart = 1200
-    linefinish = linestart + 500
+    linestart = int(input("データ表示の開始位置\n>"))
+    linefinish = linestart + 2000
     print_textdatas(dataslist,"picture_Alltxtdatas.txt",linestart,linefinish)
 
 #-----------------------------------------------------------------------------------------------------------
@@ -520,7 +518,7 @@ with open('picture_datas.pickle', mode='wb') as fo:
     pickle.dump(dataslist, fo)
 
 #-----------------------------------------------------------------------------------------------------------
-
+"""
 line,lennum = 0,4
 #txt = textdata[lennum]
 
@@ -535,3 +533,4 @@ if len(txtimage[line][lennum]) != 0:
 
 else:
     print(f"文字は Air判定 です。")
+"""

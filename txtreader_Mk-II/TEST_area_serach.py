@@ -376,76 +376,6 @@ def data_print(data,print_on_off):
 
 #========================================================================================================================
 
-def area_search(sample_txtdata,centerYX,search_area_XY):
-    shape = np.shape(sample_txtdata)
-    radius = search_area_XY // 2
-
-    count = 0
-
-    for line in range(np.shape(centerYX)[1]):
-        set_y,set_x = centerYX[0][line],centerYX[1][line]
-
-        start_x = set_x - radius
-        start_y = set_y - radius
-
-        Ssax = 0
-        Ssay = 0
-
-        finish_x = set_x + radius + 1
-        finish_y = set_y + radius + 1
-
-        Fsax = finish_x
-        Fsay = finish_y
-
-        if start_x < 0:
-            Ssax = start_x
-            start_x = 0
-
-        if start_y < 0:
-            Ssay = start_y
-            start_y = 0
-
-        if finish_x > (shape[1]):
-            finish_x = shape[1]
-        if finish_y > (shape[0]):
-            finish_y = shape[0]
-
-        Fsax = finish_x - Fsax
-        Fsay = finish_y - Fsay
-
-
-        data_copy = np.array(sample_txtdata.copy())
-        search = np.array(data_copy[start_y:finish_y, start_x:finish_x])
-
-        #data_copy[start_y:finish_y, start_x:finish_x] = search
-
-        center = np.array([radius + (Ssay), radius + (Ssax)])
-        #data_copy[set_y,set_x] = "+"
-
-        sa = np.abs(np.where(search == 0) - center.reshape(2, 1))
-        sa = sa[0] ** 2 + sa[1] ** 2
-        #sa = np.sqrt(sa)
-        if np.shape(sa)[0] != 0:
-            min = np.min(sa)
-            #print(f"MIN: {min}")
-            count += min
-        else:
-            center = np.array((set_y,set_x)).reshape(2, 1)
-            sa = np.abs(np.where(sample_txtdata == 0) - center)
-            sa = sa[0] ** 2 + sa[1] ** 2
-            #sa = np.sqrt(sa)
-
-            if np.shape(sa)[0] != 0:
-                min = np.min(sa)
-                #print(f"MIN: ？{min}")
-                count += min
-            else:
-                print("は？")
-
-    print(count)
-
-#------------------------------------------------------------------------------------------------------------------------
-
 def print_area_search(sample_txtdata,centerYX,search_area_XY):
 
     printlist = []
@@ -618,7 +548,7 @@ def removal_background(color_image,RGB,kyoyou): #写真のNumPy配列を渡す�
 
     return code0list
 
-def NEW_search(txtimage,search_txtdata,dataslist):
+def print_NEW_search(txtimage,search_txtdata,dataslist):
     rgb = dataslist["background_color"]
     kyoyoucolor = dataslist["kyoyou"]
     S_shape = np.array(search_txtdata[1])
@@ -752,7 +682,7 @@ set = "/Users/matsuurakenshin/WorkSpace/development/txtreader/SET_sample_txtdata
 with open(set, mode='br') as fi:
     S_dataslist,insert_txtdatas,seach_textdatas = pickle.load(fi)
 
-with open('/Users/matsuurakenshin/WorkSpace/development/txtreader/picture_datas.pickle', mode='br') as fi:
+with open('/Users/matsuurakenshin/WorkSpace/development/picture_datas.pickle', mode='br') as fi:
     P_dataslist = pickle.load(fi)
 
 
@@ -765,7 +695,7 @@ def keys_print():
 
 #keys_print()
 
-def TEST_area_search(txtimage,search_txtdata,mode,dataslist):
+def print_TEST_area_search(txtimage,search_txtdata,mode,dataslist):
 
     Alltxtimages = dataslist["Alltxtimages"]
 
@@ -794,7 +724,7 @@ def TEST_area_search(txtimage,search_txtdata,mode,dataslist):
 
     #------------------------------------------------------------------------------------------------------------------------
 
-    anser1,anser2,printlist = NEW_search(txtimage,search_txtdata,dataslist)
+    anser1,anser2,printlist = print_NEW_search(txtimage,search_txtdata,dataslist)
 
     M_printlist,P_printlist = "",""
 
@@ -944,7 +874,7 @@ while loop == 0:
 
     start = time.time()  # 現在時刻（処理開始前）を取得
 
-    sampledatas.append(TEST_area_search(position,search2,mode,dataslist))
+    sampledatas.append(print_TEST_area_search(position,search2,mode,dataslist))
 
     end = time.time()  # 現在時刻（処理完了後）を取得
 
