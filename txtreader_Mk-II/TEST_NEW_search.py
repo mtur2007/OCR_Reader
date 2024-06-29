@@ -710,7 +710,7 @@ while loop == 0:
         dataslist = P_dataslist
         Alltxtimages = dataslist["Alltxtimages"]
         searchlen = len(seach_textdatas)
-        kyoyou = 0.15
+        kyoyou = 0.2
 
         for line in range(len(Alltxtimages)):
             printline = ""

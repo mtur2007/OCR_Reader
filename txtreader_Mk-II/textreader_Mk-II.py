@@ -4,14 +4,14 @@ import numpy as np
 
 
 #-----------------------------------------------------------------------------------------------------------
-filename = "/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader_Mk-II/image_file_name.txt"
+filename = "/Users/matsuurakenshin/WorkSpace/development/image_file_name.txt"
 imageslist = []
 import os
 if os.path.exists(filename) == False:
     with open("image_file_name.txt","w") as f:
         f.write("image_file_name")
 
-imagenamefile = "/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader_Mk-II/image_file_name.txt"
+imagenamefile = filename
 if os.path.exists(imagenamefile) == True:
     with open(imagenamefile,"r") as f:
         for line in f:
@@ -258,7 +258,7 @@ def txtdatas_insert(dataslist):
 
 #-----------------------------------------------------------------------------------------------------------
 
-def print_textdatas(dataslist,writefilename):
+def print_textdatas(dataslist,writefilename,linestart,linefinish):
     txtdatas = dataslist["Alltxtdatas"]
     lineMaxlenx,lineMaxleny = [],[]
 
@@ -287,6 +287,7 @@ def print_textdatas(dataslist,writefilename):
                     lineMaxlenx[txt] = np.shape(txtline[txt])[1]    
 
     with open(writefilename,"w") as f:
+
         Allprintlist = []
         print(lineMaxlenx)
         guide_X = "| "
@@ -298,7 +299,7 @@ def print_textdatas(dataslist,writefilename):
             guide_X += Air0 + str(linenum) + Air1 +  " | "
             #guide_X += Air0 + str(linenum) + Air1 + " | "
         guide_X = guide_X[:-3]
-        Allprintlist.append(guide_X[:890])
+        Allprintlist.append(guide_X)
         Allprintlist.append("")
         
         #f.write(f"{guide_X[:890]}\n\n")
@@ -341,7 +342,7 @@ def print_textdatas(dataslist,writefilename):
                         printlist[y] = (f"{printlist[y]}{Textlen * ' '} | ")
                         y += 1
             
-            printlen = len(printlist[0][:890])
+            printlen = len(printlist[0])
 
             if line != 0:
                 b = printlen
@@ -365,20 +366,29 @@ def print_textdatas(dataslist,writefilename):
             
 
             for printline in printlist:
-                Allprintlist.append("| "+printline[:890])
+                Allprintlist.append(printline)
                 #f.write("| "+printline[:890]+ "\n")
 
         Allprintlist.append("")
-        Allprintlist.append(len(printline[:890])*'-')
+        Allprintlist.append(len(printline)*'-')
         Allprintlist.append("")
 
         nowline = 3
+        linefinish = linefinish - (len(str(len(lineMaxleny)-1)) + 5)
 
-        Allprintlist[0] = "   " + Allprintlist[0]
-        Allprintlist[1] = "   " + Allprintlist[1]
-        Allprintlist[2] = " - " + Allprintlist[2]
-        Allprintlist[3] = "   " + Allprintlist[3]
+        for line in range (len(Allprintlist)):
+            Allprintlist[line] = Allprintlist[line][linestart:linefinish]
         
+        Air = len(str(len(lineMaxleny)-1))
+
+        txt1 = Air*" "
+        txt2 = Air*"-"
+        Allprintlist[0] = "  " + txt1 + "   " + Allprintlist[0]
+        Allprintlist[1] = "  " + txt1 + " | " + Allprintlist[1]
+        Allprintlist[2] = "  " + txt2 + "   " + Allprintlist[2]
+        Allprintlist[3] = "  " + txt1 + " | " + Allprintlist[3]
+        
+        print("Air: ",Air)
         for linenum in range(len(lineMaxleny)-0):
             linelen = lineMaxleny[linenum]
 
@@ -388,20 +398,21 @@ def print_textdatas(dataslist,writefilename):
                 i += nowline + 1
 
                 if i == half:
-                    Allprintlist[i] = " " + str(linenum) + " " + Allprintlist[i]
+                    saAir = Air-len(str(linenum))
+                    Allprintlist[i] = " " + ((saAir)*" ") + str(linenum) + " " + " | " + Allprintlist[i]
                 else:
-                    Allprintlist[i] = "   " + Allprintlist[i]
+                    Allprintlist[i] = "  " + (Air*" ") + " | " + Allprintlist[i]
             print(i+2)
-            Allprintlist[i+1] = "   " + Allprintlist[i+1]
-            Allprintlist[i+2] = " - " + Allprintlist[i+2]
-            Allprintlist[i+3] = "   " + Allprintlist[i+3]
+            Allprintlist[i+1] = "  " + txt1 + " | " + Allprintlist[i+1]
+            Allprintlist[i+2] = "  " + txt2 + "   " + Allprintlist[i+2]
+            Allprintlist[i+3] = "  " + txt1 + " | " + Allprintlist[i+3]
             
             nowline += linelen + 3
             #print(nowline)
 
-        for line in Allprintlist:
-            f.write(line + "\n")
 
+        for line in Allprintlist:
+            f.write(line.replace('\n', '')  + "\n")
         
         print("長さ: ",nowline)
 
@@ -484,7 +495,7 @@ for imagename in imageslist:
     if imageslist[0] == "/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader_Mk-II/textdata.jpeg":
         dataslist = image_removal_background(imagename,[36,36,36],180)
     else:
-        dataslist = image_removal_background(imagename,'auto',120)
+        dataslist = image_removal_background(imagename,'auto',200)
         
     dataslist = seach_txtposition(dataslist,100)
     dataslist = txtdatas_insert(dataslist)
@@ -495,7 +506,10 @@ for imagename in imageslist:
     #plt.imshow(readtxt_imshow(dataslist))
     #plt.imshow(cv2.resize(txtimage[0][0],dsize=(10,30)))
     #print(txtdata[0][1])
-    print_textdatas(dataslist,"picture_Alltxtdatas.txt")
+
+    linestart = 1200
+    linefinish = linestart + 500
+    print_textdatas(dataslist,"picture_Alltxtdatas.txt",linestart,linefinish)
 
 #-----------------------------------------------------------------------------------------------------------
 
