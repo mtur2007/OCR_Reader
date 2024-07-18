@@ -404,7 +404,7 @@ def print_textdatas(dataslist,writefilename,linestart,linefinish):
             Allprintlist[i+1] = "  " + txt1 + " | " + Allprintlist[i+1]
             Allprintlist[i+2] = "  " + txt2 + " + " + Allprintlist[i+2]
             if linenum != len(lineMaxleny)-1:
-                Allprintlist[i+3] = "   " + txt1 + guide_X[linestart:linestart+len(Allprintlist[i+5])]
+                Allprintlist[i+3] = "   " + txt1 + guide_X[linestart:linestart+len(Allprintlist[i+5])+1]
             
             nowline += linelen + 3
             #print(nowline)
@@ -505,17 +505,22 @@ for imagename in imageslist:
     #plt.imshow(cv2.resize(txtimage[0][0],dsize=(10,30)))
     #print(txtdata[0][1])
 
+    #-----------------------------------------------------------------------------------------------------------
+
+    import pickle
+
+    ### pickleで保存（書き出し
+    with open('picture_datas.pickle', mode='wb') as fo:
+        pickle.dump(dataslist, fo)
+    
+    #-----------------------------------------------------------------------------------------------------------
+
     linestart = int(input("データ表示の開始位置\n>"))
     linefinish = linestart + int(input(f"データ表示の開始位置: {linestart} から表示する長さ\nfinish = strat + 'anser\n>"))
     print_textdatas(dataslist,"picture_Alltxtdatas.txt",linestart,linefinish)
 
 #-----------------------------------------------------------------------------------------------------------
 
-import pickle
-
-### pickleで保存（書き出し
-with open('picture_datas.pickle', mode='wb') as fo:
-    pickle.dump(dataslist, fo)
 
 #-----------------------------------------------------------------------------------------------------------
 """

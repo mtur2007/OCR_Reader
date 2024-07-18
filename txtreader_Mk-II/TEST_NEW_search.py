@@ -998,7 +998,7 @@ def keys_print():
 import time
 
 
-linelen = 110
+linelen = 85
 
 loop = 0
 
@@ -1057,8 +1057,6 @@ while loop == 0:
         break
 
     print(f"\n{'='*linelen}\n")
-
-
 
 
     if mode == 0:
@@ -1154,12 +1152,5 @@ while loop == 0:
         time_diff = end - start  # 処理完了後の時刻から処理開始前の時刻を減算する
         print(f"\ntime: {time_diff}")  # 処理にかかった時間データを使用
 
-
-"""
-import pickle
-
-with open('sample_datas.pickle', mode='wb') as fo:
-    pickle.dump((sampledatas), fo)
-"""
 
 print(f"\n{'='*linelen}\n\n処理終了。\n")

@@ -246,10 +246,11 @@ def SET_data(datas,mode):
         Lineslist.append(len(Allprint_txt)-1)
     
     #return Allprint_txt
+    '''
     print("\nSET_data(datas) ソート結果\n")
     for line in Allprint_txt:
         print(line[:10])
-
+    '''
     set_datas = SET_txts(Allprint_txt,mode,0)
 
     set_shape = []
@@ -461,12 +462,105 @@ if set_numbers == 1:
 
 """
 
+
+#========================================================================================================================
+
 import pickle
 
 ### pickleで保存したファイルを読み込み
 with open('/Users/matsuurakenshin/WorkSpace/development/txtreader/sample_datas.pickle', mode='br') as fi:
     sample_datas = pickle.load(fi)
 
+#------------------------------------------------------------------------------------------------------------------------
+"""
+def data_print(set_data):
+        
+    print(f"\n\n配列の縦表示\n")
+
+    txtlen0 = 0
+
+    for data in set_data:
+        printlist = []
+        Max = 0
+        for line in data:
+            printlist.append(f" '{line}'")
+            if len(printlist[-1]) > Max:
+                Max = len(printlist[-1])
+
+        printlist.insert(0,"[")
+        printlist.append("]")
+        
+        txtlen1 = (Max + 2) * 2 + 1
+        if txtlen0 > txtlen1:
+            print(txtlen0*"-")
+        else:
+            print(txtlen1*"-")
+
+        for linenum in range(len(printlist)):
+            line = printlist[linenum]
+            if linenum != 0 and linenum != len(printlist)-1:
+                print(f"{line}{(Max - len(line))*' '}  |  {(len(line)-3)*'*'}{(Max - len(line))*'.'}  |")
+            else:
+                print(f"{line}{(Max - len(line))*' '}  |  {(Max-1)*' '}|")
+        txtlen0 = txtlen1
+            
+    print(txtlen0*"-")
+"""
+#------------------------------------------------------------------------------------------------------------------------
+
+def data_print(datas):
+    print('\n\n\n'+25*'-/-\\'+'\n')
+    print("配列状態:")
+
+    for linenum in range(len(datas)):
+        txtlen0 = 0
+        if txtlen0 != 0:
+            print(f"{txtlen0*'-'}\n")
+        print(f"\n{100*'='}")
+        linetxt = f" line: {linenum+1} "
+        print(f"[{linetxt}]\n")
+        datasline = datas[linenum]
+        for line in datasline:
+            printdata = []
+            Max = 0
+            for txt in line:
+                printdata.append("|  " + txt)
+                if len(printdata[-1]) > Max:
+                    Max = len(printdata[-1])
+            txtlen1 = (Max + 2) * 2 + 1
+            if txtlen0 > txtlen1:
+                print(txtlen0*"-")
+            else:
+                print(txtlen1*"-")
+            for line in printdata:
+                print(f"{line}{(Max - len(line))*' '}  |  {(len(line)-3)*'*'}{(Max - len(line))*'.'}  |")
+            txtlen0 = txtlen1
+        
+        if len(datasline) == 0:
+            print(" >> Xx_None_data_xX")
+            txtlen0 = 0
+        else:
+            print(txtlen0*"-")
+    
+    print(f"\n{100*'='}")
+
+#------------------------------------------------------------------------------------------------------------------------
+
+def SET_data_print(datas):
+
+    print('\n\n\n'+25*'-/-\\'+'\n')
+
+    TEST_datas = SET_data(datas,0)
+
+    print("\nSET_data(datas) ソート結果\n")
+    for dataline in TEST_datas:
+        print(f"\n{100*'='}\n")
+        if len(dataline) == 0:
+            print('\n'+">> Xx_None_data_xX"+'\n')
+        for line in dataline:
+            print(line[:10])
+
+#------------------------------------------------------------------------------------------------------------------------
 
 #サンプルのデータ
 data_GC_G = sample_datas[0][0]
@@ -480,97 +574,123 @@ data_xa_a = sample_datas[3][1]
 
 
 #サンプルデータの表示
-set_data = data_B3_3[:4]
+datas = [data_B3_3[:4],"",data_xa_x[:4]]
+datas = data_xa_x[:4]
+datas = data_Il_l[:5]
 
-print(set_data)
-if isinstance(set_data[0], list) == False:
-    set_data = [set_data]
-#set_data = data_xa_x[:4]
-print(f"\n\n配列の縦表示\n")
+#datas = [data_B3_B[0],data_B3_3[:2]]
+#datas = [data_B3_B[0]]
+#datas = [["a","a",["a","a",["a","a"]]],["a","a"]]
 
-txtlen0 = 0
+#datas = [["a","a","a","a"],["b","b"],["c","c","c"]]
+#datas = [["a","a","a","a"],["b","b"],[["c","c","c"]]]
+#datas = [["a","a","a","a"],"b","b",[["c","c","c"]]]
 
-for data in set_data:
-    printlist = []
-    Max = 0
-    for line in data:
-        printlist.append(f" '{line}'")
-        if len(printlist[-1]) > Max:
-            Max = len(printlist[-1])
+datas = [[data_B3_3[0]],[data_xa_x[2]],[data_xa_x[2]],data_xa_x[:2]]
+#リストの最適化
 
-    printlist.insert(0,"[")
-    printlist.append("]")
-    
-    txtlen1 = (Max + 2) * 2 + 1
-    if txtlen0 > txtlen1:
-        print(txtlen0*"-")
-    else:
-        print(txtlen1*"-")
 
-    for linenum in range(len(printlist)):
-        line = printlist[linenum]
-        if linenum != 0 and linenum != len(printlist)-1:
-            print(f"{line}{(Max - len(line))*' '}  |  {(len(line)-3)*'*'}{(Max - len(line))*'.'}  |")
+def search_index(datas,index):
+
+    for linenum in datas:
+        line = datas[linenum]
+        if type(line) == list:
+            #print(search_index(line))
+            index = search_index(line,index)
+
         else:
-            print(f"{line}{(Max - len(line))*' '}  |  {(Max-1)*' '}|")
-    txtlen0 = txtlen1
-        
+            #print("1")
+            index += "."
 
-print(txtlen0*"-")
+    txt = ""
+    for data in index[-len(datas):]:
+        if data != ".":
+            txt += data
+    txt = f"[ {txt}:{len(datas)} ] "
+    index = index[:-len(datas)]
+    index.append(txt)
 
-SET_data(set_data,1)
+    #index += str(len(datas))
 
+    return index
+
+def TEST_search_index(datas,index):
+
+    for linenum in datas:
+        line = datas[linenum]
+        if type(line) == list:
+            #print(search_index(line))
+            index = search_index(line,index)
+
+        else:
+            #print("1")
+            index += "."
+
+    txt = ""
+    for data in index[-len(datas):]:
+        if data != ".":
+            txt += data
+    txt = f"[ {txt}:{len(datas)} ] "
+    index = index[:-len(datas)]
+    index.append(txt)
+
+    #index += str(len(datas))
+
+    return index
+
+print("\nリスト構造... 配列に誤りがある場合マーキングされます。")
+index = TEST_search_index(datas,[])[0]
 """
-#データの整列化
-#set_sample = [data_GC_G[:8],data_Il_l[:2],"",data_B3_3[:4],""]
-set_sample = [data_B3_3[:3],data_xa_x[:4]]
+count = 0
+max = 0
+Errtxt = " "*len(index)
+indexlen = []
+
+
+for txtnum in range(len(index)):
+
+    txt = index[txtnum]
+    if txt == "[":
+        count += 1
+        if count > max:
+            indexlen.append([])
+            max = count
+        indexlen[count-1].append([txtnum])
+    elif txt == "]":
+        indexlen[count-1][-1].append(txtnum)
+        count += -1
+
+        if count == 1:
+            
+            if max > 3:
+                for linenum in range(max - 3):
+                    for txtnum in indexlen[linenum+1]:
+                        air = "-"*(txtnum[1] - txtnum[0] -1)
+                        Errtxt = Errtxt[:txtnum[0]]+'^' +air+ '^'+Errtxt[txtnum[1]+1:]
+
+            elif max == 2:
+                for txtnum in indexlen[1]:
+                    air = "-"*(txtnum[1] - txtnum[0] -1)
+                    Errtxt = Errtxt[:txtnum[0]]+'^' +air+ '^'+Errtxt[txtnum[1]+1:]
+            
+            max = 1
+            if len(indexlen) >= 2:
+                for num in indexlen[1]:
+                    index = index[:num[0]] + "{" + index[num[0]+1:]
+                    index = index[:num[1]] + "}" + index[num[1]+1:]
+
+            indexlen = [indexlen[0]]
+
+print(index)
+print(Errtxt)
 
 #配列の状態をプリントするプログラム
+#data_print(datas)
 
-print()
-print()
-print(25*'-/-\\')
-print()
+#列毎にリスト分けした結果
+#SET_data_print(datas)
 
-txtlen0 = 0
-print("配列状態:")
-for linenum in range(len(set_sample)):
-    if txtlen0 != 0:
-        print(f"{txtlen0*'-'}\n")
-    print(f"\n{100*'='}")
-    linetxt = f" line: {linenum+1} "
-    print(f"[{linetxt}]\n")
-    datasline = set_sample[linenum]
-    for line in datasline:
-        printdata = []
-        Max = 0
-        for txt in line:
-            printdata.append("|  " + txt)
-            if len(printdata[-1]) > Max:
-                Max = len(printdata[-1])
-        txtlen1 = (Max + 2) * 2 + 1
-        if txtlen0 > txtlen1:
-            print(txtlen0*"-")
-        else:
-            print(txtlen1*"-")
-        for line in printdata:
-            print(f"{line}{(Max - len(line))*' '}  |  {(len(line)-3)*'*'}{(Max - len(line))*'.'}  |")
-        txtlen0 = txtlen1
-    
-    if len(datasline) == 0:
-        print(" >> Xx_None_data_xX")
-        txtlen0 = 0
-
-#print(f"\n\n{25*'=/=\\'}\n")
-print()
-print()
-print(25*'-/-\\')
-print()
-
-
-TEST_datas = SET_data(set_sample,0)
-
-
+TEST_datas = SET_data(datas,0)
 set_datas = data_border_print(TEST_datas)
 
 with open("Remake_SET.txt","w") as f:
@@ -578,9 +698,5 @@ with open("Remake_SET.txt","w") as f:
         f.write(f"{line}")
 
 
-print()
-print()
-print(25*'-/-\\')
-print()
-
+print('\n\n\n'+25*'-/-\\'+'\n')
 """
