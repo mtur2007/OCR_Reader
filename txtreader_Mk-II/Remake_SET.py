@@ -234,6 +234,8 @@ def SET_data(datas,mode):
         for nouse in range(max):
             printline.append([])
         for data in line:
+            if len(data) == 0:
+                data.append("")
             for dataline in range(len(data)):
                 printline[dataline].append(data[dataline])
 
@@ -300,9 +302,9 @@ def data_border_print(set_data):
         else:
             printlist.append(f"{'-'*linelen0}\n\n")
             if linenum != len(set_data)-1:
-                printlist.append(f" >> Xx_None_data_xX\n\n")
+                printlist.append(f" >> Xx__No_data__xX\n\n")
             else:
-                printlist.append(f" >> Xx_None_data_xX")
+                printlist.append(f" >> Xx__No_data__xX")
             linelen0 = 0
 
     if len(set_data[-1]) != 0:
@@ -537,7 +539,7 @@ def data_print(datas):
             txtlen0 = txtlen1
         
         if len(datasline) == 0:
-            print(" >> Xx_None_data_xX")
+            print(" >> Xx_No_data_xX")
             txtlen0 = 0
         else:
             print(txtlen0*"-")
@@ -556,9 +558,74 @@ def SET_data_print(datas):
     for dataline in TEST_datas:
         print(f"\n{100*'='}\n")
         if len(dataline) == 0:
-            print('\n'+">> Xx_None_data_xX"+'\n')
+            print('\n'+">> Xx_No_data_xX"+'\n')
         for line in dataline:
             print(line[:10])
+
+
+#========================================================================================================================
+
+
+def TEST_search_index(datas,deep,linedeep,index,now_index,txt_deep,Err_index,Err_print):
+    deep += 1 #deepはインデックスの次元測定
+
+    for linenum in range(len(datas)):
+        line = datas[linenum]
+        if linenum == 0:
+            #print()
+            now_index.append(linenum)
+
+        else:
+            now_index[-1] = linenum
+
+        txt = ""
+        for i in now_index:
+            txt += "[" + str(i) + "]"
+        #print(txt)
+        if type(line) == list:
+            #print(search_index(line))
+            linedeep,index,now_index,txt_deep,Err_index,Err_print = TEST_search_index(line,deep,linedeep,index,now_index,txt_deep,Err_index,Err_print)
+
+        else:
+            #リストの最下層の場合の処理
+            index += "."
+            txt_deep.append(deep)
+            linedeep = deep
+        
+        if deep == 1:
+            txt = index[now_index[0]]
+            for i in txt_deep:
+                if i != 3:
+                    Err_index = now_index.copy()
+                    Err_print += (f" ^{(len(txt)-3)*'-'}^")
+                    print(f"list index {now_index} / data: {txt}\n次元数に問題があります。 [ 次元数: {i} ] {{ 想定次元数: 3 }}\n")
+                    break
+            else:
+                Err_print += len(txt)*" "
+        
+            linedeep = deep
+            txt_deep = []
+
+    #print()
+
+    if len(datas) != 0:
+        txt = ""
+        for data in index[-len(datas):]:
+            #if data != ".":
+            txt += data
+
+        txt = f" [ {txt} :{len(datas)} ]"
+        index = index[:-len(datas)]
+    else:
+        txt = " [ nodata :0 ]"
+        print(f"list index: {now_index} / data: {txt}\nデータがありません。※修正は任意\n")
+    index.append(txt)
+
+    #index += str(len(datas))
+    if len(datas) != 0:
+        del now_index[-1]
+
+    return linedeep,index,now_index,txt_deep,Err_index,Err_print
 
 #------------------------------------------------------------------------------------------------------------------------
 
@@ -584,105 +651,26 @@ datas = data_Il_l[:5]
 
 #datas = [["a","a","a","a"],["b","b"],["c","c","c"]]
 #datas = [["a","a","a","a"],["b","b"],[["c","c","c"]]]
-#datas = [["a","a","a","a"],"b","b",[["c","c","c"]]]
+#datas = [["a","a","a","a"],"b","b",[["c","c",["c",["c"],"c"],"c"]]]
 
-datas = [[data_B3_3[0]],[data_xa_x[2]],[data_xa_x[2]],data_xa_x[:2]]
+datas = [[[],data_B3_3[0]],[data_xa_x[2]],[[],data_xa_x[2]],data_xa_x[:2]]
 #リストの最適化
 
+#print("\nリスト構造... 配列に誤りがある場合マーキングされます。")
+#print(f"\n配列例:) [ 1行目[a,a,a], 2行目[b,b], ３行目[c,c,c]]\n\n")
+print()
+linedeep,index,now_index,txt_deep,Err_index,Err_print = TEST_search_index(datas,0,0,[],[],[],"","   ")
+index = index[0]
+print(index)
+print(Err_print)
 
-def search_index(datas,index):
+#index = search_index(datas,[])[0]
+#print(index)
 
-    for linenum in datas:
-        line = datas[linenum]
-        if type(line) == list:
-            #print(search_index(line))
-            index = search_index(line,index)
-
-        else:
-            #print("1")
-            index += "."
-
-    txt = ""
-    for data in index[-len(datas):]:
-        if data != ".":
-            txt += data
-    txt = f"[ {txt}:{len(datas)} ] "
-    index = index[:-len(datas)]
-    index.append(txt)
-
-    #index += str(len(datas))
-
-    return index
-
-def TEST_search_index(datas,index):
-
-    for linenum in datas:
-        line = datas[linenum]
-        if type(line) == list:
-            #print(search_index(line))
-            index = search_index(line,index)
-
-        else:
-            #print("1")
-            index += "."
-
-    txt = ""
-    for data in index[-len(datas):]:
-        if data != ".":
-            txt += data
-    txt = f"[ {txt}:{len(datas)} ] "
-    index = index[:-len(datas)]
-    index.append(txt)
-
-    #index += str(len(datas))
-
-    return index
-
-print("\nリスト構造... 配列に誤りがある場合マーキングされます。")
-index = TEST_search_index(datas,[])[0]
-"""
 count = 0
 max = 0
 Errtxt = " "*len(index)
 indexlen = []
-
-
-for txtnum in range(len(index)):
-
-    txt = index[txtnum]
-    if txt == "[":
-        count += 1
-        if count > max:
-            indexlen.append([])
-            max = count
-        indexlen[count-1].append([txtnum])
-    elif txt == "]":
-        indexlen[count-1][-1].append(txtnum)
-        count += -1
-
-        if count == 1:
-            
-            if max > 3:
-                for linenum in range(max - 3):
-                    for txtnum in indexlen[linenum+1]:
-                        air = "-"*(txtnum[1] - txtnum[0] -1)
-                        Errtxt = Errtxt[:txtnum[0]]+'^' +air+ '^'+Errtxt[txtnum[1]+1:]
-
-            elif max == 2:
-                for txtnum in indexlen[1]:
-                    air = "-"*(txtnum[1] - txtnum[0] -1)
-                    Errtxt = Errtxt[:txtnum[0]]+'^' +air+ '^'+Errtxt[txtnum[1]+1:]
-            
-            max = 1
-            if len(indexlen) >= 2:
-                for num in indexlen[1]:
-                    index = index[:num[0]] + "{" + index[num[0]+1:]
-                    index = index[:num[1]] + "}" + index[num[1]+1:]
-
-            indexlen = [indexlen[0]]
-
-print(index)
-print(Errtxt)
 
 #配列の状態をプリントするプログラム
 #data_print(datas)
@@ -690,6 +678,7 @@ print(Errtxt)
 #列毎にリスト分けした結果
 #SET_data_print(datas)
 
+#データを縦方向に合わせて整列し、結果をファイルに書き込む。
 TEST_datas = SET_data(datas,0)
 set_datas = data_border_print(TEST_datas)
 
@@ -699,4 +688,3 @@ with open("Remake_SET.txt","w") as f:
 
 
 print('\n\n\n'+25*'-/-\\'+'\n')
-"""

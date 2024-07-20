@@ -488,12 +488,15 @@ def seach_txt(txtimage,seach_textdatas,kyoyou,dataslist,txt):
 
 #===========================================================================================================
 
+
+import pickle
+
 for imagename in imageslist:
 
     if imageslist[0] == "/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader_Mk-II/textdata.jpeg":
         dataslist = image_removal_background(imagename,[36,36,36],180)
     else:
-        dataslist = image_removal_background(imagename,'auto',120)
+        dataslist = image_removal_background(imagename,'auto',80)
         
     dataslist = seach_txtposition(dataslist,'auto')
     dataslist = txtdatas_insert(dataslist)
@@ -507,7 +510,6 @@ for imagename in imageslist:
 
     #-----------------------------------------------------------------------------------------------------------
 
-    import pickle
 
     ### pickleで保存（書き出し
     with open('picture_datas.pickle', mode='wb') as fo:

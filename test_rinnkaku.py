@@ -103,7 +103,7 @@ import time
 
 imagename = "/Users/matsuurakenshin/WorkSpace/development/POCARI.png"
 
-dataslist = image_removal_background(imagename,'auto',190)
+dataslist = image_removal_background(imagename,'auto',1)
 
 
 start = time.time()
