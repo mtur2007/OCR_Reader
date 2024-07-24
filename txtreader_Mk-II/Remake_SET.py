@@ -353,7 +353,7 @@ def data_border_print(set_data,guide):
                 set_index += len(line)+3 + 2
 
             else: #データがない時は1文で表示される為、例外処理
-                set_index += 1 +3 + 1
+                set_index += 1 +3
 
 
     return printlist
@@ -611,10 +611,18 @@ def SET_data_print(datas):
 
 #========================================================================================================================
 
-
-def TEST_search_index(datas,deep,deep1,linedeep,index,now_index,list_txts,line_txts,txt_deep,Err_index,Err_print):
+def search_index(datas,deep,linedeep,index,now_index,line_txts):
     deep += 1 #deepはインデックスの次元測定
-    txtline = []
+    line_txts.append('')
+    insert_index = len(line_txts)-1
+
+    if len(now_index) == 0:
+        txt_index = '[]'
+    else:
+        txt_index = ''
+        for i in now_index:
+            txt_index += '['+str(i)+']'
+    txtline = [txt_index]
 
     for linenum in range(len(datas)):
         line = datas[linenum]
@@ -631,67 +639,32 @@ def TEST_search_index(datas,deep,deep1,linedeep,index,now_index,list_txts,line_t
         #print(txt)
         if type(line) == list:
             #print(search_index(line))
-            deep1,linedeep,index,now_index,list_txts,line_txts,txt_deep,Err_index,Err_print = TEST_search_index(line,deep,deep1,linedeep,index,now_index,list_txts,line_txts,txt_deep,Err_index,Err_print)
+            linedeep,index,now_index,line_txts = search_index(line,deep,linedeep,index,now_index,line_txts)
             txtline.append('data_type: list')
         else:
             txtline.append(line)
             #リストの最下層の場合の処理
             index += "."
-            txt_deep.append(deep)
             linedeep = deep
         
-        if deep == 1:
-            txt = index[now_index[0]]
-            for i in txt_deep:
-                if i != 3:
-                    Err_index = now_index.copy()
-                    Err_print += (f" ^{(len(txt)-3)*'-'}^")
-                    print(f"list index {now_index} / data: {txt}\n次元数に問題があります。 [ 次元数: {i} ] {{ 想定次元数: 3 }}\n")
-                    break
-            else:
-                Err_print += len(txt)*" "
-        
-            linedeep = deep
-            txt_deep = []
 
-    txt_index = ''
-    for i in now_index[:-1]:
-        txt_index += '['+str(i)+']'
-    if deep < deep1:
-
-        txtdata = []
-        txtdata.append(txt_index)
-
-        for txt in txtline:
-            txtdata.append(txt)
-
-        txtdata.append('-----------------------------')
-        
-        for data in list_txts[-len(datas):]:
-            for txt in data:
-                txtdata.append(txt)
-        
-        list_txts = list_txts[:-len(datas)]
-        
-        list_txts.append(txtdata)
-
-
+    if len(now_index) == 1:
+        txt_index = '[]'
     else:
-        line_txts.append(txt_index)
-        for txt in txtline[-len(datas):]:
-            line_txts.append(txt)
-        line_txts.append('-----------------------------')
-        list_txts.append(line_txts)
-        line_txts = []
+        txt_index = ''
+        for i in now_index[:-1]:
+            txt_index += '['+str(i)+']'
 
-
+    line_txts[insert_index] = txtline
+    
+    
     if len(datas) != 0:
         txt = ""
         for data in index[-len(datas):]:
             #if data != ".":
             txt += data
 
-        txt = f" [ {txt} :{len(datas)} ]"
+        txt = f" [ {txt} :{len(datas)} ] "
         index = index[:-len(datas)]
     else:
         txt = " [ nodata :0 ]"
@@ -702,8 +675,39 @@ def TEST_search_index(datas,deep,deep1,linedeep,index,now_index,list_txts,line_t
     if len(datas) != 0:
         del now_index[-1]
 
-    deep1 = deep
-    return deep1,linedeep,index,now_index,list_txts,line_txts,txt_deep,Err_index,Err_print
+    return linedeep,index,now_index,line_txts
+
+
+def TEST_search_index(datas):
+    deep,linedeep,index,now_index,line_txts = 0,0,[],[],[]
+    deep += 1 #deepはインデックスの次元測定
+    line_txts.append('')
+    insert_index = len(line_txts)-1
+
+    txtline = ['[]']
+
+    list_txts = []
+
+    for linenum in range(len(datas)):
+        line_txts = []
+        line = datas[linenum]
+        now_index = [linenum]
+        #print(txt)
+        if type(line) == list:
+            #print(search_index(line))
+            linedeep,index,now_index,line_txts = search_index(line,deep,linedeep,index,now_index,line_txts)
+            list_txts.append(line_txts)
+            txtline.append('data_type: list')
+        else:
+            list_txts.append([])
+            txtline.append(line)
+            #リストの最下層の場合の処理
+            index += "."
+            linedeep = deep
+        
+    print(len(list_txts))
+    list_txts.insert(0,[txtline])
+    return list_txts
 
 #------------------------------------------------------------------------------------------------------------------------
 
@@ -723,32 +727,35 @@ datas = [data_B3_3[:4],"",data_xa_x[:4]]
 datas = data_xa_x[:4]
 datas = data_Il_l[:5]
 
-#datas = [data_B3_B[0],data_B3_3[:2]]
+datas = [[data_B3_B[0]],data_B3_3[:2]]
 #datas = [data_B3_B[0]]
-#datas = [["a","a",["a","a",["a","a"]]],["a","a"]]
+#datas = [["a","a",["a","a",["ab","ab"]]],["ab","ab"]]
 
 #datas = [["a","a","a","a"],["b","b"],["c","c","c"]]
 #datas = [["a","a","a","a"],["b","b"],[["c","c","c"]]]
-#datas = [["a","a","a","a"],"b","b",[["c","c",["c",["c"],"c"],"c"]]]
+#datas = [["a","a",["a","a",["a","a"],"a"],"a","a",["a","a"]],[["c","c",["c","c","c"],"c"]]]
 
-datas = [data_B3_3[:2],[data_xa_x[2]],data_Il_l[:3],data_xa_x[:5]]
+#datas = [data_B3_3[:2],[data_xa_x[2]],data_Il_l[:3],data_xa_x[:5]]
 #リストの最適化
 
 #print("\nリスト構造... 配列に誤りがある場合マーキングされます。")
 #print(f"\n配列例:) [ 1行目[a,a,a], 2行目[b,b], ３行目[c,c,c]]\n\n")
 print()
-deep1,linedeep,index,now_index,list_txts,line_txts,txt_deep,Err_index,Err_print = TEST_search_index(datas,0,0,0,[],[],[],[],[],"","   ")
-index = index[0]
-print(index)
-print(Err_print)
-
+list_txts = TEST_search_index(datas)
+'''
+for a in list_txts[1]:
+#    for b in a:
+    for c in a:
+        print(c)
+'''
+'''
+for a in datas[3]:
+    for c in a:
+        print(c)
+'''
 #index = search_index(datas,[])[0]
 #print(index)
 
-count = 0
-max = 0
-Errtxt = " "*len(index)
-indexlen = []
 
 #配列の状態をプリントするプログラム
 #data_print(datas)
@@ -757,15 +764,15 @@ indexlen = []
 #SET_data_print(datas)
 
 #データを縦方向に合わせて整列し、結果をファイルに書き込む。
-TEST_datas = SET_data(datas,0)
+TEST_datas = SET_data(list_txts,0)
 set_datas = data_border_print(TEST_datas,guide=True)
 
 with open("Remake_SET.txt","w") as f:
     for line in set_datas:
         f.write(f"{line}")
-
-for i in list_txts:
+"""
+for i in line_txts:
     for a in i:
         print(a)
-
+"""
 print('\n\n\n'+25*'-/-\\'+'\n')
