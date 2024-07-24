@@ -219,6 +219,7 @@ def SET_data(datas,mode):
 
     Allprint_txt = []
     Lineslist = []
+
     for line in datas:
         # [[],[],[]]
         #  ^  ^  ^
@@ -275,23 +276,28 @@ def data_border_print(set_data,guide):
     linelen0 = 0
 
     if guide == True:
-        max_y = len(set_data)
-        sample_guide = f" {(max_y-1) * ' '} |  "
+        max_leny = len(str(len(set_data)-1))+2
+        sample_guide = f" {max_leny * ' '} |  "
     else:
         sample_guide = "|  "
 
+    list_index = []
     for linenum in range(len(set_data)):
         dataline = set_data[linenum]
         if len(dataline) != 0:
             writeline = []
-            for line in dataline:
-                printline = sample_guide
-                for txt in line:
-                    printline = printline + txt + "  |  "
-                printline = printline[:-2]
+            for linenum in range(len(dataline)):
+                line = dataline[linenum]
+                if linenum != 0:
+                    printline = sample_guide
+                    for txt in line:
+                        printline = printline + txt + "  |  "
+                    printline = printline[:-2]
 
-                writeline.append(printline)
-        
+                    writeline.append(printline)
+                else:
+                    list_index.append(line)
+            
             linelen1 = len(printline)
 
             if linelen0 > linelen1:
@@ -321,14 +327,13 @@ def data_border_print(set_data,guide):
     if len(set_data[-1]) != 0:
         printlist.append(f"{'='*linelen1}\n")
 
-
     if guide == True:
-        max_y = len(set_data)
-        
-        sample_guide = f" {(max_y-1) * ' '} "
+
+        sample_guide = f" {max_leny * ' '} "
         set_index = 1
         for linenum in range(len(set_data)):
             line = set_data[linenum]
+            indexline = list_index[linenum]
 
             if len(line) != 0:
                 guidex0 = sample_guide + "|  "
@@ -336,10 +341,11 @@ def data_border_print(set_data,guide):
                 guidex2 = sample_guide + ':  '
 
                 for txtnum in range(len(line[0])):
-                    txtlen = len(line[0][txtnum]) - len(str(txtnum))
+                    txt_index = indexline[txtnum]
+                    txtlen = len(line[0][txtnum]) - len(str(txt_index))
                     air0 = txtlen//2
                     air1 = air0 + txtlen%2
-                    guidex0 += air0 * ' ' + str(txtnum) + air1 * ' ' + "  |  "
+                    guidex0 += air0 * ' ' + str(txt_index) + air1 * ' ' + "  |  "
                     guidex1 += len(line[0][txtnum]) * "-" + "--|--"
                     guidex2 += len(line[0][txtnum]) * " " + "  :  "
 
@@ -347,10 +353,11 @@ def data_border_print(set_data,guide):
                 printlist.insert(set_index+1,guidex1[:-2]+'\n')
                 printlist[set_index+2] = guidex2[:-2] + '\n'
 
-                set_index_Y = set_index + len(line)//2 + 3
-                printlist[set_index_Y] = ' '+str(linenum) + printlist[set_index_Y][len(str(linenum))+1:]
+                set_index_Y = set_index + (len(line)//2 - len(line)%2) + 3
+                if linenum != 0:
+                    printlist[set_index_Y] = ' ['+str(linenum-1)+']' + printlist[set_index_Y][max_leny+1:]
 
-                set_index += len(line)+3 + 2
+                set_index += len(line)+2 + 2
 
             else: #データがない時は1文で表示される為、例外処理
                 set_index += 1 +3
@@ -647,7 +654,7 @@ def search_index(datas,deep,linedeep,index,now_index,line_txts):
             index += "."
             linedeep = deep
         
-
+    #中身のリスト作成
     if len(now_index) == 1:
         txt_index = '[]'
     else:
@@ -657,7 +664,7 @@ def search_index(datas,deep,linedeep,index,now_index,line_txts):
 
     line_txts[insert_index] = txtline
     
-    
+    #インデックス簡易表現作成
     if len(datas) != 0:
         txt = ""
         for data in index[-len(datas):]:
@@ -681,11 +688,8 @@ def search_index(datas,deep,linedeep,index,now_index,line_txts):
 def TEST_search_index(datas):
     deep,linedeep,index,now_index,line_txts = 0,0,[],[],[]
     deep += 1 #deepはインデックスの次元測定
-    line_txts.append('')
-    insert_index = len(line_txts)-1
 
     txtline = ['[]']
-
     list_txts = []
 
     for linenum in range(len(datas)):
@@ -699,7 +703,6 @@ def TEST_search_index(datas):
             list_txts.append(line_txts)
             txtline.append('data_type: list')
         else:
-            list_txts.append([])
             txtline.append(line)
             #リストの最下層の場合の処理
             index += "."
@@ -727,7 +730,7 @@ datas = [data_B3_3[:4],"",data_xa_x[:4]]
 datas = data_xa_x[:4]
 datas = data_Il_l[:5]
 
-datas = [[data_B3_B[0]],data_B3_3[:2]]
+#datas = [[data_B3_B[0]],data_B3_3[:2]]
 #datas = [data_B3_B[0]]
 #datas = [["a","a",["a","a",["ab","ab"]]],["ab","ab"]]
 
@@ -735,7 +738,7 @@ datas = [[data_B3_B[0]],data_B3_3[:2]]
 #datas = [["a","a","a","a"],["b","b"],[["c","c","c"]]]
 #datas = [["a","a",["a","a",["a","a"],"a"],"a","a",["a","a"]],[["c","c",["c","c","c"],"c"]]]
 
-#datas = [data_B3_3[:2],[data_xa_x[2]],data_Il_l[:3],data_xa_x[:5]]
+datas = [data_B3_3[:2],[data_xa_x[2]],data_Il_l[:3],data_xa_x[:5]]
 #リストの最適化
 
 #print("\nリスト構造... 配列に誤りがある場合マーキングされます。")
