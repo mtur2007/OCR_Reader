@@ -243,6 +243,16 @@ def txtdatas_insert(dataslist):
                 txtdata = ""
 
             txtimages.append(txtimage)
+            '''
+            #表示内容状strに変換
+            a = []
+            for dataline in txtdata:
+                b = ''
+                for data in dataline:
+                    b += str(data) + ' '
+                a.append(b[:-1])
+            txtdatas.append(a)
+            '''
             txtdatas.append(txtdata)
 
         Alltxtimages.append(txtimages)
@@ -516,11 +526,11 @@ for imagename in imageslist:
         pickle.dump(dataslist, fo)
     
     #-----------------------------------------------------------------------------------------------------------
-
+    '''
     linestart = int(input("データ表示の開始位置\n>"))
     linefinish = linestart + int(input(f"データ表示の開始位置: {linestart} から表示する長さ\nfinish = strat + 'anser\n>"))
     print_textdatas(dataslist,"picture_Alltxtdatas.txt",linestart,linefinish)
-
+    '''
 #-----------------------------------------------------------------------------------------------------------
 
 
@@ -541,3 +551,21 @@ if len(txtimage[line][lennum]) != 0:
 else:
     print(f"文字は Air判定 です。")
 """
+#-----------------------------------------------------------------------------------------------------------
+import time
+from SET_datas import SET_list
+
+a = ['a','a',['a',['a','a']]]
+
+y,x = 0,1
+listdata = dataslist["Alltxtdatas"]
+#listdata = dataslist["Alltxtimages"][y][x]
+
+start = time.time()
+set_border_list = SET_list(listdata,guide=True,keep=3)
+finish = time.time()
+print(f'time: {finish - start}')
+
+with open("Remake_SET.txt","w") as f:
+    for line in set_border_list:
+        f.write(f"{line}")
