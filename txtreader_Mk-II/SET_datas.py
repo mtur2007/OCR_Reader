@@ -643,6 +643,8 @@ def search_index(datas,deep,keep_deep,index,now_index,line_txts,keep_linetxts):
     txtline = [txt_index]
     insert_index = len(line_txts)-1
 
+    print(txt_index)
+
     if keep_deep == deep:
 
         keep = 1
@@ -667,7 +669,7 @@ def search_index(datas,deep,keep_deep,index,now_index,line_txts,keep_linetxts):
                 #print(search_index(line))
                 keep_linetxts = ''
                 index,now_index,line_txts,keep_linetxts = search_index(line,deep,keep_deep,index,now_index,line_txts,keep_linetxts)
-                keep_linetxts = str(datatype) +' ['+keep_linetxts[:-1]+']'
+                keep_linetxts = '['+keep_linetxts[:-1]+']'
                 txtline.append(keep_linetxts)
             else:
                 txtline.append(str(line))
@@ -759,6 +761,11 @@ def search_index(datas,deep,keep_deep,index,now_index,line_txts,keep_linetxts):
 
 
 def SET_list(datas,guide,keep):
+    if keep == False:
+        keep = 0
+    else:
+        keep += 1
+
     start = time.time()
 
     deep,keep_deep,index,now_index,line_txts,keep_linetxts = 0,keep,[],[],[],[]

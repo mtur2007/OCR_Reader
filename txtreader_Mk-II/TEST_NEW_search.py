@@ -1066,10 +1066,13 @@ while loop == 0:
 
 
     if search2 != "se":
-
         start = time.time()  # 現在時刻（処理開始前）を取得
 
-        sampledatas.append(print_TEST_area_search(position,search2,mode,dataslist))
+        txtimage = Alltxtimages[position[0]][position[1]]
+        if len(txtimage) == ['']:
+            ansertxt = (f"[空白]")
+        else:
+            sampledatas.append(print_TEST_area_search(position,search2,mode,dataslist))
 
         end = time.time()  # 現在時刻（処理完了後）を取得
 
@@ -1085,7 +1088,8 @@ while loop == 0:
         Alltxtimages = dataslist["Alltxtimages"]
         txtimage = Alltxtimages[position[0]][position[1]]
 
-        if len(txtimage) == 0:
+        print('a',txtimage)
+        if len(txtimage) == '':
             ansertxt = (f"[空白]")
 
         else:

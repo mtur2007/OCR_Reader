@@ -239,8 +239,9 @@ def txtdatas_insert(dataslist):
                         break
 
             else:
-                txtimage = ""
-                txtdata = ""
+                # Air判定の場合は何も入れない。
+                txtimage = [""]
+                txtdata = [""]
 
             txtimages.append(txtimage)
             '''
@@ -506,7 +507,7 @@ for imagename in imageslist:
     if imageslist[0] == "/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader_Mk-II/textdata.jpeg":
         dataslist = image_removal_background(imagename,[36,36,36],180)
     else:
-        dataslist = image_removal_background(imagename,'auto',80)
+        dataslist = image_removal_background(imagename,'auto',100)
         
     dataslist = seach_txtposition(dataslist,'auto')
     dataslist = txtdatas_insert(dataslist)
@@ -555,17 +556,19 @@ else:
 import time
 from SET_datas import SET_list
 
-a = ['a','a',['a',['a','a']]]
+#a = [[[[0,0,0,1,0,0,0],[0,0,0,1,0,0,0]],[],[[0,0,0,1,0,0,0],[0,0,0,1,0,0,0]]],[[[0,0,0,1,0,0,0],[0,0,0,1,0,0,0]]]]
 
 y,x = 0,1
-listdata = dataslist["Alltxtdatas"]
-#listdata = dataslist["Alltxtimages"][y][x]
+listdata = dataslist["Alltxtdatas"][:2]
+#listdata = dataslist["Alltxtimages"][:1]
 
 start = time.time()
-set_border_list = SET_list(listdata,guide=True,keep=3)
+set_border_list = SET_list(listdata,guide=True,keep=2)
 finish = time.time()
 print(f'time: {finish - start}')
 
 with open("Remake_SET.txt","w") as f:
     for line in set_border_list:
         f.write(f"{line}")
+
+print(type([]))
