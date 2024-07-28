@@ -634,7 +634,7 @@ def SET_data_print(datas):
 
 #========================================================================================================================
 
-def search_index(datas,deep,keep_deep,index,now_index,line_txts,keep_linetxts):
+def search_index(datas,deep,keep_deep,keep_finish,index,now_index,line_txts,keep_linetxts):
     deep += 1 #deepはインデックスの次元測定
 
     txt_index = ''
@@ -642,8 +642,6 @@ def search_index(datas,deep,keep_deep,index,now_index,line_txts,keep_linetxts):
         txt_index += '['+str(i)+']'
     txtline = [txt_index]
     insert_index = len(line_txts)-1
-
-    print(txt_index)
 
     if keep_deep == deep:
 
@@ -668,7 +666,7 @@ def search_index(datas,deep,keep_deep,index,now_index,line_txts,keep_linetxts):
             if datatype == list or datatype == np.ndarray:
                 #print(search_index(line))
                 keep_linetxts = ''
-                index,now_index,line_txts,keep_linetxts = search_index(line,deep,keep_deep,index,now_index,line_txts,keep_linetxts)
+                index,now_index,line_txts,keep_linetxts = search_index(line,deep,keep_deep,keep_finish,index,now_index,line_txts,keep_linetxts)
                 keep_linetxts = '['+keep_linetxts[:-1]+']'
                 txtline.append(keep_linetxts)
             else:
@@ -680,7 +678,7 @@ def search_index(datas,deep,keep_deep,index,now_index,line_txts,keep_linetxts):
         line_txts[insert_index] = txtline
     
 
-    elif keep_deep+1 == deep:
+    elif keep_deep < deep <= keep_finish:
 
         for linenum in range(len(datas)):
             line = datas[linenum]
@@ -698,8 +696,9 @@ def search_index(datas,deep,keep_deep,index,now_index,line_txts,keep_linetxts):
             datatype = type(line)
             if datatype == list or datatype == np.ndarray:
                 #print(search_index(line))
-                keep_linetxts += f'[ data_type: {datatype} ] '
-                index,now_index,line_txts,keep_linetxts = search_index(line,deep,keep_deep,index,now_index,line_txts,keep_linetxts)
+                keep_linetxts += f'[ '
+                index,now_index,line_txts,keep_linetxts = search_index(line,deep,keep_deep,keep_finish,index,now_index,line_txts,keep_linetxts)
+                keep_linetxts += '] '
             else:
                 keep_linetxts += str(line)+' '
                 #リストの最下層の場合の処理
@@ -727,7 +726,7 @@ def search_index(datas,deep,keep_deep,index,now_index,line_txts,keep_linetxts):
             datatype = type(line)
             if datatype == list or datatype == np.ndarray:
                 #print(search_index(line))
-                index,now_index,line_txts,keep_linetxts = search_index(line,deep,keep_deep,index,now_index,line_txts,keep_linetxts)
+                index,now_index,line_txts,keep_linetxts = search_index(line,deep,keep_deep,keep_finish,index,now_index,line_txts,keep_linetxts)
                 txtline.append(f'data_type: {datatype}')
             else:
                 txtline.append(str(line))
@@ -760,11 +759,13 @@ def search_index(datas,deep,keep_deep,index,now_index,line_txts,keep_linetxts):
     return index,now_index,line_txts,keep_linetxts
 
 
-def SET_list(datas,guide,keep):
+def SET_list(datas,guide,keep,keeplen):
     if keep == False:
         keep = 0
+        keep_finish = 0
     else:
         keep += 1
+        keep_finish = keep + keeplen
 
     start = time.time()
 
@@ -782,7 +783,7 @@ def SET_list(datas,guide,keep):
         datatype = type(line)
         if  datatype == list or datatype == np.ndarray:
             #print(search_index(line))
-            index,now_index,line_txts,keep_linetxts = search_index(line,deep,keep_deep,index,now_index,line_txts,keep_linetxts)
+            index,now_index,line_txts,keep_linetxts = search_index(line,deep,keep_deep,keep_finish,index,now_index,line_txts,keep_linetxts)
             list_txts.append(line_txts)
             txtline.append(f'data_type: {datatype}')
             indexline.append(index)

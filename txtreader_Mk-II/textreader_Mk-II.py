@@ -556,14 +556,15 @@ else:
 import time
 from SET_datas import SET_list
 
-#a = [[[[0,0,0,1,0,0,0],[0,0,0,1,0,0,0]],[],[[0,0,0,1,0,0,0],[0,0,0,1,0,0,0]]],[[[0,0,0,1,0,0,0],[0,0,0,1,0,0,0]]]]
+#a = [[[[0,0,0,1,0,0,0],[0,0,0,1,0,0,0],[0,0,0,1,0,0,0],[0,0,0,1,0,0,0],[0,0,0,1,0,0,0],[0,0,0,1,0,0,0],[0,0,0,1,0,0,0],[0,0,0,1,0,0,0],[0,0,0,1,0,0,0],[0,0,0,1,0,0,0],[0,0,0,1,0,0,0],[0,0,0,1,0,0,0],[0,0,0,1,0,0,0],[0,0,0,1,0,0,0],[0,0,0,1,0,0,0],[0,0,0,1,0,0,0],[0,0,0,1,0,0,0],[0,0,0,1,0,0,0],[0,0,0,1,0,0,0],[0,0,0,1,0,0,0]],"",[[0,0,0,1,0,0,0],[0,0,0,1,0,0,0]]],[[[0,0,0,1,0,0,0],[0,0,0,1,0,0,0]]]]
 
 y,x = 0,1
-listdata = dataslist["Alltxtdatas"][:2]
-#listdata = dataslist["Alltxtimages"][:1]
+listdata_RGB  = dataslist["Alltxtimages"]
+listdata_T0B1 = dataslist["Alltxtdatas"]
 
 start = time.time()
-set_border_list = SET_list(listdata,guide=True,keep=2)
+set_border_list = SET_list(listdata_RGB,guide=True,keep=2,keeplen=2)
+#set_border_list = SET_list(listdata_T0B1,guide=True,keep=2,keeplen=1)
 finish = time.time()
 print(f'time: {finish - start}')
 
