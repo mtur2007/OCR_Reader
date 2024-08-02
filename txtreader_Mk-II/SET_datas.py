@@ -673,43 +673,45 @@ def search_index(datas,deep,keep_start,keep_finish,index,now_index,line_txts,kee
                 #リストの最下層の場合の処理
                 index += '.'
         print('\n'+('-'*84)+'\n'+txt_index)
-        del MAX_indexlen['[]']
-        print(MAX_indexlen)
-
-        linenum = 0
-        printlist = []
-
-        for keep_linenum in range(len(txtline)):
-            keep_line = txtline[keep_linenum]
-            printlist.append([''])
-            keep_linetxts = ''
-
-            for k, v in MAX_indexlen.items():
-                #print(k,v)
-                for keep_txtnum in range(len(keep_line)):
-                    keep_txts = keep_line[keep_txtnum]
-
-                    if k == keep_txts[0]:
-                        air = (v - len(keep_txts[1])) * ' ' + ' '
-                        keep_linetxts += air + str(keep_txts[1])
-                        if v != len(keep_txts[1]):
-                            printlist.append(['[ len  ]','index: '+ k , 'len: ' + str(v) ,' txtlen: '+str(len(keep_txts))])
-                        #print(keep_txts[0])
-                        break
-                else:
-                    keep_linetxts += v*' ' + ' '
-                    printlist.append(['[ None ]','index: '+ k , 'len: ' + str(v)])
-            
-            print(keep_linetxts)
         
-        if len(printlist) != 0:
+        if len(txtline) != 0:
+
+            del MAX_indexlen['[]']
+            print(MAX_indexlen)
+
+            linenum = 0
+            printlist = []
+
+            for keep_linenum in range(len(txtline)):
+                keep_line = txtline[keep_linenum]
+                printlist.append([''])
+                keep_linetxts = ''
+
+                for k, v in MAX_indexlen.items():
+                    #print(k,v)
+                    for keep_txtnum in range(len(keep_line)):
+                        keep_txts = keep_line[keep_txtnum]
+
+                        if k == keep_txts[0]:
+                            air = (v - len(keep_txts[1])) * ' ' + ' '
+                            keep_linetxts += air + str(keep_txts[1])
+                            if v != len(keep_txts[1]):
+                                printlist.append(['[ len  ]','index: '+ k , 'len: ' + str(v) ,' txtlen: '+str(len(keep_txts))])
+                            #print(keep_txts[0])
+                            break
+                    else:
+                        keep_linetxts += v*' ' + ' '
+                        printlist.append(['[ None ]','index: '+ k , 'len: ' + str(v)])
+                
+                print(keep_linetxts)
+            """
             anser = SET_txts(printlist,0,0)
             for a in anser:
                 txt = ''
                 for b in a:
                     txt += b+' '
                 print(txt)
-
+            """
         MAX_indexlen = {}
 
 

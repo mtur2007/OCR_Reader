@@ -563,7 +563,7 @@ listdata_RGB  = dataslist["Alltxtimages"]
 listdata_T0B1 = dataslist["Alltxtdatas"]
 
 start = time.time()
-set_border_list = SET_list(listdata_RGB[0][0],guide=True,keep_start=1,keeplen=2)
+set_border_list = SET_list(listdata_RGB[:1],guide=True,keep_start=2,keeplen=2)
 #set_border_list = SET_list(listdata_T0B1,guide=True,keep_start=2,keeplen=1)
 finish = time.time()
 print(f'time: {finish - start}')
