@@ -1,4 +1,10 @@
 
+import copy
+import numpy as np
+import time
+import random
+
+
 def Myint(num): #数値の int部分を確実に表示させる様にする自作関数
     for line in range(len(str(num))):
         if str(num)[line] == ".":
@@ -7,11 +13,6 @@ def Myint(num): #数値の int部分を確実に表示させる様にする自�
 
 
 #数値の整列を行う関数
-
-import copy
-import numpy as np
-import time
-
 
 def SET_txt(txtslist,mode,position):
 
@@ -382,10 +383,6 @@ def data_border_print(set_data,guide,indeximage):
     return printlist
 
 
-
-
-import random
-
 def Myrandom(lennum, a,b, numtype):
 
     numberslist = []
@@ -645,6 +642,7 @@ def search_index(datas,deep,keep_start,keep_finish,index,now_index,line_txts,kee
     insert_index = len(line_txts)-1
 
     if keep_start == deep:
+        txtline = []
         MAX_index = []
         MAX_indexlen = []
 
@@ -674,9 +672,11 @@ def search_index(datas,deep,keep_start,keep_finish,index,now_index,line_txts,kee
                 #txtline.append(str(line))
                 #リストの最下層の場合の処理
                 index += '.'
-        #print('\n'+('-'*84)+'\n'+txt_index)
         
-        if len(txtline) != 0:
+        print('\n'+('-'*84)+'\n'+txt_index)
+        
+        if len(datas) >= 2:
+            
             #print(MAX_index)
             #print(MAX_indexlen)
 
@@ -693,40 +693,49 @@ def search_index(datas,deep,keep_start,keep_finish,index,now_index,line_txts,kee
 
 
             linenum = 0
-            printlist = []
+            printlist = [[]]
             keep_linetxts = [txt_index]
+            #del txtline[0]
 
             for keep_linenum in range(len(txtline)):
                 keep_line = txtline[keep_linenum]
-                printlist.append([''])
+                
                 txt = ''
-
+                a = 0
                 for iline,ilen in zip(MAX_index,MAX_indexlen):
                     for keep_txtnum in range(len(keep_line)):
                         keep_txts = keep_line[keep_txtnum]
 
                         if iline == keep_txts[0]:
-                            air = (ilen - len(keep_txts[1])) * ' ' + ' '
-                            txt += air + str(keep_txts[1])
-                            #if ilen != len(keep_txts[1]):
-                                #printlist.append(['[ len  ]','index: '+ str(iline) , 'len: ' + str(ilen) ,' txtlen: '+str(len(keep_txts))])
+                            air = (ilen - len(keep_txts[1])) * ' '
+                            if keep_txts[1][0] == '[':
+                                txt += '[' + air + str(keep_txts[1][1:]) + ' '
+                            else:
+                                txt += air + str(keep_txts[1]) + ' '
+                            if ilen != len(keep_txts[1]):
+                                a = 1
+                                printlist.append(['[ len  ]','index: '+ str(iline) , 'len: ' + str(ilen) ,' txtlen: '+str(len(keep_txts[1]))])
                             #print(keep_txts[0])
                             break
                     else:
                         txt += ilen*' ' + ' '
-                        #printlist.append(['[ None ]','index: '+ str(iline) , 'len: ' + str(ilen)])
-                
+                        a = 1
+                        printlist.append(['[ None ]','index: '+ str(iline) , 'len: ' + str(ilen)])
+
+                if a == 1:
+                    printlist.append('')
+
                 keep_linetxts.append(txt)
-            '''
-            anser = SET_txts(printlist,0,0)
+            
+            if len(printlist) != 1:
+                anser = SET_txts(printlist,0,0)
 
-            for a in anser:
-                txt = ''
-                for b in a:
-                    txt += b+' '
-                print(txt)
-            '''
-
+                for a in anser:
+                    txt = ''
+                    for b in a:
+                        txt += b+' '
+                    print(txt)
+                
         #中身のリスト作成
         line_txts[insert_index] = keep_linetxts
         #line_txts[insert_index] = [('! - NOW_MAKE - '*4)+('!'),('              '*4)+(' ')]

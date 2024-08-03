@@ -1,12 +1,15 @@
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
-
+import os
+import time
+from SET_datas import SET_list
+import pickle
 
 #-----------------------------------------------------------------------------------------------------------
 filename = "/Users/matsuurakenshin/WorkSpace/development/image_file_name.txt"
 imageslist = []
-import os
+
 if os.path.exists(filename) == False:
     with open("image_file_name.txt","w") as f:
         f.write("image_file_name")
@@ -25,7 +28,7 @@ if os.path.exists(imagenamefile) == True:
 
 #-----------------------------------------------------------------------------------------------------------
 
-
+# 輪郭 関連のファイル
 def removal_background(color_image,RGB,kyoyou): #写真のNumPy配列を渡すと戻り値として背景を１とし、それ以外を0に置き換えた配列が戻ってくる。
     background_color = np.array(RGB)
 
@@ -40,7 +43,7 @@ def removal_background(color_image,RGB,kyoyou): #写真のNumPy配列を渡す�
 
     return code0list
 
-
+# 画像処理 関連のファイル
 def image_removal_background(imagename,RGB,kyoyou):
     #image = Image.open(imagename)
     image = cv2.cvtColor(cv2.imread(imagename),cv2.COLOR_BGR2RGB)
@@ -75,9 +78,9 @@ def image_removal_background(imagename,RGB,kyoyou):
 
         #RGB = [31,31,31]
 
-        print(f"背景色自動検出: {RGB}")
-    else:
-        print(f"背景色指定: {RGB}")
+        #print(f"背景色自動検出: {RGB}")
+    #else:
+        #print(f"背景色指定: {RGB}")
 
 
     dataslist = {}
@@ -99,7 +102,6 @@ def image_removal_background(imagename,RGB,kyoyou):
 
     return dataslist
 
-import time
 
 imagename = "/Users/matsuurakenshin/WorkSpace/development/POCARI.png"
 
@@ -119,21 +121,23 @@ for i in range(np.shape(where_0_Y)[0]):
         rinnkaku_X.append(where_0_X[i])
 
 rinkaku = (np.array(rinnkaku_Y), np.array(rinnkaku_X))
-sample = np.where(dataslist["code0list"] == 0)
+#sample = np.where(dataslist["code0list"] == 0)
 
 
-printimage = dataslist["image"]
-print(printimage[0,0])
+### pickleで保存（書き出し）
+with open('data.pickle', mode='wb') as fo:
+  pickle.dump([rinnkaku_X,rinnkaku_Y], fo)
 
-print(rinkaku[0])
-printimage[rinkaku] = (255, 0, 0)
-    
-end = time.time()  
 
-time_diff = end - start  # 処理完了後の時刻から処理開始前の時刻を減算する
-print(f"\ntime: {time_diff}")  # 処理にかかった時間データを使用
 
+"""
+with open("Remake_SET.txt","w") as f:
+    for line in anser:
+        f.write(f"{line}")
+"""
+"""
 # 結果を表示
 cv2.imshow('Green My Characters', printimage)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
+"""
