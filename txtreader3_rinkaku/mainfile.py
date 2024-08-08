@@ -52,7 +52,7 @@ with open("/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader3_rin
 #-----------------------------------------------------------------------------------------------------------
 code0list = dataslist['code0list']
 index0_y,index0_x = np.where(code0list == 0)
-print(index0_y[0],index0_x[0])
+
 search_rinkaku(code0list,[9,14])
 
 """
