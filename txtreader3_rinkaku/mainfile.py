@@ -1,10 +1,10 @@
 import numpy as np
 import time
-from SET_datas import SET_list_noset as SET_list
+from SET_datas import SET_list as SET_list
 
 from A__removal        import image_removal_background
 from B__search_rinkaku import search_Allrinkaku
-from C__sort_rinkaku   import search_rinkaku
+from C__search_B   import search_rinkaku
 
 import pickle
 
@@ -53,7 +53,7 @@ with open("/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader3_rin
 code0list = dataslist['code0list']
 index0_y,index0_x = np.where(code0list == 0)
 
-search_rinkaku(code0list,[9,14])
+search_rinkaku(code0list,[16,10])
 
 """
 with open("Remake_SET.txt","w") as f:

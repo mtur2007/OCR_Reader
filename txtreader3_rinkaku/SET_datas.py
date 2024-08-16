@@ -632,7 +632,11 @@ def SET_data_print(datas):
 
 #========================================================================================================================
 
-def search_index(datas,deep,keep_start,keep_finish,index,now_index,line_txts,keep_linetxts,keep_index,MAX_index,MAX_indexlen):
+def search_index(datas,deep,keep_start,keep_finish,index,now_index,line_txts,keep_linetxts,keep_index,MAX_index,MAX_indexlen,finish_index):
+
+    put_txt = '-'
+    
+
     deep += 1 #deepはインデックスの次元測定
 
     txt_index = ''
@@ -642,9 +646,13 @@ def search_index(datas,deep,keep_start,keep_finish,index,now_index,line_txts,kee
     insert_index = len(line_txts)-1
 
     if keep_start == deep:
+        # < MAX_indexlen > インデックス別整列をする為、linenumの値[リストのインデックス]は使わず、リストの一列毎の階層だげを調べる。
         txtline = []
         MAX_index = []
         MAX_indexlen = []
+        finish_index = {}
+
+        now_index.append('')
 
         keep = 1
         line_txts.append('')
@@ -653,20 +661,30 @@ def search_index(datas,deep,keep_start,keep_finish,index,now_index,line_txts,kee
         for linenum in range(len(datas)):
             keep_index = []
             line = datas[linenum]
-            if linenum == 0:
-                now_index.append(linenum)
-
-            else:
-                now_index[-1] = linenum
+            
+            now_index[-1] = linenum
 
             datatype = type(line)
 
             if datatype == list or datatype == np.ndarray:
                 keep_linetxts = []
-                # < MAX_indexlen > インデックス別整列をする為、linenumの値は使わず、リストの階層だげを調べる。
-                index,now_index,line_txts,keep_linetxts,keep_index,MAX_index,MAX_indexlen = search_index(line,deep,keep_start,keep_finish,index,now_index,line_txts,keep_linetxts,keep_index,MAX_index,MAX_indexlen)
+
+                if ([-1] in MAX_index) == False:
+                    MAX_index.append([-1])
+                    MAX_indexlen.append(1)
+                        #print(MAX_indexlen)
+                else:
+                    if MAX_indexlen[MAX_index.index([-1])] < 1:
+                        MAX_indexlen[MAX_index.index([-1])] = 1
+
+                keep_linetxts.append([[-1],'['])
+                '''
+                ここに '[' を入れるプログラムを作成する。
+                '''
+                index,now_index,line_txts,keep_linetxts,keep_index,MAX_index,MAX_indexlen,finish_index = search_index(line,deep,keep_start,keep_finish,index,now_index,line_txts,keep_linetxts,keep_index,MAX_index,MAX_indexlen,finish_index)
                 #keep_linetxts = '['+keep_linetxts[:-1]+']'
                 #keep_linetxts = keep_linetxts[:-1]
+
                 txtline.append(keep_linetxts)
             else:
                 #txtline.append(str(line))
@@ -699,6 +717,10 @@ def search_index(datas,deep,keep_start,keep_finish,index,now_index,line_txts,kee
             #printlist = [[]]
             keep_linetxts = [txt_index]
             #del txtline[0]
+            search_key = 'None'
+
+            S_onlylist_index = []
+            F_onlylist_index = []
 
             for keep_linenum in range(len(txtline)):
                 keep_line = txtline[keep_linenum]
@@ -708,20 +730,48 @@ def search_index(datas,deep,keep_start,keep_finish,index,now_index,line_txts,kee
                 for iline,ilen in zip(MAX_index,MAX_indexlen):
                     for keep_txtnum in range(len(keep_line)):
                         keep_txts = keep_line[keep_txtnum]
-
+                    
                         if iline == keep_txts[0]:
-                            air = (ilen - len(keep_txts[1])) * ' '
-                            if keep_txts[1][0] == '[':
-                                txt += '[' + air + str(keep_txts[1][1:]) + ' '
+                            if len(keep_txts) == 3:
+                                search_key = str(iline[:-1])
+                                search_finsh = finish_index[search_key]
+                                if search_finsh == iline[-1]:
+                                    txt += '] '
+                                else:
+                                    txt += ilen*put_txt + ' '
+                                    
                             else:
+                                air = (ilen - len(keep_txts[1])) * ' '
                                 txt += air + str(keep_txts[1]) + ' '
-                            if ilen != len(keep_txts[1]):
-                                a = 1
-                                #printlist.append(['[ len  ]','index: '+ str(iline) , 'len: ' + str(ilen) ,' txtlen: '+str(len(keep_txts[1]))])
 
+                                #printlist.append(['[ len  ]','index: '+ str(iline) , 'len: ' + str(ilen) ,' txtlen: '+str(len(keep_txts[1]))])
                             break
+
                     else:
-                        txt += ilen*' ' + ' '
+                        if iline[-1] != -1:
+                            plustxt = ilen*put_txt + ' '
+                            if (str(iline[:-1]) in finish_index) == True:
+                                if str(iline[:-1]) == search_key:
+
+                                    if iline[-1] == search_finsh:
+                                        plustxt = '] '
+
+                                elif finish_index[str(iline[:-1])] == iline[-1]:
+                                    plustxt = '  '
+                                    if (len(txt) in F_onlylist_index) == False:
+                                        F_onlylist_index.append(len(txt))
+
+
+                            txt += plustxt
+
+                        else:
+                            txtlen = len(txt)
+                            if (txtlen in S_onlylist_index) == False:
+                                S_onlylist_index.append(txtlen)
+
+                            txt += '  '
+                            
+
                         #a = 1
                         #printlist.append(['[ None ]','index: '+ str(iline) , 'len: ' + str(ilen)])
 
@@ -729,6 +779,21 @@ def search_index(datas,deep,keep_start,keep_finish,index,now_index,line_txts,kee
                 #     printlist.append('')
 
                 keep_linetxts.append(txt)
+
+            for linenum in range(len(keep_linetxts)-1):
+                linenum += 1
+                for S_index in S_onlylist_index:
+                    line = keep_linetxts[linenum]
+
+                    if line[S_index] == '[':
+                        keep_linetxts[linenum] = line[:S_index] + '(' + line[S_index+1:]
+
+                for F_index in F_onlylist_index:
+                    line = keep_linetxts[linenum]
+
+                    if line[F_index] == ']':
+                        keep_linetxts[linenum] = line[:F_index] + '}' + line[F_index+1:]
+
             
             # if len(printlist) != 1:
             #     anser = SET_txts(printlist,0,0)
@@ -751,37 +816,56 @@ def search_index(datas,deep,keep_start,keep_finish,index,now_index,line_txts,kee
         #     MAX_index.append(keep_index)
         #     MAX_indexlen.append(1)
         
-        keep_index.append('')
+        keep_index.append(-1)
+        now_index.append('')
+        
+        insert_index = keep_index.copy()
+        if (insert_index in MAX_index) == False:
+            MAX_index.append(insert_index)
+            MAX_indexlen.append(1)
+                #print(MAX_indexlen)
+        else:
+            if MAX_indexlen[MAX_index.index(insert_index)] < 1:
+                MAX_indexlen[MAX_index.index(insert_index)] = 1
+
+        keep_linetxts.append([insert_index,'['])
+
 
         for linenum in range(len(datas)):
-            keep_index[-1] = linenum
-            line = datas[linenum]
-            if linenum == 0:
-                #print()
-                now_index.append(linenum)
 
-            else:
-                now_index[-1] = linenum
+            line = datas[linenum]
+
+            keep_index[-1] = linenum
+            now_index[-1] = linenum
 
             #print(txt)
             datatype = type(line)
             if datatype == list or datatype == np.ndarray:
                 #print(search_index(line))
                 #keep_linetxts += f'[ '
-                index,now_index,line_txts,keep_linetxts,keep_index,MAX_index,MAX_indexlen = search_index(line,deep,keep_start,keep_finish,index,now_index,line_txts,keep_linetxts,keep_index,MAX_index,MAX_indexlen) 
+                insert_index = keep_index.copy()
+                if (insert_index in MAX_index) == False:
+                    MAX_index.append(insert_index)
+                    MAX_indexlen.append(5)
+                        #print(MAX_indexlen)
+                else:
+                    if MAX_indexlen[MAX_index.index(insert_index)] < 5:
+                        MAX_indexlen[MAX_index.index(insert_index)] = 5
+
+                keep_linetxts.append([insert_index,'◆list'])
+                '''
+                ここに '[' を入れるプログラムを作成する。
+                '''
+                index,now_index,line_txts,keep_linetxts,keep_index,MAX_index,MAX_indexlen,finish_index = search_index(line,deep,keep_start,keep_finish,index,now_index,line_txts,keep_linetxts,keep_index,MAX_index,MAX_indexlen,finish_index) 
                 #keep_linetxts += '] '
             else:
-                insert_index = keep_index.copy()
-                if linenum == 0:
-                    txt_line = '['+str(line)
-                elif linenum == len(datas)-1:
-                    txt_line = str(line)+']'
-                else:
-                    txt_line = str(line)
+                txt_line = str(line)
                 #key = f'{deep},{linenum}'
 
                 #テキストの場合、中身の長さを入れ
                 
+                insert_index = keep_index.copy()
+
                 if (insert_index in MAX_index) == False:
                     MAX_index.append(insert_index)
                     MAX_indexlen.append(len(txt_line))
@@ -798,6 +882,30 @@ def search_index(datas,deep,keep_start,keep_finish,index,now_index,line_txts,kee
 
                 #リストの最下層の場合の処理
                 index += '.'
+        
+        insert_index = keep_index.copy()
+        insert_index[-1] += 1
+
+        if (insert_index in MAX_index) == False:
+            MAX_index.append(insert_index)
+            MAX_indexlen.append(1)
+                #print(MAX_indexlen)
+        else:
+            if MAX_indexlen[MAX_index.index(insert_index)] < 1:
+                MAX_indexlen[MAX_index.index(insert_index)] = 1
+
+        keep_linetxts.append([insert_index,'','finish'])
+
+        key = str(insert_index[:-1])
+        if (key in finish_index) == False:
+            finish_index[key] = insert_index[-1]
+        else:
+            if finish_index[key] < insert_index[-1]:
+                finish_index[key] = insert_index[-1]
+
+        '''
+        ここに ']' を 入れるプログラムを作成する。
+        '''
 
         del keep_index[-1]
     
@@ -807,14 +915,12 @@ def search_index(datas,deep,keep_start,keep_finish,index,now_index,line_txts,kee
         line_txts.append('')
         insert_index = len(line_txts)-1
 
+        now_index.append('')
+
         for linenum in range(len(datas)):
             line = datas[linenum]
-            if linenum == 0:
-                #print()
-                now_index.append(linenum)
 
-            else:
-                now_index[-1] = linenum
+            now_index[-1] = linenum
 
             txt = ""
             for i in now_index:
@@ -823,7 +929,7 @@ def search_index(datas,deep,keep_start,keep_finish,index,now_index,line_txts,kee
             datatype = type(line)
             if datatype == list or datatype == np.ndarray:
                 #print(search_index(line))
-                index,now_index,line_txts,keep_linetxts,keep_index,MAX_index,MAX_indexlen = search_index(line,deep,keep_start,keep_finish,index,now_index,line_txts,keep_linetxts,keep_index,MAX_index,MAX_indexlen)
+                index,now_index,line_txts,keep_linetxts,keep_index,MAX_index,MAX_indexlen,finish_index = search_index(line,deep,keep_start,keep_finish,index,now_index,line_txts,keep_linetxts,keep_index,MAX_index,MAX_indexlen,finish_index)
                 txtline.append(f'data_type: {datatype}')
             else:
                 txtline.append(str(line))
@@ -852,7 +958,7 @@ def search_index(datas,deep,keep_start,keep_finish,index,now_index,line_txts,kee
         print(f"list index: {now_index} / data: {txt}\nデータがありません。※修正は任意\n")
     index.append(txt)
 
-    return index,now_index,line_txts,keep_linetxts,keep_index,MAX_index,MAX_indexlen
+    return index,now_index,line_txts,keep_linetxts,keep_index,MAX_index,MAX_indexlen,finish_index
 
 
 def SET_list(datas,guide,keep_start,keeplen):
@@ -865,7 +971,7 @@ def SET_list(datas,guide,keep_start,keeplen):
 
     start = time.time()
 
-    deep,index,now_index,line_txts,keep_linetxts,keep_index,MAX_index,MAX_indexlen = 0,[],[],[],[],[],[],[]
+    deep,index,now_index,line_txts,keep_linetxts,keep_index,MAX_index,MAX_indexlen,finish_index = 0,[],[],[],[],[],[],[],{}
     deep += 1 #deepはインデックスの次元測定
 
     txtline = ['[]']
@@ -879,7 +985,7 @@ def SET_list(datas,guide,keep_start,keeplen):
         datatype = type(line)
         if  datatype == list or datatype == np.ndarray:
             #print(search_index(line))
-            index,now_index,line_txts,keep_linetxts,keep_index,MAX_index,MAX_indexlen = search_index(line,deep,keep_start,keep_finish,index,now_index,line_txts,keep_linetxts,keep_index,MAX_index,MAX_indexlen)
+            index,now_index,line_txts,keep_linetxts,keep_index,MAX_index,MAX_indexlen,finish_index = search_index(line,deep,keep_start,keep_finish,index,now_index,line_txts,keep_linetxts,keep_index,MAX_index,MAX_indexlen,finish_index)
             list_txts.append(line_txts)
             txtline.append(f'data_type: {datatype}')
             indexline.append(index)

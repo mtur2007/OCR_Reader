@@ -14,8 +14,6 @@ def search_Allrinkaku(imagedata):
     #輪郭検出
 
     NG_data = (np.array((0,1,2,1)),np.array((1,2,1,0)))
-    NG_data_y = np.array((0,1,2,1))
-    NG_data_x = np.array((1,2,1,0))
     '''
     NG_data は 輪郭を正確に検出する為 文字判定と背景判定のベクトルが１以内に文字判定があるかを調査する為の配列
 
@@ -32,16 +30,7 @@ def search_Allrinkaku(imagedata):
         now0_X = where_0_X[i]
         area = code0list[now0_Y-1:now0_Y+2, now0_X-1:now0_X+2]
         if np.count_nonzero(area[NG_data] == 1) > 0: #0の周りに1 (背景判定: 位置はNG_data) があるかで検出
-
-            # where_1_x = np.where(area[NG_data] == 1)[0]
-            # where_1_y,where_1_x = NG_data_y[where_1_x],NG_data_x[where_1_x]
-
-            # rinnkaku_y = now0_Y + (where_1_y - 1)
-            # rinnkaku_x = now0_X + (where_1_x - 1)
-
-            # rinnkaku_Y[len(rinnkaku_Y):len(rinnkaku_Y)] = rinnkaku_y.tolist()
-            # rinnkaku_X[len(rinnkaku_X):len(rinnkaku_X)] = rinnkaku_x.tolist()
-
+            
             rinnkaku_Y.append(now0_Y)
             rinnkaku_X.append(now0_X)
 
