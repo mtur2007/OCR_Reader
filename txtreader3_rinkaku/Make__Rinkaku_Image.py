@@ -103,14 +103,43 @@ for linenum in range(np.shape(contours)[0]):
         NEW_contours.append(index1)
 
     else:
-        insert_index = index1
+        #NEW_contours[-1] = insert_index
+        d2 = index1 - contours[linenum-3]
+        d2[0] = d2[0]*-1
+        d2_atan2 = math.degrees(math.atan2(d2[0],d2[1]))
+        if (abs(180 - abs(d2_atan2)) < 45) or (abs(d2_atan2) < 45):
+        #if  (math.atan2(d2[0],d2[1]) > -2.35) and (math.atan2(d2[0],d2[1]) > -0.78):
+            print('True')
+            insert_index = index1
 
-        if (d[0] == 1) and (d[1] == 1):
-            insert_index = index0
-        if (d[0] == -1) and (d[1] == -1):
+            if (d[0] == 1) and (d[1] == 1):
+                insert_index = index0
+            if (d[0] == -1) and (d[1] == -1):
+                insert_index = index0
+            
+            NEW_contours[-1] = insert_index
+        else:
             insert_index = index0
 
-        NEW_contours[-1] = insert_index
+            if (d[0] == 1) and (d[1] == 1):
+                insert_index = index1
+            if (d[0] == -1) and (d[1] == -1):
+                insert_index = index1
+            NEW_contours[-1] = insert_index
+
+print('-------')
+print(f'      |\n  . → | {math.degrees(math.atan2(0,1))}\n      |\n-------')
+print(f'    ↗ |\n  .   | {math.degrees(math.atan2(1,1))}\n      |\n-------')
+print(f'  ↑   |\n  .   | {math.degrees(math.atan2(1,0))}\n      |\n-------')
+print(f'↖     |\n  .   | {math.degrees(math.atan2(1,-1))}\n      |\n-------')
+print(f'      |\n← .   | {math.degrees(math.atan2(0,-1))}\n      |\n-------')
+print(f'      |\n  .   | {math.degrees(math.atan2(-1,-1))}\n↙     |\n-------')
+print(f'      |\n  .   | {math.degrees(math.atan2(-1,0))}\n  ↓   |\n-------')
+print(f'      |\n  .   | {math.degrees(math.atan2(-1,1))}\n    ↘ |\n-------')
+
+
+print(math.atan2(-1,-2))
+
 
             
 NEW_contours = np.array(NEW_contours)
@@ -162,7 +191,7 @@ print('[#] boarder')
 
 print('{_} break')
 
-while True:
+while  True:
 
     cv2.imshow('OpenCV answer', contours_image)
 
@@ -173,7 +202,7 @@ while True:
     elif k == 47: #'角度の表示'
         atan2_print = (atan2_print+1)%2
     
-    elif k == 51: #'3[#の代用](マス目の表示))'
+    elif k == 51: #'3[#の代用](マス目の表示))_'
         math_print = (math_print+1)%2
 
     elif k == 58: #'*(元の情報の表示)'
