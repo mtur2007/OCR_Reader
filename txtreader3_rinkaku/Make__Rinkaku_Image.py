@@ -92,40 +92,47 @@ square = np.where(square == 1)
 
 square_guide,atan2_guide = search_anser_contours(contours,square_size)
 
+
 NEW_contours = []
+for i in range(1):
 
-for linenum in range(np.shape(contours)[0]):
-    index0 = contours[linenum-1]
-    index1 = contours[linenum]
+    for linenum in range(np.shape(contours)[0]):
+        index0 = contours[linenum-1]
+        index1 = contours[linenum]
 
-    d = index1 - index0
-    if (abs(d[0]) != 1) or (abs(d[1]) != 1):    
-        NEW_contours.append(index1)
 
-    else:
-        #NEW_contours[-1] = insert_index
-        d2 = index1 - contours[linenum-3]
-        d2[0] = d2[0]*-1
-        d2_atan2 = math.degrees(math.atan2(d2[0],d2[1]))
-        if (abs(180 - abs(d2_atan2)) < 45) or (abs(d2_atan2) < 45):
-        #if  (math.atan2(d2[0],d2[1]) > -2.35) and (math.atan2(d2[0],d2[1]) > -0.78):
-            print('True')
-            insert_index = index1
 
-            if (d[0] == 1) and (d[1] == 1):
-                insert_index = index0
-            if (d[0] == -1) and (d[1] == -1):
-                insert_index = index0
-            
-            NEW_contours[-1] = insert_index
+        d = index1 - index0
+        if (abs(d[0]) != 1) or (abs(d[1]) != 1):
+            NEW_contours.append(index1)
+
         else:
-            insert_index = index0
+            #NEW_contours[-1] = insert_index
+            d2 = index1 - contours[linenum-2]
+            d2[0] = d2[0]*-1
+            d2_atan2 = math.degrees(math.atan2(d2[0],d2[1]))
+            if (abs(180 - abs(d2_atan2)) < 45) or (abs(d2_atan2) < 45):
+            #  ^   ↙︎ ↖︎                       ^　　 ^    ↗︎ ↘︎           ^
+            
+            #if  (math.atan2(d2[0],d2[1]) > -2.35) and (math.atan2(d2[0],d2[1]) > -0.78):
+                insert_index = index1
 
-            if (d[0] == 1) and (d[1] == 1):
-                insert_index = index1
-            if (d[0] == -1) and (d[1] == -1):
-                insert_index = index1
-            NEW_contours[-1] = insert_index
+                if (d[0] == 1) and (d[1] == 1):
+                    insert_index = index0
+                if (d[0] == -1) and (d[1] == -1):
+                    insert_index = index0
+                
+                NEW_contours[-1] = insert_index
+            else:
+                insert_index = index0
+
+                if (d[0] == 1) and (d[1] == 1):
+                    insert_index = index1
+                if (d[0] == -1) and (d[1] == -1):
+                    insert_index = index1
+                NEW_contours[-1] = insert_index
+
+    contours = NEW_contours
 
 print('-------')
 print(f'      |\n  . → | {math.degrees(math.atan2(0,1))}\n      |\n-------')
@@ -145,7 +152,7 @@ print(math.atan2(-1,-2))
 NEW_contours = np.array(NEW_contours)
 
 NEW_guide,NEW_atan2_guide = search_anser_contours(NEW_contours,square_size)
-print(NEW_atan2_guide)
+
 
 
 mathmeY = []
@@ -250,6 +257,5 @@ while  True:
 
     if k == 95:
         break
-    print(k)
 
 cv2.destroyAllWindows()
