@@ -36,12 +36,13 @@ print('sample shape: ',np.shape(img_blank))
 img_contour_only = cv2.drawContours(img_blank, contours, -1, (0,0,0), 3)
 
 #[3,[4]],5
-contours = contours[3][:,0]
+contours = contours[5][:,0]
 minnum = np.amin(contours,axis=0)
 maxnum = np.amax(contours,axis=0)
 print(minnum)
 print(maxnum)
 image = img[minnum[1]:maxnum[1]+1,minnum[0]:maxnum[0]+1]
+now_binary = binary[minnum[1]:maxnum[1]+1,minnum[0]:maxnum[0]+1]
 print('Shape image: ',np.shape(image))
 
 
@@ -83,7 +84,12 @@ image = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
 
 image = cv2.flip(image, 1)
 
+# グレースケールに変換
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+# 二値化（閾値を150に設定）
+ret, now_binary = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY)
+
 with open('/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader3_rinkaku/pickle_file/TEST_rinkaku.pickle', mode='wb') as fo:
-    pickle.dump([image,contours], fo)
+    pickle.dump([image,contours,now_binary], fo)
 
 

@@ -4,6 +4,9 @@ import math
 import cv2
 import matplotlib.pyplot as plt
 
+from SET_datas import SET_list
+
+
 def search_anser_contours(contours,square_size):
     contours = np.array(contours) * square_size
 
@@ -65,7 +68,14 @@ def search_anser_contours(contours,square_size):
 
 ### pickleで保存したファイルを読み込み
 with open('/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader3_rinkaku/pickle_file/TEST_rinkaku.pickle', mode='br') as fi:
-    image,contours = pickle.load(fi)
+    image,contours,now_binary = pickle.load(fi)
+
+answer = SET_list(now_binary,guide=True,keep_start=1,keeplen=3)
+
+with open("/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader3_rinkaku/Make_txtfile/now_binary.txt","w") as f:
+    for line in answer:
+        f.write(f"{line}")
+
 
 Back_Color = [0,0,0]
 Square_Color = np.array((0,255,0))
@@ -94,45 +104,70 @@ square_guide,atan2_guide = search_anser_contours(contours,square_size)
 
 
 NEW_contours = []
-for i in range(1):
 
-    for linenum in range(np.shape(contours)[0]):
-        index0 = contours[linenum-1]
-        index1 = contours[linenum]
+for linenum in range(np.shape(contours)[0]):
+    index0 = contours[linenum-1]
+    index1 = contours[linenum]
 
+    d = index1 - index0
+    if (abs(d[0]) != 1) or (abs(d[1]) != 1):
+        NEW_contours.append(index1)
 
+    else:
+        #NEW_contours[-1] = insert_index
+        d2 = index1 - contours[linenum-2]
+        d2[0] = d2[0]*-1
+        d2_atan2 = math.degrees(math.atan2(d2[0],d2[1]))
+        if (abs(180 - abs(d2_atan2)) < 45) or (abs(d2_atan2) < 45):
+        #  ^   ↙︎ ↖︎                       ^　　 ^    ↗︎ ↘︎           ^
+        
+        #if  (math.atan2(d2[0],d2[1]) > -2.35) and (math.atan2(d2[0],d2[1]) > -0.78):
+            insert_index = index1
 
-        d = index1 - index0
-        if (abs(d[0]) != 1) or (abs(d[1]) != 1):
-            NEW_contours.append(index1)
-
-        else:
-            #NEW_contours[-1] = insert_index
-            d2 = index1 - contours[linenum-2]
-            d2[0] = d2[0]*-1
-            d2_atan2 = math.degrees(math.atan2(d2[0],d2[1]))
-            if (abs(180 - abs(d2_atan2)) < 45) or (abs(d2_atan2) < 45):
-            #  ^   ↙︎ ↖︎                       ^　　 ^    ↗︎ ↘︎           ^
-            
-            #if  (math.atan2(d2[0],d2[1]) > -2.35) and (math.atan2(d2[0],d2[1]) > -0.78):
-                insert_index = index1
-
-                if (d[0] == 1) and (d[1] == 1):
-                    insert_index = index0
-                if (d[0] == -1) and (d[1] == -1):
-                    insert_index = index0
-                
-                NEW_contours[-1] = insert_index
-            else:
+            if (d[0] == 1) and (d[1] == 1):
                 insert_index = index0
+            if (d[0] == -1) and (d[1] == -1):
+                insert_index = index0
+            
+            NEW_contours[-1] = insert_index
+        else:
+            insert_index = index0
 
-                if (d[0] == 1) and (d[1] == 1):
-                    insert_index = index1
-                if (d[0] == -1) and (d[1] == -1):
-                    insert_index = index1
-                NEW_contours[-1] = insert_index
+            if (d[0] == 1) and (d[1] == 1):
+                insert_index = index1
+            if (d[0] == -1) and (d[1] == -1):
+                insert_index = index1
+            NEW_contours[-1] = insert_index
 
-    contours = NEW_contours
+
+
+# # NEW_contours = []
+
+# plus_data = [np.array((-1,0,1,0)),np.array((0,1,0,-1))]
+# for linenum in range(np.shape(contours)[0]):
+#     index0 = contours[linenum-1]
+#     index1 = contours[linenum]
+
+#     d = index1 - index0
+#     if (abs(d[0]) == 1) and (abs(d[1]) == 1):
+#         binary0 = plus_data + np.array([[index0[0]],[index0[1]]])
+#         print(index0)
+#         print(binary0)
+#         print(now_binary[binary0[0],binary0[1]])
+#         print(np.where(now_binary[binary0[0],binary0[1]] == 0))
+#         where0 = binary0[:,np.where(now_binary[binary0[0],binary0[1]] == 0)[0]]
+#         where0 = where0 - np.array([[index0[0]],[index0[1]]])
+#         print(where0)
+#         np.sum(where0,axis=1)
+
+#         binary0 = now_binary.copy() + [[index1[0]],[index1[1]]]
+
+
+#         binary1 = now_binary[index1]
+
+#         # NEW_contours.append(index1)
+
+
 
 print('-------')
 print(f'      |\n  . → | {math.degrees(math.atan2(0,1))}\n      |\n-------')
