@@ -1043,10 +1043,6 @@ def SET_list(datas,guide,keep_start,keeplen):
         line_txts[insert_index] = keep_linetxts
         txtline = line_txts
 
-        for a in line_txts:
-            for b in a:
-                print(b)
-            print()
 
     else:
         for linenum in range(len(datas)):

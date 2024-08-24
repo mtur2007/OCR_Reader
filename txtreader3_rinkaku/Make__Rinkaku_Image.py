@@ -140,6 +140,36 @@ for linenum in range(np.shape(contours)[0]):
             NEW_contours[-1] = insert_index
 
 
+# contours = NEW_contours
+# NEW_contours = []
+
+# for linenum in range(np.shape(contours)[0]):
+#     index0 = contours[linenum-1]
+#     index1 = contours[linenum]
+
+#     d = index1 - index0
+#     if(abs(d[0]) + abs(d[1])) == 1:
+    
+#         d2 = index1 - contours[linenum-2]
+#         d2[0] = d2[0]*-1
+#         d2_atan2 = math.degrees(math.atan2(d2[0],d2[1]))
+            
+#         if (abs(180 - abs(d2_atan2)) < 45) or (abs(d2_atan2) < 45):
+#             #  ^   ↙︎ ↖︎                       ^　　 ^    ↗︎ ↘︎           ^
+#             print('1',d,d[0])
+#             if d[0] < 0:
+#                 print('<')
+#                 NEW_contours = index1
+#         else:
+#             print('2',d,d[1])
+#             if d[1] < 0:
+#                 print('<')
+#                 NEW_contours = index1
+#     else:
+#         NEW_contours.append(index1)
+            
+
+
 
 # # NEW_contours = []
 
@@ -170,14 +200,14 @@ for linenum in range(np.shape(contours)[0]):
 
 
 print('-------')
-print(f'      |\n  . → | {math.degrees(math.atan2(0,1))}\n      |\n-------')
-print(f'    ↗ |\n  .   | {math.degrees(math.atan2(1,1))}\n      |\n-------')
-print(f'  ↑   |\n  .   | {math.degrees(math.atan2(1,0))}\n      |\n-------')
-print(f'↖     |\n  .   | {math.degrees(math.atan2(1,-1))}\n      |\n-------')
-print(f'      |\n← .   | {math.degrees(math.atan2(0,-1))}\n      |\n-------')
-print(f'      |\n  .   | {math.degrees(math.atan2(-1,-1))}\n↙     |\n-------')
-print(f'      |\n  .   | {math.degrees(math.atan2(-1,0))}\n  ↓   |\n-------')
-print(f'      |\n  .   | {math.degrees(math.atan2(-1,1))}\n    ↘ |\n-------')
+print(f'      |\n  . → |    {math.degrees(math.atan2(0,1))} /  {math.atan2(0,1)}\n      |\n-------')
+print(f'    ↗ |\n  .   |   {math.degrees(math.atan2(1,1))} /  {math.atan2(1,1)}\n      |\n-------')
+print(f'  ↑   |\n  .   |   {math.degrees(math.atan2(1,0))} /  {math.atan2(1,0)}\n      |\n-------')
+print(f'↖     |\n  .   |  {math.degrees(math.atan2(1,-1))} /  {math.atan2(1,-1)}\n      |\n-------')
+print(f'      |\n← .   |  {math.degrees(math.atan2(0,-1))} /  {math.atan2(0,-1)}\n      |\n-------')
+print(f'      |\n  .   | {math.degrees(math.atan2(-1,-1))} / {math.atan2(-1,-1)}\n↙     |\n-------')
+print(f'      |\n  .   |  {math.degrees(math.atan2(-1,0))} / {math.atan2(-1,0)}\n  ↓   |\n-------')
+print(f'      |\n  .   |  {math.degrees(math.atan2(-1,1))} / {math.atan2(-1,1)}\n    ↘ |\n-------')
 
 
 print(math.atan2(-1,-2))
