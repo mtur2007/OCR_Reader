@@ -529,7 +529,6 @@ def search_index(datas,deep,keep_start,keep_finish,index,now_index,line_txts,kee
 
         now_index.append('')
 
-        keep = 1
         line_txts.append('')
         insert_index = len(line_txts)-1
 
@@ -580,7 +579,7 @@ def search_index(datas,deep,keep_start,keep_finish,index,now_index,line_txts,kee
         
         #print('\n'+('-'*84)+'\n'+txt_index)
         
-        if len(datas) >= 2:
+        if len(datas) >= 1:
             
             #print(MAX_index)
             #print(MAX_indexlen)
@@ -799,8 +798,6 @@ def search_index(datas,deep,keep_start,keep_finish,index,now_index,line_txts,kee
         del keep_index[-1]
     
     else:
-        keep = 0
-
         line_txts.append('')
         insert_index = len(line_txts)-1
 
@@ -927,7 +924,7 @@ def SET_list(datas,guide,keep_start,keeplen):
         
         #print('\n'+('-'*84)+'\n'+txt_index)
         
-        if len(datas) >= 2:
+        if len(datas) >= 1:
             
             #print(MAX_index)
             #print(MAX_indexlen)
@@ -1056,21 +1053,13 @@ def SET_list(datas,guide,keep_start,keeplen):
                 index,now_index,line_txts,keep_linetxts,keep_index,MAX_index,MAX_indexlen,finish_index = search_index(line,deep,keep_start,keep_finish,index,now_index,line_txts,keep_linetxts,keep_index,MAX_index,MAX_indexlen,finish_index)
                 list_txts.append(line_txts)
 
-                print(line_txts)
-                for a in line_txts:
-                    print(a)
-                    for b in a:
-                        print(b)
-                    print()
-
-
                 txtline.append(f'data_type: {datatype}')
                 indexline.append(index)
             else:
                 txtline.append(str(line))
                 #リストの最下層の場合の処理
                 indexline.append('.')
-                linedeep = deep
+
             index = []
 
         txtline = [txtline]

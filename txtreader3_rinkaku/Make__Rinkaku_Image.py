@@ -70,12 +70,19 @@ def search_anser_contours(contours,square_size):
 with open('/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader3_rinkaku/pickle_file/TEST_rinkaku.pickle', mode='br') as fi:
     image,contours,now_binary = pickle.load(fi)
 
+#---------------------------------
+answer = SET_list(image,guide=True,keep_start=1,keeplen=3)
+
+with open("/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader3_rinkaku/Make_txtfile/now_image.txt","w") as f:
+    for line in answer:
+        f.write(f"{line}")
+
 answer = SET_list(now_binary,guide=True,keep_start=1,keeplen=3)
 
 with open("/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader3_rinkaku/Make_txtfile/now_binary.txt","w") as f:
     for line in answer:
         f.write(f"{line}")
-
+#---------------------------------
 
 Back_Color = [0,0,0]
 Square_Color = np.array((0,255,0))
@@ -140,35 +147,41 @@ for linenum in range(np.shape(contours)[0]):
             NEW_contours[-1] = insert_index
 
 
-# contours = NEW_contours
-# NEW_contours = []
+contours = NEW_contours
+NEW_contours = []
 
-# for linenum in range(np.shape(contours)[0]):
-#     index0 = contours[linenum-1]
-#     index1 = contours[linenum]
+for linenum in range(np.shape(contours)[0]):
+    index0 = contours[linenum-1]
+    index1 = contours[linenum]
 
-#     d = index1 - index0
-#     if(abs(d[0]) + abs(d[1])) == 1:
-    
-#         d2 = index1 - contours[linenum-2]
-#         d2[0] = d2[0]*-1
-#         d2_atan2 = math.degrees(math.atan2(d2[0],d2[1]))
+    d = index1 - index0
+    if(abs(d[0]) + abs(d[1])) == 1:
+
+        d3 = index1 - contours[linenum-3]
+        if (abs(d3[0]) - abs(d3[1])) == 0:
+            NEW_contours[-1] = index1
+        # d2 = index1 - contours[linenum-2]
+        # d2[0] = d2[0]*-1
+        # d2_atan2 = math.degrees(math.atan2(d2[0],d2[1]))
+        
+        # d3 = index1 - contours[linenum-3]
+        # if (abs(180 - abs(d2_atan2)) < 45) or (abs(d2_atan2) < 45):
+        #     #  ^   ↙︎ ↖︎                       ^　　 ^    ↗︎ ↘︎           ^
+        #     print('X',d,d2,d3)
+        #     if (abs(d3[0]) / abs(d3[1])) != 0:
+        #         NEW_contours.append(index1)
+
+        # else:
+        #     print('Y',d,d2)
+        #     if d[0] > 0:
+        #         print('<')
+        #         NEW_contours[-1] = index1
+    else:
+        NEW_contours.append(index1)
             
-#         if (abs(180 - abs(d2_atan2)) < 45) or (abs(d2_atan2) < 45):
-#             #  ^   ↙︎ ↖︎                       ^　　 ^    ↗︎ ↘︎           ^
-#             print('1',d,d[0])
-#             if d[0] < 0:
-#                 print('<')
-#                 NEW_contours = index1
-#         else:
-#             print('2',d,d[1])
-#             if d[1] < 0:
-#                 print('<')
-#                 NEW_contours = index1
-#     else:
-#         NEW_contours.append(index1)
-            
 
+with open('/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader3_rinkaku/pickle_file/NEW_contours.picke',mode='wb') as fo:
+    pickle.dump(NEW_contours, fo)
 
 
 # # NEW_contours = []
@@ -199,18 +212,18 @@ for linenum in range(np.shape(contours)[0]):
 
 
 
-print('-------')
-print(f'      |\n  . → |    {math.degrees(math.atan2(0,1))} /  {math.atan2(0,1)}\n      |\n-------')
-print(f'    ↗ |\n  .   |   {math.degrees(math.atan2(1,1))} /  {math.atan2(1,1)}\n      |\n-------')
-print(f'  ↑   |\n  .   |   {math.degrees(math.atan2(1,0))} /  {math.atan2(1,0)}\n      |\n-------')
-print(f'↖     |\n  .   |  {math.degrees(math.atan2(1,-1))} /  {math.atan2(1,-1)}\n      |\n-------')
-print(f'      |\n← .   |  {math.degrees(math.atan2(0,-1))} /  {math.atan2(0,-1)}\n      |\n-------')
-print(f'      |\n  .   | {math.degrees(math.atan2(-1,-1))} / {math.atan2(-1,-1)}\n↙     |\n-------')
-print(f'      |\n  .   |  {math.degrees(math.atan2(-1,0))} / {math.atan2(-1,0)}\n  ↓   |\n-------')
-print(f'      |\n  .   |  {math.degrees(math.atan2(-1,1))} / {math.atan2(-1,1)}\n    ↘ |\n-------')
+# print('-------')
+# print(f'      |\n  . → |    {math.degrees(math.atan2(0,1))} /  {math.atan2(0,1)}\n      |\n-------')
+# print(f'    ↗ |\n  .   |   {math.degrees(math.atan2(1,1))} /  {math.atan2(1,1)}\n      |\n-------')
+# print(f'  ↑   |\n  .   |   {math.degrees(math.atan2(1,0))} /  {math.atan2(1,0)}\n      |\n-------')
+# print(f'↖     |\n  .   |  {math.degrees(math.atan2(1,-1))} /  {math.atan2(1,-1)}\n      |\n-------')
+# print(f'      |\n← .   |  {math.degrees(math.atan2(0,-1))} /  {math.atan2(0,-1)}\n      |\n-------')
+# print(f'      |\n  .   | {math.degrees(math.atan2(-1,-1))} / {math.atan2(-1,-1)}\n↙     |\n-------')
+# print(f'      |\n  .   |  {math.degrees(math.atan2(-1,0))} / {math.atan2(-1,0)}\n  ↓   |\n-------')
+# print(f'      |\n  .   |  {math.degrees(math.atan2(-1,1))} / {math.atan2(-1,1)}\n    ↘ |\n-------')
 
 
-print(math.atan2(-1,-2))
+# print(math.atan2(-1,-2))
 
 
             
@@ -265,6 +278,7 @@ print('{_} break')
 
 while  True:
 
+    #cv2.imwrite('/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader3_rinkaku/Make_picture/contours_image.jpg', contours_image)
     cv2.imshow('OpenCV answer', contours_image)
 
     k = cv2.waitKey()
@@ -315,12 +329,127 @@ while  True:
         contours_image[NEW_guide] = Square2_Color
 
     
-    #     contours_image[square_guide] = Back_Color
-    # if atan2_print == 1:
-    #     contours_image[square_guide] = Square_Color
-
-
     if k == 95:
         break
 
 cv2.destroyAllWindows()
+
+def Make_ContoursImage(image_print,atan2_print,square_print,math_print,atan22_print,square2_print,atan2_guide,square_guide,mathme,NEW_atan2_guide,NEW_guide):
+
+    contours_image = image.copy()
+    if image_print == 0:
+        contours_image = image.copy()
+        Square_Color = [0,0,255]
+        Square2_Color =[255,0,0]
+        Guide_Colror = [0,0,200]
+        Guide2_Colror =[0,200,0]
+        mathme_Color = [80,10,10]
+    else:
+        contours_image[:,:] = Back_Color.copy()
+        #contours_image = Black_image
+        Square_Color = [200,0,0]
+        Square2_Color =[0,0,200]
+        Guide_Colror = [10,170,160]
+        Guide2_Colror =[160,170,10]
+        mathme_Color = [50,50,50]
+
+    if atan2_print == 0:
+        contours_image[atan2_guide] = Guide_Colror
+    if square_print == 0:
+        contours_image[square_guide] = Square_Color
+    if math_print == 0:
+        contours_image[mathme] = mathme_Color
+
+    if atan22_print == 0:
+        contours_image[NEW_atan2_guide] = Guide2_Colror
+    if square2_print == 0:
+        contours_image[NEW_guide] = Square2_Color
+
+    return contours_image
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+"""
+
+# imagenum = 0
+
+# image_print   = 0
+# square_print  = 1
+# atan2_print   = 1
+# math_print    = 1
+# atan22_print  = 1
+# square2_print = 1
+# contours_image = Make_ContoursImage(image_print,atan2_print,square_print,math_print,atan22_print,square2_print,atan2_guide,square_guide,mathme,NEW_atan2_guide,NEW_guide)
+# cv2.imwrite(f'/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader3_rinkaku/Make_picture/contours_image_{imagenum}.jpg', contours_image)
+# imagenum+= 1
+
+# image_print   = 0
+# square_print  = 0
+# atan2_print   = 1
+# math_print    = 0
+# atan22_print  = 1
+# square2_print = 1
+# contours_image = Make_ContoursImage(image_print,atan2_print,square_print,math_print,atan22_print,square2_print,atan2_guide,square_guide,mathme,NEW_atan2_guide,NEW_guide)
+# cv2.imwrite(f'/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader3_rinkaku/Make_picture/contours_image_{imagenum}.jpg', contours_image)
+# imagenum+= 1
+
+# image_print   = 1
+# square_print  = 0
+# atan2_print   = 0
+# math_print    = 0
+# atan22_print  = 1
+# square2_print = 1
+# contours_image = Make_ContoursImage(image_print,atan2_print,square_print,math_print,atan22_print,square2_print,atan2_guide,square_guide,mathme,NEW_atan2_guide,NEW_guide)
+# cv2.imwrite(f'/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader3_rinkaku/Make_picture/contours_image_{imagenum}.jpg', contours_image)
+# imagenum+= 1
+
+# image_print   = 1
+# square_print  = 1
+# atan2_print   = 0
+# math_print    = 0
+# atan22_print  = 1
+# square2_print = 1
+# contours_image = Make_ContoursImage(image_print,atan2_print,square_print,math_print,atan22_print,square2_print,atan2_guide,square_guide,mathme,NEW_atan2_guide,NEW_guide)
+# cv2.imwrite(f'/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader3_rinkaku/Make_picture/contours_image_{imagenum}.jpg', contours_image)
+# imagenum+= 1
+
+# image_print   = 1
+# square_print  = 0
+# atan2_print   = 1
+# math_print    = 0
+# atan22_print  = 1
+# square2_print = 0
+# contours_image = Make_ContoursImage(image_print,atan2_print,square_print,math_print,atan22_print,square2_print,atan2_guide,square_guide,mathme,NEW_atan2_guide,NEW_guide)
+# cv2.imwrite(f'/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader3_rinkaku/Make_picture/contours_image_{imagenum}.jpg', contours_image)
+# imagenum+= 1
+
+# image_print   = 1
+# square_print  = 1
+# atan2_print   = 1
+# math_print    = 0
+# atan22_print  = 0
+# square2_print = 0
+# contours_image = Make_ContoursImage(image_print,atan2_print,square_print,math_print,atan22_print,square2_print,atan2_guide,square_guide,mathme,NEW_atan2_guide,NEW_guide)
+# cv2.imwrite(f'/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader3_rinkaku/Make_picture/contours_image_{imagenum}.jpg', contours_image)
+# imagenum+= 1
+
+# image_print   = 1
+# square_print  = 1
+# atan2_print   = 1
+# math_print    = 0
+# atan22_print  = 0
+# square2_print = 1
+# contours_image = Make_ContoursImage(image_print,atan2_print,square_print,math_print,atan22_print,square2_print,atan2_guide,square_guide,mathme,NEW_atan2_guide,NEW_guide)
+# cv2.imwrite(f'/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader3_rinkaku/Make_picture/contours_image_{imagenum}.jpg', contours_image)
+# imagenum+= 1
+
+# image_print   = 1
+# square_print  = 1
+# atan2_print   = 0
+# math_print    = 0
+# atan22_print  = 0
+# square2_print = 1
+# contours_image = Make_ContoursImage(image_print,atan2_print,square_print,math_print,atan22_print,square2_print,atan2_guide,square_guide,mathme,NEW_atan2_guide,NEW_guide)
+# cv2.imwrite(f'/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader3_rinkaku/Make_picture/contours_image_{imagenum}.jpg', contours_image)
+# imagenum+= 1
+
+"""
