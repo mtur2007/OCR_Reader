@@ -36,7 +36,7 @@ print('sample shape: ',np.shape(img_blank))
 img_contour_only = cv2.drawContours(img_blank, contours, -1, (0,0,0), 3)
 
 #[3,[4]],5
-contours = contours[5][:,0]
+contours = contours[3][:,0]
 minnum = np.amin(contours,axis=0)
 maxnum = np.amax(contours,axis=0)
 print(minnum)
