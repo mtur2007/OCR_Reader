@@ -6,10 +6,11 @@ import random
 
 
 def Myint(num): #数値の int部分を確実に表示させる様にする自作関数
-    for line in range(len(str(num))):
-        if str(num)[line] == ".":
-            return int(str(num)[:line])
-    return num
+    num = str(num)
+    for line in range(len(num)):
+        if num[line] == ".":
+            return int(num[:line])
+    return int(num)
 
 
 #数値の整列を行う関数
@@ -119,7 +120,7 @@ def SET_number(numberslist,mode):
             len_list.append(len(line))
             if len(line) > Max:
                 Max = len(line)
-        
+
         New_list = []
         Line_list = []
         for nouse in range(Max):
@@ -170,7 +171,7 @@ def SET_number(numberslist,mode):
                     Maxfloatlen = len(str(num)) - len(str(Myint(num)))
 
             Maxlen = Maxintlen + Maxfloatlen
-
+            
             for nowread in range(len(numberslist[line])):
                 num = numberslist[line][nowread]
                 Air0 = Maxintlen - len(str(Myint(num)))
@@ -186,7 +187,7 @@ def SET_numbers(numberslist,mode):
         numberslist = [numberslist]
         print(f"SET修正: {numberslist}")
         mode = 1
-
+    
     numberslist = SET_number(numberslist,mode)
 
     return numberslist
@@ -336,7 +337,7 @@ def data_border_print(set_data,guide,indeximage):
         printlist.append(f"{'='*linelen1}\n")
 
     finish = time.time()
-    print(f'[SET_border, border] time: {finish - start}')
+    #print(f'[SET_border, border] time: {finish - start}')
 
     #ガイド(index)を追加する場合の処理
     if guide == True:
@@ -378,7 +379,7 @@ def data_border_print(set_data,guide,indeximage):
                 set_index += 1 +3
 
         finish = time.time()
-        print(f'[SET_border, guide ] time: {finish - start}')
+        #print(f'[SET_border, guide ] time: {finish - start}')
 
     return printlist
 
@@ -534,6 +535,7 @@ def search_index(datas,deep,keep_start,keep_finish,index,now_index,line_txts,kee
 
         for linenum in range(len(datas)):
             keep_index = [0]
+            #now_index[1:]を表す
             line = datas[linenum]
             
             now_index[-1] = linenum
@@ -866,6 +868,9 @@ def SET_list(datas,guide,keep_start,keeplen):
     indexline = []
 
     if keep_start == deep:
+
+        keep_start_time = time.time()
+
         # < MAX_indexlen > インデックス別整列をする為、linenumの値[リストのインデックス]は使わず、リストの一列毎の階層だげを調べる。
         txtline = []
         MAX_index = []
@@ -923,9 +928,14 @@ def SET_list(datas,guide,keep_start,keeplen):
                 txtline.append([[[0],txt_line]])
         
         #print('\n'+('-'*84)+'\n'+txt_index)
+
+        keep_finish_time = time.time()
+        print()
+        print(f'[search_index / keep - search] time: {keep_finish_time - keep_start_time}')
         
+        keep_start_time = time.time()
         if len(datas) >= 1:
-            
+    
             #print(MAX_index)
             #print(MAX_indexlen)
 
@@ -1040,6 +1050,9 @@ def SET_list(datas,guide,keep_start,keeplen):
         line_txts[insert_index] = keep_linetxts
         txtline = line_txts
 
+        keep_finish_time = time.time()
+        print(f'[search_index / keep - set   ] time: {keep_finish_time - keep_start_time}')
+        
 
     else:
         for linenum in range(len(datas)):
@@ -1064,8 +1077,6 @@ def SET_list(datas,guide,keep_start,keeplen):
 
         txtline = [txtline]
     
-    print(('-'*84))
-    
     indexline.insert(0,'')
         
     list_txts.insert(0,txtline)
@@ -1074,23 +1085,30 @@ def SET_list(datas,guide,keep_start,keeplen):
     print()
     print(f'[search_index] time: {finish - start}')
 
+    print()
+    print(('-'*84))
+    print()
+    
     #データを縦方向に合わせて整列し、結果をファイルに書き込む。
     start = time.time()
     set_list = SET_data(list_txts,0)
     finish = time.time()
-    print(f'[SET_data]     time: {finish - start}')
-    print()
-
+    # print(f'[SET_data]     time: {finish - start}')
+    
+    # print()
+    # print(('-'*84))
+    # print()
+    
     start = time.time()
     set_border_list = data_border_print(set_list,guide,indexline)
     finish = time.time()
-    print(f'[SET_border, All ]   time: {finish - start}')
-    print()
+    # print(f'[SET_border, All ]   time: {finish - start}')
+    # print()
 
     return set_border_list
 
 #------------------------------------------------------------------------------------------------------------------------
-def search_index_noset(datas,deep,keep_deep,keep_finish,index,now_index,line_txts,keep_linetxts):
+def search_index_noset(datas,deep,keep_start,keep_finish,index,now_index,line_txts,keep_linetxts):
     deep += 1 #deepはインデックスの次元測定
 
     txt_index = ''
@@ -1099,7 +1117,7 @@ def search_index_noset(datas,deep,keep_deep,keep_finish,index,now_index,line_txt
     txtline = [txt_index]
     insert_index = len(line_txts)-1
 
-    if keep_deep == deep:
+    if keep_start == deep:
 
         keep = 1
         line_txts.append('')
@@ -1122,7 +1140,7 @@ def search_index_noset(datas,deep,keep_deep,keep_finish,index,now_index,line_txt
             if datatype == list or datatype == np.ndarray:
                 #print(search_index(line))
                 keep_linetxts = ''
-                index,now_index,line_txts,keep_linetxts = search_index_noset(line,deep,keep_deep,keep_finish,index,now_index,line_txts,keep_linetxts)
+                index,now_index,line_txts,keep_linetxts = search_index_noset(line,deep,keep_start,keep_finish,index,now_index,line_txts,keep_linetxts)
                 keep_linetxts = '['+keep_linetxts[:-1]+']'
                 txtline.append(keep_linetxts)
             else:
@@ -1134,7 +1152,7 @@ def search_index_noset(datas,deep,keep_deep,keep_finish,index,now_index,line_txt
         line_txts[insert_index] = txtline
     
 
-    elif keep_deep < deep <= keep_finish:
+    elif keep_start < deep <= keep_finish:
 
         for linenum in range(len(datas)):
             line = datas[linenum]
@@ -1153,7 +1171,7 @@ def search_index_noset(datas,deep,keep_deep,keep_finish,index,now_index,line_txt
             if datatype == list or datatype == np.ndarray:
                 #print(search_index(line))
                 keep_linetxts += f'[ '
-                index,now_index,line_txts,keep_linetxts = search_index_noset(line,deep,keep_deep,keep_finish,index,now_index,line_txts,keep_linetxts)
+                index,now_index,line_txts,keep_linetxts = search_index_noset(line,deep,keep_start,keep_finish,index,now_index,line_txts,keep_linetxts)
                 keep_linetxts += '] '
             else:
                 keep_linetxts += str(line)+' '
@@ -1182,7 +1200,7 @@ def search_index_noset(datas,deep,keep_deep,keep_finish,index,now_index,line_txt
             datatype = type(line)
             if datatype == list or datatype == np.ndarray:
                 #print(search_index(line))
-                index,now_index,line_txts,keep_linetxts = search_index_noset(line,deep,keep_deep,keep_finish,index,now_index,line_txts,keep_linetxts)
+                index,now_index,line_txts,keep_linetxts = search_index_noset(line,deep,keep_start,keep_finish,index,now_index,line_txts,keep_linetxts)
                 txtline.append(f'data_type: {datatype}')
             else:
                 txtline.append(str(line))
@@ -1220,41 +1238,78 @@ def SET_list_noset(datas,guide,keep_start,keeplen):
         keep_start = 0
         keep_finish = 0
     else:
-        keep_start += 1
         keep_finish = keep_start + keeplen
 
     start = time.time()
 
-    deep,index,now_index,line_txts,keep_linetxts, = 0,[],[],[],[]
-    deep += 1 #deepはインデックスの次元測定
+    deep,index,now_index,line_txts,keep_linetxts, = 1,[],[],[],[]
+    #deepはインデックスの次元測定
 
     txtline = ['[]']
     list_txts = []
     indexline = []
-    for linenum in range(len(datas)):
-        line_txts = []
-        line = datas[linenum]
-        now_index = [linenum]
-        #print(txt)
-        datatype = type(line)
-        if  datatype == list or datatype == np.ndarray:
-            #print(search_index(line))
-            index,now_index,line_txts,keep_linetxts = search_index_noset(line,deep,keep_start,keep_finish,index,now_index,line_txts,keep_linetxts)
-            list_txts.append(line_txts)
-            txtline.append(f'data_type: {datatype}')
-            indexline.append(index)
-        else:
-            txtline.append(str(line))
-            #リストの最下層の場合の処理
-            indexline.append('.')
-            linedeep = deep
-        index = []
+
+    if keep_start == deep:
+
+        line_txts.append('')
+        insert_index = len(line_txts)-1
+
+        for linenum in range(len(datas)):
+            line = datas[linenum]
+            if linenum == 0:
+                #print()
+                now_index.append(linenum)
+
+            else:
+                now_index[-1] = linenum
+
+            txt = ""
+            for i in now_index:
+                txt += "[" + str(i) + "]"
+            #print(txt)
+            datatype = type(line)
+            if datatype == list or datatype == np.ndarray:
+                #print(search_index(line))
+                keep_linetxts = ''
+                index,now_index,line_txts,keep_linetxts = search_index_noset(line,deep,keep_start,keep_finish,index,now_index,line_txts,keep_linetxts)
+                keep_linetxts = '['+keep_linetxts[:-1]+']'
+                txtline.append(keep_linetxts)
+            else:
+                txtline.append(str(line))
+                #リストの最下層の場合の処理
+                index += '.'
+
+        #中身のリスト作成
+        line_txts[insert_index] = txtline
+        txtline = line_txts
+
+    else:    
+        for linenum in range(len(datas)):
+            line_txts = []
+            line = datas[linenum]
+            now_index = [linenum]
+            #print(txt)
+            datatype = type(line)
+            if  datatype == list or datatype == np.ndarray:
+                #print(search_index(line))
+                index,now_index,line_txts,keep_linetxts = search_index_noset(line,deep,keep_start,keep_finish,index,now_index,line_txts,keep_linetxts)
+                list_txts.append(line_txts)
+                txtline.append(f'data_type: {datatype}')
+                indexline.append(index)
+            else:
+                txtline.append(str(line))
+                #リストの最下層の場合の処理
+                indexline.append('.')
+                linedeep = deep
+            index = []
+
+        txtline = [txtline]
     
     print(('-'*84))
     
     indexline.insert(0,'')
         
-    list_txts.insert(0,[txtline])
+    list_txts.insert(0,txtline)
 
     finish = time.time()
     print()

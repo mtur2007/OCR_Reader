@@ -35,7 +35,7 @@ print('sample shape: ',np.shape(img_blank))
 # 輪郭だけを描画（黒色で描画）
 img_contour_only = cv2.drawContours(img_blank, contours, -1, (0,0,0), 3)
 
-#[3,[4]],5
+#[3,[4]],5a
 contours = contours[3][:,0]
 minnum = np.amin(contours,axis=0)
 maxnum = np.amax(contours,axis=0)

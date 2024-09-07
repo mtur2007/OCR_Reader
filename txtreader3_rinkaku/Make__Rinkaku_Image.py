@@ -4,9 +4,10 @@ import math
 import cv2
 import matplotlib.pyplot as plt
 
-from SET_datas import SET_list
+from SET_datas import SET_numbers
 
 from pynput import keyboard
+
 
 
 def search_anser_contours(contours,square_size):
@@ -174,6 +175,24 @@ for linenum in range(np.shape(contours)[0]):
         NEW_contours.append(index1)
 
 
+contours = NEW_contours
+NEW_contours = []
+
+for linenum in range(len(contours)-2):
+
+    index_m1 = contours[linenum-1]
+    index0 = contours[linenum]
+    index1 = contours[linenum+1]
+
+    diff = index0 - index_m1
+    now_diff = index1 - index0
+    if (diff != now_diff).any():
+        NEW_contours.append(index0)
+
+NEW_contours.append(contours[-1])
+
+
+
 # print('-------')
 # print(f'      |\n  . → |    {math.degrees(math.atan2(0,1))} /  {math.atan2(0,1)}\n      |\n-------')
 # print(f'    ↗ |\n  .   |   {math.degrees(math.atan2(1,1))} /  {math.atan2(1,1)}\n      |\n-------')
@@ -190,6 +209,24 @@ for linenum in range(np.shape(contours)[0]):
 
             
 NEW_contours = np.array(NEW_contours)
+text_contours = SET_numbers(np.array(NEW_contours,dtype=str).tolist(),mode=0)
+
+contours_diff = []
+contours_degrees = []
+
+
+for linenum in range(len(NEW_contours)):
+    contour0 = NEW_contours[linenum-1]
+    contour1 = NEW_contours[linenum]
+
+    d = contour1 - contour0
+    # print(d)
+    contours_diff.append([(d[0] * -1),d[1]])
+    contours_degrees.append(math.degrees(math.atan2((d[0] * -1),d[1])))
+
+text_diff = SET_numbers(np.array(contours_diff,dtype=str).tolist(),mode=0)
+
+text_degrees = SET_numbers(contours_degrees,mode=1)[0]
 
 NEW_guide,NEW_atan2_guide = search_anser_contours(NEW_contours,square_size)
 
@@ -231,6 +268,9 @@ math_print    = False
 square2_print = False
 atan22_print  = False
 
+index_print = False
+now_index = 0
+
 print('[:] ximage')
 print('[.] contours')
 print('[/] guide')
@@ -238,29 +278,54 @@ print('[#] boarder')
 
 print('{_} break')
 
+write_txt = []
+for linenum in range(len(text_degrees)):
+    write_txt.append(f"   : {text_degrees[linenum]}  :  [{text_contours[linenum][0]}, {text_contours[linenum][1]}]  :  [{text_diff[linenum][0]}, {text_diff[linenum][1]}]")
 
-def Make_ContoursImage(image_print,atan2_print,square_print,math_print,atan22_print,square2_print,image,atan2_guide,square_guide,mathme,NEW_atan2_guide,NEW_guide):
+
+def Make_ContoursImage(image_print,atan2_print,square_print,math_print,index_print,now_index,atan22_print,square2_print,image,atan2_guide,square_guide,mathme,NEW_atan2_guide,NEW_guide):
     contours_image = image.copy()
 
     if image_print == True:
-        Square_Color = [0,0,255]
-        Square2_Color =[255,0,0]
-        Guide_Colror = [0,0,200]
-        Guide2_Colror =[0,200,0]
+
+        if index_print == True:
+            Square_Color = [0,0,200]
+            Square2_Color =[200,0,0]
+
+            Guide_Colror = [0,0,100]
+            Guide2_Colror =[0,100,0]
+        else:
+            Square_Color = [0,0,255]
+            Square2_Color =[255,0,0]
+
+            Guide_Colror = [0,0,200]
+            Guide2_Colror =[0,200,0]
+
         mathme_Color = [80,10,10]
     else:
         contours_image[:,:] = Back_Color.copy()
         #contours_image = Black_image
-        Square_Color = [200,0,0]
-        Square2_Color =[0,0,200]
-        Guide_Colror = [10,170,160]
-        Guide2_Colror =[160,170,10]
+
+        if index_print == True:
+            Square_Color = [130,0,0]
+            Square2_Color =[0,0,130]
+
+            Guide_Colror = [5,85,80]
+            Guide2_Colror =[80,85,5]
+        else:
+            Square_Color = [200,0,0]
+            Square2_Color =[0,0,200]
+                
+            Guide_Colror = [10,170,160]
+            Guide2_Colror =[160,170,10]
+
         mathme_Color = [50,50,50]
 
     if atan2_print == True:
         contours_image[atan2_guide] = Guide_Colror
     if square_print == True:
         contours_image[square_guide] = Square_Color
+
     if math_print == True:
         contours_image[mathme] = mathme_Color
 
@@ -269,36 +334,74 @@ def Make_ContoursImage(image_print,atan2_print,square_print,math_print,atan22_pr
     if square2_print == True:
         contours_image[NEW_guide] = Square2_Color
 
+    if index_print == True:
+        global NEW_contours,square_size
+
+        position = NEW_contours[now_index-1]
+        square_y = square[0] + position[0]*square_size
+        square_x = square[1] + position[1]*square_size
+        now_square = (square_y,square_x)
+        contours_image[now_square] = [0,150,150]
+
+        position = NEW_contours[now_index]
+        square_y = square[0] + position[0]*square_size
+        square_x = square[1] + position[1]*square_size
+        now_square = (square_y,square_x)
+        contours_image[now_square] = [0,255,255]
+
+        index_square, index_guide = search_anser_contours([NEW_contours[now_index-1],NEW_contours[now_index]],square_size)
+        contours_image[index_guide] = [0,200,200]
+
+        copy_write_txt = write_txt.copy()
+        copy_write_txt[now_index-1] = ' >'+ copy_write_txt[now_index-1][2:]
+        copy_write_txt[now_index] = ' ▶'+ copy_write_txt[now_index][2:]
+        with open('/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader3_rinkaku/Make_txtfile/contours_degrees.txt','w') as f:
+            for line in copy_write_txt:
+                f.write(line+'\n')
+                
     return contours_image
 
 
 def on_press(key):
 
-    global image_print,square_print,atan2_print,math_print,square2_print,atan22_print,image,atan2_guide,square_guide,mathme,NEW_atan2_guide,NEW_guide
+    global image_print,square_print,atan2_print,math_print,index_print,now_index,square2_print,atan22_print,image,atan2_guide,square_guide,mathme,NEW_atan2_guide,NEW_guide
     
     try:
-        if key.char == '.':  #'輪郭の表示'
+        key = key.char
+        if key == '.':  #'輪郭の表示'
             square_print = not square_print
 
-        elif key.char == '/': #'角度の表示'
+        elif key == '/': #'角度の表示'
             atan2_print = not atan2_print
         
-        elif key.char == '3': #'3[#の代用](マス目の表示))_'
+        elif key == '3': #'3[#の代用](マス目の表示))'
             math_print = not math_print
+        
+        elif key == '1': #'現在のインデックス情報を表示'
+            index_print = not index_print
 
-        elif key.char == '@': #'*(元の情報の表示)'
+        elif key == '@': #'*(元の情報の表示)'
             image_print = not image_print
         
-        elif key.char == ';':
+        elif key == ';':
             square2_print = not square2_print
-        elif key.char == ':':
+        elif key == ':':
             atan22_print = not atan22_print
+        
+        elif key == 'd':
+            now_index += 1
+            now_index = now_index % len(NEW_contours)
+
+        elif key == 'a':
+            now_index -= 1
+            now_index = abs(now_index % len(NEW_contours))
+
         pass
         
             
-        contours_image = Make_ContoursImage(image_print,atan2_print,square_print,math_print,atan22_print,square2_print,image,atan2_guide,square_guide,mathme,NEW_atan2_guide,NEW_guide)
+        contours_image = Make_ContoursImage(image_print,atan2_print,square_print,math_print,index_print,now_index,atan22_print,square2_print,image,atan2_guide,square_guide,mathme,NEW_atan2_guide,NEW_guide)
         cv2.imwrite('/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader3_rinkaku/Make_picture/__Controllable__contours_image.jpg', contours_image)
-    
+
     except AttributeError:
 
         if key == keyboard.Key.esc:
@@ -306,33 +409,33 @@ def on_press(key):
             return False
         pass
 
-contours_image = Make_ContoursImage(image_print,atan2_print,square_print,math_print,atan22_print,square2_print,image,atan2_guide,square_guide,mathme,NEW_atan2_guide,NEW_guide)
+contours_image = Make_ContoursImage(image_print,atan2_print,square_print,math_print,index_print,now_index,atan22_print,square2_print,image,atan2_guide,square_guide,mathme,NEW_atan2_guide,NEW_guide)
 cv2.imwrite('/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader3_rinkaku/Make_picture/__Controllable__contours_image.jpg', contours_image)
     
 # キーボードのリスナーを開始
 with keyboard.Listener(on_press=on_press) as listener:
     listener.join()
+    
 
-C_shape = np.shape(image)
-NK_image = cv2.imread('/Users/matsuurakenshin/WorkSpace/development/txtreader/picture_file/North_Korea.png')
-NK_shape = np.shape(NK_image)
-C_yx = C_shape[0] / C_shape[1]
-NK_yx = NK_shape[0] / NK_shape[1]
-if C_yx > NK_yx:
-    hiritu = (C_shape[0]/NK_shape[0]) * 1
-else:
-    hiritu = (C_shape[1]/NK_shape[1]) * 1
+# C_shape = np.shape(image)
+# NK_image = cv2.imread('/Users/matsuurakenshin/WorkSpace/development/txtreader/picture_file/North_Korea.png')
+# NK_shape = np.shape(NK_image)
+# C_yx = C_shape[0] / C_shape[1]
+# NK_yx = NK_shape[0] / NK_shape[1]
+# if C_yx > NK_yx:
+#     hiritu = (C_shape[0]/NK_shape[0]) * 1
+# else:
+#     hiritu = (C_shape[1]/NK_shape[1]) * 1
 
-NK_image = cv2.resize(NK_image,None,fx=hiritu,fy=hiritu)
+# NK_image = cv2.resize(NK_image,None,fx=hiritu,fy=hiritu)
 
-C_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-where_not0 = np.where(C_gray == 0)
-not0_color = NK_image[where_not0]
+# C_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+# where_not0 = np.where(C_gray == 0)
+# not0_color = NK_image[where_not0]
 
-
-contours_image = Make_ContoursImage(image_print,atan2_print,square_print,math_print,atan22_print,square2_print,image,atan2_guide,square_guide,mathme,NEW_atan2_guide,NEW_guide)
-contours_image[where_not0] = not0_color
-cv2.imwrite('/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader3_rinkaku/Make_picture/__Controllable__contours_image.jpg', contours_image)
+# contours_image = Make_ContoursImage(image_print,atan2_print,square_print,math_print,image_print,now_index,atan22_print,square2_print,image,atan2_guide,square_guide,mathme,NEW_atan2_guide,NEW_guide)
+# contours_image[where_not0] = not0_color
+# cv2.imwrite('/Users/matsuurakenshin/WorkSpace/development/txtreader/txtreader3_rinkaku/Make_picture/__Controllable__contours_image.jpg', contours_image)
 
 
 # NK_gray = cv2.cvtColor(NK_image, cv2.COLOR_BGR2GRAY)
