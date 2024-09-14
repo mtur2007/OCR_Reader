@@ -4,7 +4,6 @@ import numpy as np
 import time
 import random
 
-
 def Myint(num): #数値の int部分を確実に表示させる様にする自作関数
     num = str(num)
     for line in range(len(num)):
@@ -94,7 +93,6 @@ def SET_txts(txtslist,mode,position):
 
     if isinstance(txtslist[0], list) == False:
         txtslist = [txtslist]
-        print(f"SET修正: {txtslist}")
         mode = 1
 
     if position == "left":
@@ -185,7 +183,6 @@ def SET_numbers(numberslist,mode):
 
     if isinstance(numberslist[0], list) == False:
         numberslist = [numberslist]
-        print(f"SET修正: {numberslist}")
         mode = 1
     
     numberslist = SET_number(numberslist,mode)
